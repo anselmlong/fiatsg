@@ -31,7 +31,7 @@ export default async function SaintsPage() {
 
       {supporter ? (
         <>
-          <p className="mt-4 font-serif text-2xl text-purple-deep">
+          <p className="mt-4 font-serif text-2xl text-ink">
             <strong className="tabular-nums">{met.size}</strong> of {SAINTS.length} met
           </p>
           <Collection met={met} />

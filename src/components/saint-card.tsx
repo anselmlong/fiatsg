@@ -12,11 +12,11 @@ export function SaintCard({ saint, size = "md", priority }: { saint: Saint; size
   return (
     <figure className={`saint-tile ${frame} bg-gold shadow-[0_6px_18px_-8px_rgba(52,25,92,0.45)] ${lg ? "w-72 sm:w-80" : "w-full"}`}>
       <div className={`${inner} border-2 border-gold-soft bg-paper`}>
-        <div className="relative aspect-[3/4] bg-purple-deep">
+        <div className="relative aspect-[3/4] bg-gold-soft">
           <Image src={saint.image} alt={saint.name} fill priority={priority} sizes={lg ? "320px" : "(min-width:1024px) 180px, (min-width:640px) 30vw, 45vw"} className="object-cover" />
         </div>
         <figcaption className={`${caption} ${lg ? "h-[5.5rem]" : ""}`}>
-          <p className={`line-clamp-2 text-balance font-serif font-bold leading-[1.15] text-purple-deep ${lg ? "text-2xl" : "text-[0.95rem]"}`}>{saint.name}</p>
+          <p className={`line-clamp-2 text-balance font-serif font-bold leading-[1.15] text-ink ${lg ? "text-2xl" : "text-[0.95rem]"}`}>{saint.name}</p>
           {saint.feast && <p className="whitespace-nowrap text-[0.68rem] font-bold uppercase tracking-[0.08em] text-gold-ink">{saint.feast}</p>}
         </figcaption>
       </div>
@@ -70,7 +70,7 @@ export function SaintThumb({ saint }: { saint?: Saint }) {
   }
   return (
     <div className="w-20 rounded-2xl bg-gold p-[3px] shadow-[0_4px_12px_-6px_rgba(52,25,92,0.45)]">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.8rem] bg-purple-deep">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.8rem] bg-gold-soft">
         <Image src={saint.image} alt={saint.name} fill sizes="80px" className="object-cover" />
       </div>
     </div>

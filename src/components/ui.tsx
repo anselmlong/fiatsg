@@ -115,7 +115,7 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-sm font-bold text-purple">{cause.org.name.split(" — ")[0]}</p>
-        <h3 className="mt-1 text-2xl sm:line-clamp-2 sm:min-h-[2lh] text-purple-deep group-hover:underline">{r.title}</h3>
+        <h3 className="mt-1 text-2xl sm:line-clamp-2 sm:min-h-[2lh] text-ink group-hover:underline">{r.title}</h3>
         <p className="mt-2 text-base text-ink sm:line-clamp-2 sm:min-h-[2lh]">{r.summary}</p>
         {matched.length > 0 && (
           <p className="mt-3 flex items-start gap-2 rounded-xl bg-gold-soft px-3 py-2 text-sm font-bold text-purple-deep">

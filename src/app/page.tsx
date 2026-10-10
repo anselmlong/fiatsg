@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-purple-deep">
+      <section className="relative isolate overflow-hidden bg-cream">
         <Image
           src="/images/hero-worship-crop.jpg"
           alt="Young Catholics worshipping together, hands raised, before a crucifix"
@@ -22,16 +22,16 @@ export default async function Home() {
           sizes="100vw"
           className="-z-10 object-cover object-[70%_center]"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-deep via-purple-deep/85 to-purple-deep/20" />
-        <div className="absolute inset-0 -z-10 bg-purple-deep/40 lg:hidden" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cream via-cream/95 to-cream/20" />
+        <div className="absolute inset-0 -z-10 bg-cream/70 lg:hidden" />
         <Container className="py-20 sm:py-28 lg:py-32">
-          <h1 className="font-serif text-5xl font-bold !text-gold sm:text-7xl">
+          <h1 className="font-serif text-5xl font-bold !text-ink sm:text-7xl">
             <span lang="la" data-no-translate>Fiat</span> — let it be done.
           </h1>
-          <p className="mt-6 max-w-2xl font-serif text-2xl text-balance !text-white sm:text-4xl">
+          <p className="mt-6 max-w-2xl font-serif text-2xl text-balance !text-ink sm:text-4xl">
             Mary's yes changed everything. Yours can be an hour, a skill, a prayer or an invite.
           </p>
-          <p className="mt-6 max-w-xl text-lg text-white/90 sm:text-xl">
+          <p className="mt-6 max-w-xl text-lg text-muted sm:text-xl">
             Fiat connects you with Catholic organisations in Singapore that need help. Every request is vetted by the
             Catholic Foundation.
           </p>
@@ -39,7 +39,7 @@ export default async function Home() {
             Find a way to help <ArrowRight aria-hidden className="h-5 w-5" />
           </Link>
         </Container>
-        <p className="absolute bottom-3 right-4 text-xs text-white/70">Photo: Office for Young People</p>
+        <p className="absolute bottom-3 right-4 rounded bg-paper/90 px-2 py-1 text-xs text-muted">Photo: Office for Young People</p>
       </section>
 
       <section className="pt-16 pb-12 sm:pt-24">
@@ -60,7 +60,7 @@ export default async function Home() {
         <section className="border-t border-line pt-12">
           <Container className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <p className="text-lg">
-              <strong className="text-purple-deep">Part of a Catholic organisation?</strong> Ask for the volunteers you need.
+              <strong className="text-ink">Part of a Catholic organisation?</strong> Ask for the volunteers you need.
             </p>
             <Link href="/join/organisation" className="btn-ghost">Register your organisation</Link>
           </Container>

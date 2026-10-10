@@ -65,8 +65,8 @@ export async function Header() {
         </div>
       </div>
       {user && (
-        <div className="border-t border-line bg-purple-soft/60">
-          <p className="mx-auto max-w-6xl px-4 py-1 text-sm text-purple-deep">
+        <div className="border-t border-line bg-cream">
+          <p className="mx-auto max-w-6xl px-4 py-1 text-sm text-muted">
             Signed in as <strong>{user.name}</strong>
             {user.role === "org" && " · Organisation"}
             {user.role === "cf_admin" && " · Catholic Foundation"}
