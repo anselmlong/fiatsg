@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { offerHelp, pray } from "@/app/actions/supporter";
 import { Submit } from "@/components/submit";
+import { PrayIcon } from "@/components/icons";
 
 export function OfferForm({ requestId, orgName, firstName }: { requestId: number; orgName: string; firstName: string }) {
   const [state, action] = useActionState(offerHelp.bind(null, requestId), undefined);
   if (state?.ok) {
     return (
       <div className="rounded-2xl bg-ok-soft p-5 text-ok" role="status">
-        <p className="text-xl font-bold">Thank you, {firstName}! 🙏</p>
+        <p className="text-xl font-bold">Thank you, {firstName}.</p>
         <p className="mt-2 text-ink">
           We've sent your details to <strong>{orgName}</strong>. They'll contact you by phone or email to arrange the next
           steps.
@@ -38,7 +39,7 @@ export function PrayForm({ requestId, count, alreadyPrayed, needsName }: { reque
   if (done) {
     return (
       <div className="rounded-2xl bg-purple-soft p-5 text-center" role="status">
-        <p className="text-4xl" aria-hidden>🙏</p>
+        <PrayIcon aria-hidden className="mx-auto h-10 w-10 text-purple" strokeWidth={1.5} />
         <p className="mt-2 text-lg font-bold text-purple-deep">You're praying for this cause</p>
         <p className="text-muted">along with {state?.ok === "prayed" ? count + 1 : count} others. Thank you.</p>
       </div>
@@ -56,8 +57,8 @@ export function PrayForm({ requestId, count, alreadyPrayed, needsName }: { reque
           <input name="name" className="input" maxLength={40} />
         </label>
       )}
-      <Submit className="btn-gold w-full text-lg" pending="Praying…">🙏 I'll pray for this</Submit>
-      <p className="hint text-center">{count} people are praying</p>
+      <Submit className="btn-gold w-full text-lg" pending="Praying…"><PrayIcon aria-hidden className="h-5 w-5" /> I'll pray for this</Submit>
+      <p className="hint text-center">{count === 0 ? "Be the first to pray" : `${count} people are praying`}</p>
     </form>
   );
 }

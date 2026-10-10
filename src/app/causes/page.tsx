@@ -3,6 +3,7 @@ import { CauseCard, Container, Notice } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { listCauses } from "@/lib/queries";
 import { AREAS, SKILLS, skillLabel } from "@/lib/skills";
+import { Sparkles } from "lucide-react";
 
 export const metadata = { title: "Find a cause" };
 
@@ -38,8 +39,7 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
           </Notice>
         </div>
       )}
-      <p className="eyebrow">Find a cause</p>
-      <h1 className="mt-2 text-4xl font-bold sm:text-5xl">Where could your gifts go?</h1>
+      <h1 className=" text-4xl font-bold sm:text-5xl">Where could your gifts go?</h1>
       <p className="mt-3 max-w-2xl text-lg text-muted">
         Every request here comes from a Catholic organisation in Singapore and has been reviewed by the Catholic Foundation.
       </p>
@@ -50,7 +50,7 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
           <select name="skill" defaultValue={skill} className="input">
             <option value="">Any skill</option>
             {SKILLS.map((s) => (
-              <option key={s.id} value={s.id}>{s.icon} {s.label}</option>
+              <option key={s.id} value={s.id}>{s.label}</option>
             ))}
           </select>
         </label>
@@ -104,7 +104,7 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
 
       {forYou.length > 0 && (
         <section className="mt-10" aria-labelledby="for-you">
-          <h2 id="for-you" className="text-3xl font-bold">✨ For you</h2>
+          <h2 id="for-you" className="flex items-center gap-3 text-3xl font-bold"><Sparkles aria-hidden className="h-7 w-7 text-gold" /> For you</h2>
           <p className="mt-1 text-muted">These need {mySkills.slice(0, 3).map(skillLabel).join(", ").toLowerCase()}{mySkills.length > 3 ? " and more" : ""} — gifts you have.</p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {forYou.map((c) => <CauseCard key={c.request.id} cause={c} mySkills={mySkills} />)}

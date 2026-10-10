@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { updateMySkills } from "@/app/actions/supporter";
 import { Submit } from "@/components/submit";
 import { SKILLS, AREAS } from "@/lib/skills";
+import { SkillIcon } from "@/components/icons";
 
 export function SkillsForm({ skills, otherSkill, area, phone }: { skills: string[]; otherSkill: string | null; area: string | null; phone: string | null }) {
   const [state, action] = useActionState(updateMySkills, undefined);
@@ -13,7 +14,7 @@ export function SkillsForm({ skills, otherSkill, area, phone }: { skills: string
         {SKILLS.map((s) => (
           <label key={s.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-white px-3 py-2 font-semibold has-[:checked]:border-purple has-[:checked]:bg-purple-soft">
             <input type="checkbox" name="skills" value={s.id} defaultChecked={skills.includes(s.id)} className="h-5 w-5 accent-[var(--purple)]" />
-            <span aria-hidden>{s.icon}</span> {s.label}
+            <SkillIcon id={s.id} className="h-5 w-5 text-purple" /> {s.label}
           </label>
         ))}
       </div>

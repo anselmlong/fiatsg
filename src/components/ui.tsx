@@ -3,7 +3,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { fmtSchedule } from "@/lib/format";
 import type { CauseRow } from "@/lib/queries";
-import { SKILLS, skillIcon, skillLabel } from "@/lib/skills";
+import { SKILLS, skillLabel } from "@/lib/skills";
+import { CalendarDays, MapPin, Sparkles } from "lucide-react";
+import { PrayIcon, SkillIcon } from "./icons";
 
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-6xl px-4 ${className}`}>{children}</div>;
@@ -16,7 +18,7 @@ export function SkillChip({ id, highlight = false }: { id: string; highlight?: b
         highlight ? "bg-gold-soft text-purple-deep ring-2 ring-gold" : "bg-purple-soft text-purple-deep"
       }`}
     >
-      <span aria-hidden>{skillIcon(id)}</span>
+      <SkillIcon id={id} className="h-4 w-4" />
       {skillLabel(id)}
     </span>
   );
@@ -88,17 +90,20 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
         <h3 className="text-2xl text-purple-deep group-hover:underline">{r.title}</h3>
         <p className="text-ink/85">{r.summary}</p>
         {matched.length > 0 && (
-          <p className="rounded-2xl bg-gold-soft px-4 py-2 text-sm font-bold text-purple-deep">
-            ✨ Needs your skills: {matched.map(skillLabel).join(", ")}
+          <p className="flex items-start gap-2 rounded-2xl bg-gold-soft px-4 py-2 text-sm font-bold text-purple-deep">
+            <Sparkles aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink" />
+            <span>Needs your gifts: {matched.map(skillLabel).join(", ")}</span>
           </p>
         )}
         <div className="mt-auto space-y-1 pt-2 text-sm text-muted">
-          <p>
-            📅 {when} · {time}
+          <p className="flex items-start gap-2">
+            <CalendarDays aria-hidden className="mt-0.5 h-4 w-4 shrink-0" /> <span>{when} · {time}</span>
           </p>
-          <p>📍 {r.area === "Online" ? "Online / from home" : r.area}</p>
-          <p>
-            🙏 {cause.prayerCount} praying · {r.status === "completed" ? "Completed" : `${spotsLeft} of ${r.volunteersNeeded} places open`}
+          <p className="flex items-center gap-2">
+            <MapPin aria-hidden className="h-4 w-4 shrink-0" /> {r.area === "Online" ? "Online / from home" : r.area}
+          </p>
+          <p className="flex items-center gap-2 tabular-nums">
+            <PrayIcon aria-hidden className="h-4 w-4 shrink-0" /> {cause.prayerCount} praying · {r.status === "completed" ? "Completed" : `${spotsLeft} of ${r.volunteersNeeded} places open`}
           </p>
         </div>
       </div>
@@ -115,7 +120,7 @@ export function SkillPicker({ name = "skills", selected = [] }: { name?: string;
           className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-white px-4 py-3 font-semibold transition has-[:checked]:border-purple has-[:checked]:bg-purple-soft has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold"
         >
           <input type="checkbox" name={name} value={s.id} defaultChecked={selected.includes(s.id)} className="h-6 w-6 accent-[var(--purple)]" />
-          <span aria-hidden className="text-2xl">{s.icon}</span>
+          <SkillIcon id={s.id} className="h-6 w-6 shrink-0 text-purple" />
           <span>{s.label}</span>
         </label>
       ))}

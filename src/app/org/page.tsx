@@ -3,6 +3,7 @@ import { Container, Notice, StatusBadge } from "@/components/ui";
 import { requireOrg } from "@/lib/auth";
 import { fmtSchedule } from "@/lib/format";
 import { orgRequests } from "@/lib/queries";
+import { Megaphone } from "lucide-react";
 
 export const metadata = { title: "Our requests" };
 
@@ -23,8 +24,8 @@ export default async function OrgDashboard({ searchParams }: PageProps<"/org">) 
         <div className="mb-8">
           <Notice tone={org.status === "rejected" ? "bad" : "warn"}>
             <p className="text-lg font-bold">
-              {org.status === "pending" && "⏳ Your organisation is waiting for review by the Catholic Foundation."}
-              {org.status === "changes_requested" && "✏️ The Catholic Foundation has asked for some changes."}
+              {org.status === "pending" && "Your organisation is waiting for review by the Catholic Foundation."}
+              {org.status === "changes_requested" && "The Catholic Foundation has asked for some changes."}
               {org.status === "rejected" && "Your organisation was not approved."}
             </p>
             {org.reviewComment && <p className="mt-2">“{org.reviewComment}”</p>}
@@ -37,16 +38,16 @@ export default async function OrgDashboard({ searchParams }: PageProps<"/org">) 
       )}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow">{org.name.split(" — ")[0]}</p>
-          <h1 className="mt-2 text-4xl font-bold">Our requests</h1>
-          {newOffers > 0 && <p className="mt-2 text-lg font-bold text-purple">🙋 {newOffers} {newOffers === 1 ? "person is" : "people are"} waiting to hear from you</p>}
+          <h1 className="text-4xl font-bold">Our requests</h1>
+          <p className="mt-1 text-lg text-muted">{org.name.split(" — ")[0]}</p>
+          {newOffers > 0 && <p className="mt-2 text-lg font-bold text-purple">{newOffers} {newOffers === 1 ? "person is" : "people are"} waiting to hear from you</p>}
         </div>
         {org.status === "approved" && <Link href="/org/requests/new" className="btn-primary text-lg">+ Ask for volunteers</Link>}
       </div>
 
       {rows.length === 0 ? (
         <div className="card mt-8 p-10 text-center">
-          <p className="text-5xl" aria-hidden>📣</p>
+          <Megaphone aria-hidden className="mx-auto h-12 w-12 text-gold" strokeWidth={1.5} />
           <p className="mt-3 text-lg">You haven't asked for help yet.</p>
           {org.status === "approved" && <Link href="/org/requests/new" className="btn-primary mt-5">Create your first request</Link>}
         </div>
@@ -69,7 +70,7 @@ export default async function OrgDashboard({ searchParams }: PageProps<"/org">) 
                   </div>
                   <div className="flex gap-6 text-center">
                     <div><p className="font-serif text-3xl font-bold text-purple">{acceptedCount}/{r.volunteersNeeded}</p><p className="text-sm text-muted">confirmed</p></div>
-                    <div><p className={`font-serif text-3xl font-bold ${waiting ? "text-gold-ink" : "text-purple"}`}>{waiting}</p><p className="text-sm text-muted">new offers</p></div>
+                    <div><p className={`font-serif text-3xl tabular-nums font-bold ${waiting ? "text-gold-ink" : "text-purple"}`}>{waiting}</p><p className="text-sm text-muted">new offers</p></div>
                     <div><p className="font-serif text-3xl font-bold text-purple">{prayerCount}</p><p className="text-sm text-muted">praying</p></div>
                   </div>
                 </Link>

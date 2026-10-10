@@ -8,6 +8,7 @@ import { requireOrg } from "@/lib/auth";
 import { fmtSchedule, timeAgo } from "@/lib/format";
 import { getUpdates, respondents } from "@/lib/queries";
 import { CompleteForm, UpdateForm } from "./forms";
+import { Mail, Phone } from "lucide-react";
 
 export default async function OrgRequestPage({ params, searchParams }: PageProps<"/org/requests/[id]">) {
   const org = await requireOrg();
@@ -67,15 +68,15 @@ export default async function OrgRequestPage({ params, searchParams }: PageProps
                     <StatusBadge status={response.status} label={response.status === "offered" ? "New" : undefined} />
                   </div>
                   <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-lg">
-                    <a href={`mailto:${user.email}`} className="font-bold">✉️ {user.email}</a>
-                    {user.phone && <a href={`tel:${user.phone.replace(/\s/g, "")}`} className="font-bold">📞 {user.phone}</a>}
+                    <a href={`mailto:${user.email}`} className="inline-flex items-center gap-2 font-bold"><Mail aria-hidden className="h-5 w-5" /> {user.email}</a>
+                    {user.phone && <a href={`tel:${user.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-2 font-bold"><Phone aria-hidden className="h-5 w-5" /> {user.phone}</a>}
                   </div>
                   {(user.skills.length > 0 || user.otherSkill) && (
                     <div className="mt-3 flex flex-wrap gap-2">
                       {[...user.skills].sort((a, b) => Number(req.skills.includes(b)) - Number(req.skills.includes(a))).map((s) => (
                         <SkillChip key={s} id={s} highlight={req.skills.includes(s)} />
                       ))}
-                      {user.otherSkill && <span className="chip">✨ {user.otherSkill}</span>}
+                      {user.otherSkill && <span className="chip">{user.otherSkill}</span>}
                     </div>
                   )}
                   {response.note && <p className="mt-3 rounded-2xl bg-cream p-4 font-serif text-lg italic">“{response.note}”</p>}
@@ -121,7 +122,7 @@ export default async function OrgRequestPage({ params, searchParams }: PageProps
           )}
           {req.status === "completed" && (
             <div className="card p-6">
-              <h2 className="text-2xl font-bold">🎉 Completed</h2>
+              <h2 className="text-2xl font-bold">Completed</h2>
               <p className="mt-2">{req.outcomeSummary}</p>
               <p className="mt-2 text-muted">{req.outcomeHours ?? 0} hours · {req.outcomePeopleServed ?? 0} people served</p>
             </div>

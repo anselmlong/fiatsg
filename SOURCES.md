@@ -1,0 +1,14 @@
+# Image sources
+
+All photos in `public/images/` were downloaded from the organisations' own public websites for this hackathon demo.
+
+| File | Source |
+| --- | --- |
+| cf-logo.png | catholicfoundation.sg |
+| cws-*.jpg | catholicwelfare.org.sg |
+| vf-banner*.jpg | villafrancis.org.sg |
+| acmi-*.jpg | acmi.org.sg |
+| caritas-*.jpg | caritas-singapore.org |
+| oyp-*.webp | oyp.org.sg |
+| cps-mass.jpg | cps.org.sg |
+| hero-volunteer.jpg | catholicwelfare.org.sg (cropped) |

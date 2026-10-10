@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
+import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { withdrawOffer } from "@/app/actions/supporter";
+import { PrayIcon } from "@/components/icons";
 import { Container, DemoTag, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
@@ -37,7 +39,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
   const orgShort = org.name.split(" — ")[0];
 
   return (
-    <article>
+    <article className="pb-24 lg:pb-0">
       <div className="relative isolate bg-purple-deep">
         {r.coverUrl && <Image src={r.coverUrl} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-50" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-purple-deep via-purple-deep/70 to-transparent" />
@@ -59,13 +61,12 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
         <div className="min-w-0 space-y-10">
           {r.status === "completed" && (
             <section className="card border-2 border-gold/60 p-7">
-              <p className="eyebrow">The fruit</p>
-              <h2 className="mt-2 text-3xl font-bold">What your help made possible</h2>
+              <h2 className="text-3xl font-bold">What your help made possible</h2>
               <p className="mt-3 text-lg">{r.outcomeSummary}</p>
               <dl className="mt-6 grid grid-cols-3 gap-4 text-center">
-                <div><dt className="text-sm text-muted">Hours given</dt><dd className="font-serif text-4xl font-bold text-purple">{r.outcomeHours ?? "—"}</dd></div>
-                <div><dt className="text-sm text-muted">People served</dt><dd className="font-serif text-4xl font-bold text-purple">{r.outcomePeopleServed ?? "—"}</dd></div>
-                <div><dt className="text-sm text-muted">Prayers</dt><dd className="font-serif text-4xl font-bold text-purple">{cause.prayerCount}</dd></div>
+                <div><dt className="text-sm text-muted">Hours given</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{r.outcomeHours ?? "—"}</dd></div>
+                <div><dt className="text-sm text-muted">People served</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{r.outcomePeopleServed ?? "—"}</dd></div>
+                <div><dt className="text-sm text-muted">Prayers</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{cause.prayerCount}</dd></div>
               </dl>
             </section>
           )}
@@ -80,7 +81,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
           {updateList.length > 0 && (
             <section>
               <h2 className="text-3xl font-bold">Updates from {orgShort}</h2>
-              <ol className="mt-6 space-y-6 border-l-4 border-gold/60 pl-6">
+              <ol className="mt-6 space-y-6">
                 {updateList.map((u) => (
                   <li key={u.id} className="card overflow-hidden">
                     {u.photoUrl && (
@@ -97,7 +98,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
           )}
 
           <section className="card p-7">
-            <p className="eyebrow">Why this matters</p>
+            <h2 className="text-2xl font-bold">Why this matters</h2>
             <p className="mt-3 font-serif text-xl italic leading-relaxed text-ink/90">{org.whyItMatters}</p>
             <h2 className="mt-8 text-2xl font-bold">About {orgShort}</h2>
             <p className="mt-3 text-ink/85">{org.history}</p>
@@ -109,7 +110,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
 
           {prayerList.length > 0 && (
             <section>
-              <h2 className="text-3xl font-bold">🙏 Prayers for this cause</h2>
+              <h2 className="flex items-center gap-3 text-3xl font-bold"><PrayIcon aria-hidden className="h-7 w-7 text-gold" strokeWidth={1.75} /> Prayers for this cause</h2>
               <ul className="mt-6 grid gap-4 sm:grid-cols-2">
                 {prayerList.map((p, i) => (
                   <li key={i} className="rounded-2xl bg-purple-soft/70 p-5">
@@ -125,22 +126,22 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
         <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
           <div className="card space-y-5 p-6">
             <dl className="space-y-3 text-base">
-              <div><dt className="font-bold">📅 When</dt><dd>{when}<br />{time}</dd></div>
-              <div><dt className="font-bold">📍 Where</dt><dd>{r.area === "Online" ? "Online — from home" : <>{r.address ?? r.area}<br /><span className="text-muted">{r.area}</span></>}</dd></div>
-              <div><dt className="font-bold">👥 Who can come</dt><dd>{ageLabel(r.ageGroup)}</dd></div>
-              <div><dt className="font-bold">🙋 Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : `${spotsLeft} of ${r.volunteersNeeded} places still open`}</dd></div>
+              <div><dt className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</dt><dd>{when}<br />{time}</dd></div>
+              <div><dt className="flex items-center gap-2 font-bold"><MapPin aria-hidden className="h-5 w-5 text-purple" /> Where</dt><dd>{r.area === "Online" ? "Online — from home" : <>{r.address ?? r.area}<br /><span className="text-muted">{r.area}</span></>}</dd></div>
+              <div><dt className="flex items-center gap-2 font-bold"><UsersRound aria-hidden className="h-5 w-5 text-purple" /> Who can come</dt><dd>{ageLabel(r.ageGroup)}</dd></div>
+              <div><dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : `${spotsLeft} of ${r.volunteersNeeded} places still open`}</dd></div>
             </dl>
             <div>
               <p className="font-bold">Gifts needed</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {r.skills.map((s) => <SkillChip key={s} id={s} highlight={mySkills.includes(s)} />)}
               </div>
-              {r.skills.some((s) => mySkills.includes(s)) && <p className="mt-2 text-sm font-bold text-gold-ink">✨ Highlighted gifts match yours</p>}
+              {r.skills.some((s) => mySkills.includes(s)) && <p className="mt-2 flex items-center gap-2 text-sm font-bold text-gold-ink"><Sparkles aria-hidden className="h-4 w-4" /> Highlighted gifts match yours</p>}
             </div>
           </div>
 
           {r.status === "approved" && isPublic && (
-            <div className="card p-6">
+            <div id="offer" className="card scroll-mt-28 p-6">
               <h2 className="text-2xl font-bold">Offer your help</h2>
               <div className="mt-4">
                 {!user ? (
@@ -154,6 +155,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
                 ) : myResponse ? (
                   <div className="space-y-3">
                     <StatusBadge status={myResponse.status} />
+                    {myResponse.status === "offered" && <p className="text-xl font-bold text-purple-deep">Thank you, {user.name.split(" ")[0]}.</p>}
                     <p>
                       {myResponse.status === "accepted"
                         ? `${orgShort} has accepted your offer. They'll be in touch with the details.`
@@ -190,6 +192,12 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
           )}
         </aside>
       </Container>
+
+      {r.status === "approved" && isPublic && !myResponse && user?.role !== "org" && user?.role !== "cf_admin" && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 px-4 py-3 shadow-[0_-4px_16px_rgba(52,25,92,0.08)] backdrop-blur lg:hidden">
+          <a href="#offer" className="btn-primary w-full text-lg">I'd like to help</a>
+        </div>
+      )}
     </article>
   );
 }

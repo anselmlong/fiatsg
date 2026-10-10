@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TextSize } from "./text-size";
 
 export function MobileMenu({
@@ -17,8 +16,6 @@ export function MobileMenu({
   logout: () => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-  useEffect(() => setOpen(false), [pathname]);
 
   return (
     <div className="lg:hidden">
@@ -35,7 +32,7 @@ export function MobileMenu({
         <div id="mobile-nav" className="absolute inset-x-0 top-full border-b border-line bg-paper px-4 pb-6 pt-2 shadow-lg">
           <nav aria-label="Mobile" className="flex flex-col">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="border-b border-line py-4 text-lg font-bold text-ink no-underline">
+              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="border-b border-line py-4 text-lg font-bold text-ink no-underline">
                 {l.label}
               </Link>
             ))}
@@ -51,8 +48,8 @@ export function MobileMenu({
               </form>
             ) : (
               <>
-                <Link href="/login" className="btn-ghost flex-1">Log in</Link>
-                <Link href="/join" className="btn-primary flex-1">Join</Link>
+                <Link href="/login" onClick={() => setOpen(false)} className="btn-ghost flex-1">Log in</Link>
+                <Link href="/join" onClick={() => setOpen(false)} className="btn-primary flex-1">Join</Link>
               </>
             )}
           </div>

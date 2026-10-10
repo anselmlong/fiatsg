@@ -1,26 +1,25 @@
 export const SKILLS = [
-  { id: "befriending", label: "Befriending & listening", icon: "🤝" },
-  { id: "teaching", label: "Teaching & tutoring", icon: "📚" },
-  { id: "music", label: "Music & singing", icon: "🎵" },
-  { id: "cooking", label: "Cooking & food", icon: "🍲" },
-  { id: "driving", label: "Driving", icon: "🚗" },
-  { id: "tech", label: "IT & tech help", icon: "💻" },
-  { id: "admin", label: "Admin & paperwork", icon: "📋" },
-  { id: "translation", label: "Languages & translation", icon: "🗣️" },
-  { id: "eldercare", label: "Caring for seniors", icon: "🧓" },
-  { id: "childcare", label: "Working with children", icon: "🧒" },
-  { id: "design", label: "Design & social media", icon: "🎨" },
-  { id: "photography", label: "Photo & video", icon: "📷" },
-  { id: "health", label: "First aid & health", icon: "🩺" },
-  { id: "handyman", label: "Repairs & handyman", icon: "🔧" },
-  { id: "events", label: "Event help & logistics", icon: "📦" },
+  { id: "befriending", label: "Befriending & listening" },
+  { id: "teaching", label: "Teaching & tutoring" },
+  { id: "music", label: "Music & singing" },
+  { id: "cooking", label: "Cooking & food" },
+  { id: "driving", label: "Driving" },
+  { id: "tech", label: "IT & tech help" },
+  { id: "admin", label: "Admin & paperwork" },
+  { id: "translation", label: "Languages & translation" },
+  { id: "eldercare", label: "Caring for seniors" },
+  { id: "childcare", label: "Working with children" },
+  { id: "design", label: "Design & social media" },
+  { id: "photography", label: "Photo & video" },
+  { id: "health", label: "First aid & health" },
+  { id: "handyman", label: "Repairs & handyman" },
+  { id: "events", label: "Event help & logistics" },
 ] as const;
 
 export type SkillId = (typeof SKILLS)[number]["id"];
 
 const byId = new Map<string, (typeof SKILLS)[number]>(SKILLS.map((s) => [s.id, s]));
 export const skillLabel = (id: string) => byId.get(id)?.label ?? id;
-export const skillIcon = (id: string) => byId.get(id)?.icon ?? "✨";
 export const isSkill = (id: string) => byId.has(id);
 
 export const AREAS = ["Central", "North", "North-East", "East", "West", "Online"] as const;

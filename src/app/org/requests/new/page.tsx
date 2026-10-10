@@ -11,8 +11,7 @@ export default async function NewRequestPage() {
   if (org.status !== "approved") redirect("/org");
   return (
     <Container className="max-w-3xl py-10">
-      <p className="eyebrow">New request</p>
-      <h1 className="mt-2 text-4xl font-bold">Ask for volunteers</h1>
+      <h1 className=" text-4xl font-bold">Ask for volunteers</h1>
       <p className="mt-2 text-lg text-muted">Tell people what you need and why. The more human the story, the more people will say yes.</p>
       <div className="card mt-8 p-6 sm:p-8">
         <RequestForm action={createRequest} submitLabel="Send for review" />

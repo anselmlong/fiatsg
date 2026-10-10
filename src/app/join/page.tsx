@@ -8,8 +8,7 @@ export default async function JoinPage({ searchParams }: PageProps<"/join">) {
   const next = (await searchParams).next;
   return (
     <Container className="max-w-3xl py-14">
-      <p className="eyebrow">Join Fiat</p>
-      <h1 className="mt-2 text-4xl font-bold sm:text-5xl">What gifts has God given you?</h1>
+      <h1 className=" text-4xl font-bold sm:text-5xl">What gifts has God given you?</h1>
       <p className="mt-3 text-lg text-muted">
         It takes about a minute. Tell us what you're good at, and we'll show you the causes that need it.
       </p>

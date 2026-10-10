@@ -8,12 +8,16 @@ const SIZES = [
   { id: "xl", label: "A", title: "Extra large text" },
 ];
 
+function persist(id: string) {
+  document.documentElement.dataset.text = id;
+  document.cookie = `fiat_text=${id}; path=/; max-age=31536000; samesite=lax`;
+}
+
 export function TextSize({ initial }: { initial: string }) {
   const [size, setSize] = useState(initial);
   function choose(id: string) {
     setSize(id);
-    document.documentElement.dataset.text = id;
-    document.cookie = `fiat_text=${id}; path=/; max-age=31536000; samesite=lax`;
+    persist(id);
   }
   return (
     <div role="group" aria-label="Text size" className="flex items-center rounded-full border border-line bg-white p-1">

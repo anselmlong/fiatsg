@@ -46,6 +46,7 @@ html[data-text="xl"] { --text-scale: 1.3; }
   --font-serif: var(--font-heading);
 }
 
+@layer base {
 html {
   font-size: calc(112.5% * var(--text-scale)); /* 18px base */
 }
@@ -57,18 +58,36 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3, .font-serif {
+h1, h2, h3 {
   font-family: var(--font-heading), Georgia, serif;
   line-height: 1.2;
   color: var(--purple-deep);
 }
 
-a { color: var(--purple); }
+a {
+  color: var(--purple);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1.5px;
+}
+
+::selection {
+  background: var(--gold-soft);
+  color: var(--purple-deep);
+}
+
+html {
+  accent-color: var(--purple);
+  caret-color: var(--purple);
+  scrollbar-color: color-mix(in srgb, var(--purple) 45%, transparent) var(--cream);
+}
+
+input, textarea, select { font: inherit; }
 
 :focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 3px;
   border-radius: 6px;
+}
 }
 
 @utility btn {
@@ -99,11 +118,9 @@ a { color: var(--purple); }
   @apply text-sm text-muted;
 }
 @utility input {
-  @apply min-h-12 w-full rounded-2xl border-2 border-line bg-white px-4 py-3 text-base text-ink placeholder:text-muted/70 focus:border-purple focus:outline-none;
+  @apply min-h-12 w-full rounded-2xl border-2 border-line bg-white px-4 py-3 text-base text-ink placeholder:text-muted focus:border-purple focus:outline-none;
 }
 @utility chip {
   @apply inline-flex items-center gap-1 rounded-full bg-purple-soft px-3 py-1 text-sm font-semibold text-purple-deep;
 }
-@utility eyebrow {
-  @apply text-sm font-bold uppercase tracking-[0.18em] text-gold-ink;
-}
+

@@ -19,7 +19,7 @@ function Decision({ action }: { action: (fd: FormData) => Promise<void> }) {
       </label>
       <div className="flex flex-wrap gap-2">
         <button name="decision" value="approved" className="btn-primary">✓ Approve</button>
-        <button name="decision" value="changes_requested" className="btn-ghost">✏️ Ask for changes</button>
+        <button name="decision" value="changes_requested" className="btn-ghost">Ask for changes</button>
         <button name="decision" value="rejected" className="btn-danger">Decline</button>
       </div>
     </form>
@@ -47,10 +47,9 @@ export default async function AdminPage() {
 
   return (
     <Container className="py-10">
-      <p className="eyebrow">Catholic Foundation</p>
-      <h1 className="mt-2 text-4xl font-bold">Review queue</h1>
+      <h1 className="text-4xl font-bold">Review queue</h1>
       <p className="mt-2 text-lg text-muted">
-        {waiting ? `${waiting} ${waiting === 1 ? "item needs" : "items need"} your review.` : "All caught up. Thank you! 🙏"} Nothing goes public until you approve it.
+        {waiting ? `${waiting} ${waiting === 1 ? "item needs" : "items need"} your review.` : "All caught up. Thank you."} Nothing goes public until you approve it.
       </p>
 
       <section className="mt-10">
@@ -111,7 +110,7 @@ export default async function AdminPage() {
                       <div className="mt-2 space-y-2">{r.story.split(/\n+/).map((p, i) => <p key={i}>{p}</p>)}</div>
                     </details>
                     <p className="mt-3 text-sm text-muted">
-                      📅 {when} · {time} · 📍 {r.address ?? r.area} · 👥 {r.volunteersNeeded} volunteers · {ageLabel(r.ageGroup)}
+                      {when} · {time} · {r.address ?? r.area} · {r.volunteersNeeded} volunteers · {ageLabel(r.ageGroup)}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">{r.skills.map((s) => <SkillChip key={s} id={s} />)}</div>
                     <Link href={`/causes/${r.id}`} className="mt-3 inline-block text-sm font-bold">Preview public page →</Link>

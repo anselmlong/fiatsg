@@ -37,7 +37,7 @@ export default async function OrgPage({ params }: PageProps<"/orgs/[id]">) {
             <h2 className="text-3xl font-bold">Our story</h2>
             <p className="mt-4 text-lg leading-relaxed">{org.history}</p>
           </section>
-          <section className="rounded-3xl border-l-8 border-gold bg-paper p-7">
+          <section className="rounded-3xl bg-gold-soft/60 p-7">
             <h2 className="text-2xl font-bold">Why it matters</h2>
             <p className="mt-3 font-serif text-xl italic leading-relaxed">{org.whyItMatters}</p>
           </section>

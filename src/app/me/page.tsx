@@ -6,6 +6,7 @@ import { db, orgs, prayers, requests, responses, updates } from "@/db";
 import { requireUser } from "@/lib/auth";
 import { fmtSchedule, timeAgo } from "@/lib/format";
 import { SkillsForm } from "./skills-form";
+import { Sprout } from "lucide-react";
 
 export const metadata = { title: "My impact" };
 
@@ -46,8 +47,7 @@ export default async function MePage() {
 
   return (
     <Container className="py-10">
-      <p className="eyebrow">My impact</p>
-      <h1 className="mt-2 text-4xl font-bold sm:text-5xl">Thank you, {first}.</h1>
+      <h1 className=" text-4xl font-bold sm:text-5xl">Thank you, {first}.</h1>
       <p className="mt-3 max-w-2xl text-lg text-muted">
         “Whatever you did for one of the least of these brothers and sisters of mine, you did for me.” — Matthew 25:40
       </p>
@@ -60,7 +60,7 @@ export default async function MePage() {
           { n: peopleReached, l: "people reached by causes you served" },
         ].map((s) => (
           <div key={s.l} className="card p-5 text-center">
-            <p className="font-serif text-5xl font-bold text-purple">{s.n}</p>
+            <p className="font-serif text-5xl font-bold tabular-nums text-purple">{s.n}</p>
             <p className="mt-1 text-sm text-muted">{s.l}</p>
           </div>
         ))}
@@ -72,7 +72,7 @@ export default async function MePage() {
             <h2 className="text-3xl font-bold">My causes</h2>
             {mine.length === 0 ? (
               <div className="card mt-6 p-8 text-center">
-                <p className="text-5xl" aria-hidden>🌱</p>
+                <Sprout aria-hidden className="mx-auto h-12 w-12 text-ok" strokeWidth={1.5} />
                 <p className="mt-3 text-lg">You haven't offered to help yet. Your first yes is waiting.</p>
                 <Link href="/causes" className="btn-primary mt-5">Find a cause</Link>
               </div>
@@ -89,7 +89,7 @@ export default async function MePage() {
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <StatusBadge status={m.response.status} />
-                            {m.request.status === "completed" && <StatusBadge status="completed" label="Completed 🎉" />}
+                            {m.request.status === "completed" && <StatusBadge status="completed" label="Completed" />}
                           </div>
                           <p className="mt-2 text-xl font-bold text-purple-deep">{m.request.title}</p>
                           <p className="text-sm text-muted">{m.orgName.split(" — ")[0]} · {when} · {time}</p>
@@ -104,7 +104,7 @@ export default async function MePage() {
           </section>
 
           <section>
-            <h2 className="text-3xl font-bold">🌱 News from the causes you follow</h2>
+            <h2 className="text-3xl font-bold">News from the causes you follow</h2>
             {feed.length === 0 ? (
               <p className="mt-4 text-muted">When organisations you've helped or prayed for post updates, they'll appear here.</p>
             ) : (
@@ -129,7 +129,7 @@ export default async function MePage() {
             <h2 className="text-2xl font-bold">My gifts</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {user.skills.length ? user.skills.map((s) => <SkillChip key={s} id={s} />) : <p className="text-muted">None chosen yet.</p>}
-              {user.otherSkill && <span className="chip">✨ {user.otherSkill}</span>}
+              {user.otherSkill && <span className="chip">{user.otherSkill}</span>}
             </div>
             <details className="mt-5">
               <summary className="btn-ghost w-full cursor-pointer list-none">Change my gifts & details</summary>
@@ -140,7 +140,7 @@ export default async function MePage() {
           </div>
           {prayed.length > 0 && (
             <div className="card p-6">
-              <h2 className="text-2xl font-bold">🙏 I'm praying for</h2>
+              <h2 className="text-2xl font-bold">I'm praying for</h2>
               <ul className="mt-3 space-y-2">
                 {prayed.map((p) => <li key={p.requestId}><Link href={`/causes/${p.requestId}`}>{p.title}</Link></li>)}
               </ul>

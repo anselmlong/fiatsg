@@ -7,7 +7,7 @@ export function Footer() {
         <div>
           <p className="font-serif text-3xl font-bold text-white">Fiat</p>
           <p className="mt-2 text-white/85">
-            “Let it be done to me according to your word.” <span className="text-white/60">— Luke 1:38</span>
+            <span lang="la" className="font-serif italic">Fiat voluntas tua</span> — thy will be done. <span className="text-white/70">Matthew 6:10</span>
           </p>
         </div>
         <div className="text-white/85">
