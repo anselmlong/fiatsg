@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, HeartHandshake, ShieldCheck, Sprout } from "lucide-react";
 import { PrayIcon } from "@/components/icons";
-import { CauseCard, Container } from "@/components/ui";
+import { CauseCard, Container, DemoTag } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { getUpdates, listCauses, siteStats } from "@/lib/queries";
 
@@ -83,7 +83,7 @@ export default async function Home() {
             />
             <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-purple-deep to-transparent" />
             <figcaption className="absolute bottom-4 right-4 rounded-full bg-purple-deep/80 px-3 py-1 text-sm text-white">
-              Volunteers with residents · Catholic Welfare Services
+              Photo: catholicwelfare.org.sg
             </figcaption>
           </figure>
         </div>
@@ -93,7 +93,7 @@ export default async function Home() {
         <Container className="py-10">
           <p className="max-w-4xl text-xl leading-relaxed text-ink/85 sm:text-2xl">
             So far, Catholics here have offered {n(stats.prayers)} prayers, given {n(stats.hours)} hours and reached {n(stats.served)} people.
-            Right now, {n(stats.causes)} causes are waiting for someone to say yes.
+            Right now, {n(stats.causes)} causes are waiting for someone to say yes. <DemoTag />
           </p>
         </Container>
       </section>
@@ -176,7 +176,9 @@ export default async function Home() {
                     {cause.request.coverUrl && <Image src={cause.request.coverUrl} alt="" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover transition duration-500 group-hover:scale-[1.02]" />}
                   </div>
                   <div className="p-7">
-                    <p className="text-sm font-bold text-muted">{cause.org.name.split(" — ")[0]}</p>
+                    <p className="flex items-center gap-2 text-sm font-bold text-muted">
+                      {cause.org.name.split(" — ")[0]} {cause.request.isDemo && <DemoTag />}
+                    </p>
                     <h3 className="mt-1 text-2xl group-hover:underline">{cause.request.title}</h3>
                     {updates[0] && <blockquote className="mt-4 font-serif text-xl italic leading-relaxed text-ink/90">“{updates[0].body}”</blockquote>}
                     <p className="mt-6 text-muted">

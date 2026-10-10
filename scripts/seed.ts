@@ -106,7 +106,7 @@ const ORGS: OrgSeed[] = [
         silentPrayers: 21,
       },
       {
-        title: "Mid-Autumn lantern evening with St Theresa's Home",
+        title: "Mid-Autumn lantern evening with our seniors",
         summary: "Families and youth brought mooncakes, lanterns and songs to 80 seniors.",
         story:
           "For many residents, Mid-Autumn used to mean a full table and grandchildren running with lanterns. This year, we asked our volunteers to become that family for one evening.",
@@ -118,7 +118,6 @@ const ORGS: OrgSeed[] = [
         startTime: "17:00",
         endTime: "20:00",
         area: "Central",
-        address: "St Theresa's Home, 49 Upper Thomson Road",
         ageGroup: "all",
         status: "completed",
         outcome: {
