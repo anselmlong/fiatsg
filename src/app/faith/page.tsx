@@ -4,7 +4,7 @@ import { ShareButtons } from "@/components/share-buttons";
 import { Container } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { metSaintIds } from "@/lib/meet";
-import { CATEGORIES, FAITH_TASKS, SAINTS, causePool, saint, saintsIn, type Saint } from "@/lib/saints";
+import { FAITH_TASKS, SAINTS, saint } from "@/lib/saints";
 import { siteUrl } from "@/lib/site";
 import { TaskButton } from "./task-button";
 
@@ -107,50 +107,30 @@ export default async function SaintsPage() {
   );
 }
 
-const TIER_PLACE = ["", "a one-off event", "a regular role", "a long-term role"];
-const grid = "mt-3 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6";
-
-// The saints met so far, by category, with one soft silhouette hinting at who comes next.
+// Set iteration preserves the newest-first order returned by metSaintIds.
 function Collection({ met }: { met: Set<string> }) {
-  // Sharing the faith first: it's open to everyone, every day.
-  const groups = [...CATEGORIES].sort((a, b) => Number(b.id === "faith") - Number(a.id === "faith")).map((c) => {
-    const all = saintsIn(c.id);
-    if (!all.length) return null;
-    const mine = all.filter((s) => met.has(s.id));
-    let hint: string | null = null;
-    if (c.id === "faith") {
-      const task = FAITH_TASKS.find((t) => !met.has(t.saintId));
-      if (task) hint = task.title;
-    } else {
-      const tier = [1, 2, 3].find((t) => causePool(c.id, t).some((s) => !met.has(s.id)));
-      if (tier) hint = `Serve ${c.label.toLowerCase()} at ${TIER_PLACE[tier]}`;
-    }
-    return { c, mine, hint };
-  }).filter((g) => g !== null);
+  const mine = [...met].flatMap((id) => {
+    const s = saint(id);
+    return s ? [s] : [];
+  });
+  const hint = FAITH_TASKS.find((t) => !met.has(t.saintId))?.title ?? "Serve at any cause";
 
   return (
-    <section id="collection" aria-label="Saints you've met" className="mt-8 scroll-mt-28 space-y-8">
-      {groups.map(({ c, mine, hint }) => (
-        <div key={c.id}>
-          <h2 className="text-xl font-bold">{c.label}</h2>
-          <ul className={grid}>
-            {mine.map((s: Saint) => (
-              <li key={s.id}>
-                <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
-                  <SaintCard saint={saint(s.id)!} />
-                </Link>
-              </li>
-            ))}
-            {hint && (
-              <li>
-                <Link href={c.id === "faith" ? "#meet-more" : "/causes"} className="group block h-full rounded-[1.4rem] no-underline">
-                  <SaintWaiting hint={hint} />
-                </Link>
-              </li>
-            )}
-          </ul>
-        </div>
-      ))}
+    <section id="collection" aria-label="Saints you've met" className="mt-8 scroll-mt-28">
+      <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {mine.map((s) => (
+          <li key={s.id}>
+            <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
+              <SaintCard saint={s} />
+            </Link>
+          </li>
+        ))}
+        <li>
+          <Link href="#meet-more" className="group block h-full rounded-[1.4rem] no-underline">
+            <SaintWaiting hint={hint} />
+          </Link>
+        </li>
+      </ul>
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import "server-only";
 import { createHmac } from "node:crypto";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { db, saintMeetings, type Request } from "@/db";
 import { causePool, faithTask, type FaithTaskId } from "./saints";
 
@@ -20,7 +20,7 @@ export async function meetForTask(userId: number, taskId: FaithTaskId) {
 }
 
 // A cause brings the next saint this supporter hasn't met in the cause's (category, tier) pool.
-// Categories without saints yet bring no one.
+// An exhausted pool brings no new saint.
 export async function meetForCause(userId: number, request: Pick<Request, "id" | "category" | "tier">) {
   if (!request.category) return null;
   const met = new Set(await metSaintIds(userId));
@@ -30,7 +30,11 @@ export async function meetForCause(userId: number, request: Pick<Request, "id" |
 }
 
 export async function metSaintIds(userId: number) {
-  const rows = await db.select({ saintId: saintMeetings.saintId }).from(saintMeetings).where(eq(saintMeetings.userId, userId));
+  const rows = await db
+    .select({ saintId: saintMeetings.saintId })
+    .from(saintMeetings)
+    .where(eq(saintMeetings.userId, userId))
+    .orderBy(desc(saintMeetings.createdAt), desc(saintMeetings.id));
   return rows.map((r) => r.saintId);
 }
 
