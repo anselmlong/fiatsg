@@ -1,21 +1,22 @@
 import Link from "next/link";
-import { SaintThumb } from "@/components/saint-card";
+import { SaintCard, SaintThumb, SaintWaiting } from "@/components/saint-card";
 import { ShareButtons } from "@/components/share-buttons";
 import { Container } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { metSaintIds } from "@/lib/meet";
-import { FAITH_TASKS, saint } from "@/lib/saints";
+import { CATEGORIES, FAITH_TASKS, SAINTS, causePool, saint, saintsIn, type Saint } from "@/lib/saints";
 import { siteUrl } from "@/lib/site";
 import { TaskButton } from "./task-button";
 
-export const metadata = { title: "Share your faith" };
+export const metadata = { title: "Saints" };
 
 const HOW: Record<string, { href: string; label: string } | undefined> = {
   pray: { href: "/causes", label: "Find a cause to pray for" },
   offer: { href: "/causes", label: "Find a cause" },
 };
 
-export default async function FaithPage() {
+// The collection first, then the ways to meet more.
+export default async function SaintsPage() {
   const user = await currentUser();
   const supporter = user?.role === "supporter" ? user : null;
   const met = new Set(supporter ? await metSaintIds(supporter.id) : []);
@@ -23,27 +24,21 @@ export default async function FaithPage() {
 
   return (
     <Container className="py-10">
-      <h1 className="text-4xl font-bold sm:text-5xl">Bring someone with you.</h1>
+      <h1 className="text-4xl font-bold sm:text-5xl">{supporter ? "Your saints" : "Meet the saints"}</h1>
       <p className="mt-3 max-w-2xl text-lg text-muted">
-        “Come and see.” — John 1:46. Each time you share your faith, you'll meet a saint who did the same.
+        Each time you serve, pray or bring someone along, you meet a saint who did the same, and their holy card joins your collection.
       </p>
-      <p className="mt-2 max-w-2xl text-muted">Each task below has a saint waiting. Do it, and their holy card joins your collection.</p>
 
-      {inviteUrl ? (
-        <section className="card mt-8 max-w-2xl border-2 border-gold/60 p-6">
-          <h2 className="text-2xl font-bold">Invite a friend to Fiat</h2>
-          <p className="mt-1 text-muted">When a friend joins from your link, you'll meet the saint who brought his brother to Jesus.</p>
-          <div className="mt-4">
-            <ShareButtons
-              url={inviteUrl}
-              title="Fiat"
-              text={`${supporter!.name.split(" ")[0]} would like you to join Fiat: give your time, gifts and prayers to Catholic causes in Singapore.`}
-            />
-          </div>
-        </section>
+      {supporter ? (
+        <>
+          <p className="mt-4 font-serif text-2xl text-purple-deep">
+            <strong className="tabular-nums">{met.size}</strong> of {SAINTS.length} met
+          </p>
+          <Collection met={met} />
+        </>
       ) : (
         <div className="card mt-8 max-w-2xl p-6">
-          <p className="text-lg">Join Fiat to share your faith and meet the saints who walked this way before you.</p>
+          <p className="text-lg">Join Fiat to start your collection and meet the saints who walked this way before you.</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href="/join?next=/faith" className="btn-primary">Join Fiat</Link>
             <Link href="/login?next=/faith" className="btn-ghost">Log in</Link>
@@ -51,44 +46,111 @@ export default async function FaithPage() {
         </div>
       )}
 
-      <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {FAITH_TASKS.map((t) => {
-          const s = saint(t.saintId)!;
-          const done = met.has(s.id);
-          const how = HOW[t.id];
-          return (
-            <li key={t.id} className="card flex items-start gap-4 p-4">
-              {done ? (
-                <Link href={`/saints/${s.id}`} className="shrink-0 rounded-2xl no-underline" aria-label={`Read ${s.name}'s story`}>
-                  <SaintThumb saint={s} />
-                </Link>
-              ) : (
-                <div className="shrink-0 text-center">
-                  <SaintThumb />
-                  <p className="mt-1 w-20 text-xs font-bold text-gold-ink">Saint to meet</p>
+      <section aria-labelledby="meet-more" className="mt-14">
+        <h2 id="meet-more" className="text-3xl font-bold">Meet more saints</h2>
+        <p className="mt-1 text-lg text-muted">“Come and see.” — John 1:46. Each of these has a saint waiting.</p>
+
+        {inviteUrl && (
+          <div className="card mt-6 max-w-2xl border-2 border-gold/60 p-6">
+            <h3 className="text-2xl font-bold">Invite a friend to Fiat</h3>
+            <p className="mt-1 text-muted">When a friend joins from your link, you'll meet the saint who brought his brother to Jesus.</p>
+            <div className="mt-4">
+              <ShareButtons
+                url={inviteUrl}
+                title="Fiat"
+                text={`${supporter!.name.split(" ")[0]} would like you to join Fiat: give your time, gifts and prayers to Catholic causes in Singapore.`}
+              />
+            </div>
+          </div>
+        )}
+
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FAITH_TASKS.map((t) => {
+            const s = saint(t.saintId)!;
+            const done = met.has(s.id);
+            const how = HOW[t.id];
+            return (
+              <li key={t.id} className="card flex items-start gap-4 p-4">
+                {done ? (
+                  <Link href={`/saints/${s.id}`} className="shrink-0 rounded-2xl no-underline" aria-label={`Read ${s.name}'s story`}>
+                    <SaintThumb saint={s} />
+                  </Link>
+                ) : (
+                  <div className="shrink-0 text-center">
+                    <SaintThumb />
+                    <p className="mt-1 w-20 text-xs font-bold text-gold-ink">Saint to meet</p>
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl font-bold">{t.title}</h3>
+                  <p className="mt-1 text-muted">{t.body}</p>
+                  <div className="mt-3">
+                    {done ? (
+                      <Link href={`/saints/${s.id}`} className="font-bold text-ok">You met {s.name}&nbsp;→</Link>
+                    ) : !supporter ? null : t.kind === "honour" ? (
+                      <TaskButton taskId={t.id} />
+                    ) : how ? (
+                      <Link href={how.href} className="font-bold">{how.label}&nbsp;→</Link>
+                    ) : t.id === "invite" ? (
+                      <p className="text-sm font-bold text-gold-ink">Share your link above.</p>
+                    ) : (
+                      <Link href="/causes" className="font-bold">Find a cause to share&nbsp;→</Link>
+                    )}
+                  </div>
                 </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <h2 className="text-xl font-bold">{t.title}</h2>
-                <p className="mt-1 text-muted">{t.body}</p>
-                <div className="mt-3">
-                  {done ? (
-                    <Link href={`/saints/${s.id}`} className="font-bold text-ok">You met {s.name}&nbsp;→</Link>
-                  ) : !supporter ? null : t.kind === "honour" ? (
-                    <TaskButton taskId={t.id} />
-                  ) : how ? (
-                    <Link href={how.href} className="font-bold">{how.label}&nbsp;→</Link>
-                  ) : t.id === "invite" ? (
-                    <p className="text-sm font-bold text-gold-ink">Share your link above.</p>
-                  ) : (
-                    <Link href="/causes" className="font-bold">Find a cause to share&nbsp;→</Link>
-                  )}
-                </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </Container>
+  );
+}
+
+const TIER_PLACE = ["", "a one-off event", "a regular role", "a long-term role"];
+const grid = "mt-3 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6";
+
+// The saints met so far, by category, with one soft silhouette hinting at who comes next.
+function Collection({ met }: { met: Set<string> }) {
+  // Sharing the faith first: it's open to everyone, every day.
+  const groups = [...CATEGORIES].sort((a, b) => Number(b.id === "faith") - Number(a.id === "faith")).map((c) => {
+    const all = saintsIn(c.id);
+    if (!all.length) return null;
+    const mine = all.filter((s) => met.has(s.id));
+    let hint: string | null = null;
+    if (c.id === "faith") {
+      const task = FAITH_TASKS.find((t) => !met.has(t.saintId));
+      if (task) hint = task.title;
+    } else {
+      const tier = [1, 2, 3].find((t) => causePool(c.id, t).some((s) => !met.has(s.id)));
+      if (tier) hint = `Serve ${c.label.toLowerCase()} at ${TIER_PLACE[tier]}`;
+    }
+    return { c, mine, hint };
+  }).filter((g) => g !== null);
+
+  return (
+    <section id="collection" aria-label="Saints you've met" className="mt-8 scroll-mt-28 space-y-8">
+      {groups.map(({ c, mine, hint }) => (
+        <div key={c.id}>
+          <h2 className="text-xl font-bold">{c.label}</h2>
+          <ul className={grid}>
+            {mine.map((s: Saint) => (
+              <li key={s.id}>
+                <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
+                  <SaintCard saint={saint(s.id)!} />
+                </Link>
+              </li>
+            ))}
+            {hint && (
+              <li>
+                <Link href={c.id === "faith" ? "#meet-more" : "/causes"} className="group block h-full rounded-[1.4rem] no-underline">
+                  <SaintWaiting hint={hint} />
+                </Link>
+              </li>
+            )}
+          </ul>
+        </div>
+      ))}
+    </section>
   );
 }

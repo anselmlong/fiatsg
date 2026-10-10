@@ -14,7 +14,7 @@ export default async function SaintPage({ params }: PageProps<"/saints/[id]">) {
   if (!s) notFound();
   return (
     <Container className="max-w-5xl py-8 sm:py-12">
-      <Link href="/me#saints" className="font-bold">← Saints you've met</Link>
+      <Link href="/faith" className="font-bold">← Your saints</Link>
 
       <div className="mt-8 grid gap-10 md:grid-cols-[17rem_1fr] md:gap-14 lg:grid-cols-[19rem_1fr]">
         {/* The portrait stays in view beside the story on wider screens. */}

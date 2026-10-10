@@ -127,7 +127,7 @@ export default async function OrgRequestPage({ params, searchParams }: PageProps
           {(req.status === "approved" || req.status === "completed") && (
             <div className="card p-6">
               <h2 className="text-2xl font-bold">Share an update</h2>
-              <p className="mt-1 text-sm text-muted">Everyone who offered or prayed will see it on their “My impact” page.</p>
+              <p className="mt-1 text-sm text-muted">Everyone who offered or prayed will see it on their “My causes” page.</p>
               <div className="mt-4"><UpdateForm requestId={id} /></div>
             </div>
           )}

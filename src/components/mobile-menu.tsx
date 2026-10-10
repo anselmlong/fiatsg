@@ -8,7 +8,7 @@ export function MobileMenu({
   loggedIn,
   logout,
 }: {
-  links: { href: string; label: string }[];
+  links: { href: string; label: string; badge?: number }[];
   loggedIn: boolean;
   logout: () => Promise<void>;
 }) {
@@ -29,8 +29,9 @@ export function MobileMenu({
         <div id="mobile-nav" className="absolute inset-x-0 top-full border-b border-line bg-paper px-4 pb-6 pt-2 shadow-lg">
           <nav aria-label="Mobile" className="flex flex-col">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="border-b border-line py-4 text-lg font-bold text-ink no-underline">
+              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="flex items-center gap-2 border-b border-line py-4 text-lg font-bold text-ink no-underline">
                 {l.label}
+                {l.badge && <SaintCount n={l.badge} />}
               </Link>
             ))}
           </nav>
@@ -49,5 +50,13 @@ export function MobileMenu({
         </div>
       )}
     </div>
+  );
+}
+
+export function SaintCount({ n }: { n: number }) {
+  return (
+    <span className="rounded-full bg-gold-soft px-2 text-sm font-bold tabular-nums text-gold-ink ring-1 ring-gold/50">
+      {n}<span className="sr-only"> saints met</span>
+    </span>
   );
 }

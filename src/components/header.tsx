@@ -2,13 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
 import { currentUser } from "@/lib/auth";
-import { MobileMenu } from "./mobile-menu";
+import { metSaintIds } from "@/lib/meet";
+import { MobileMenu, SaintCount } from "./mobile-menu";
 import { Translator } from "./translator";
 
 export async function Header() {
   const user = await currentUser();
+  // The collection's size sits beside "Saints", like a trophy count.
+  const saints = user?.role === "supporter" ? (await metSaintIds(user.id)).length : 0;
 
-  const links: { href: string; label: string }[] =
+  const links: { href: string; label: string; badge?: number }[] =
     user?.role === "org"
       ? [
           { href: "/org", label: "Our requests" },
@@ -23,8 +26,8 @@ export async function Header() {
           ]
         : [
             { href: "/causes", label: "Find a cause" },
-            { href: "/faith", label: "Share your faith" },
-            ...(user ? [{ href: "/me", label: "My impact" }] : []),
+            ...(user ? [{ href: "/me", label: "My causes" }] : []),
+            { href: "/faith", label: "Saints", badge: saints || undefined },
           ];
 
   return (
@@ -38,8 +41,9 @@ export async function Header() {
         </Link>
         <nav aria-label="Main" className="ml-auto hidden items-center gap-1 lg:flex">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="rounded-full px-4 py-2 font-bold text-ink no-underline hover:bg-purple-soft">
+            <Link key={l.href} href={l.href} className="flex items-center gap-2 rounded-full px-4 py-2 font-bold text-ink no-underline hover:bg-purple-soft">
               {l.label}
+              {l.badge && <SaintCount n={l.badge} />}
             </Link>
           ))}
         </nav>

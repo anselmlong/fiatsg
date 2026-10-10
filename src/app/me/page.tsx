@@ -6,12 +6,11 @@ import { db, orgs, prayers, requests, responses, updates } from "@/db";
 import { requireUser } from "@/lib/auth";
 import { fmtSchedule, timeAgo } from "@/lib/format";
 import { SkillsForm } from "./skills-form";
-import { SaintCard, SaintWaiting } from "@/components/saint-card";
 import { metSaintIds } from "@/lib/meet";
-import { CATEGORIES, FAITH_TASKS, causePool, saint, saintsIn, type Saint } from "@/lib/saints";
+import { SAINTS } from "@/lib/saints";
 import { Sprout } from "lucide-react";
 
-export const metadata = { title: "My impact" };
+export const metadata = { title: "My causes" };
 
 export default async function MePage() {
   const user = await requireUser("supporter", "/me");
@@ -47,45 +46,41 @@ export default async function MePage() {
   const completed = accepted.filter((m) => m.request.status === "completed");
   const peopleReached = completed.reduce((a, m) => a + (m.request.outcomePeopleServed ?? 0), 0);
   const first = user.name.split(" ")[0];
-  const metIds = await metSaintIds(user.id);
-  const met = new Set(metIds);
+  const metCount = (await metSaintIds(user.id)).length;
+  // A quiet line of thanks rather than a dashboard: the causes themselves come first.
+  const numbers = [
+    { n: mine.filter((m) => m.response.status !== "declined").length, l: "offered" },
+    { n: accepted.length, l: "welcomed" },
+    { n: prayed.length, l: "prayed for" },
+    { n: peopleReached, l: "people reached" },
+  ].filter((x) => x.n > 0);
 
   return (
     <Container className="py-10">
-      <h1 className=" text-4xl font-bold sm:text-5xl">Thank you, {first}.</h1>
+      <h1 className=" text-4xl font-bold sm:text-5xl">My causes</h1>
       <p className="mt-3 max-w-2xl text-lg text-muted">
-        “Whatever you did for one of the least of these brothers and sisters of mine, you did for me.” — Matthew 25:40
+        Thank you, {first}. “Whatever you did for one of the least of these, you did for me.” — Matthew 25:40
       </p>
+      {numbers.length > 0 && (
+        <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-base">
+          {numbers.map((x) => (
+            <span key={x.l}><strong className="font-serif text-xl tabular-nums text-purple">{x.n}</strong> {x.l}</span>
+          ))}
+        </p>
+      )}
 
-      <section aria-label="Your numbers" className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-        {[
-          { n: mine.filter((m) => m.response.status !== "declined").length, l: "causes you offered to help" },
-          { n: accepted.length, l: "times you were welcomed" },
-          { n: prayed.length, l: "causes you prayed for" },
-          { n: peopleReached, l: "people reached by causes you served" },
-        ].map((s) => (
-          <div key={s.l} className="card p-5 text-center">
-            <p className="font-serif text-5xl font-bold tabular-nums text-purple">{s.n}</p>
-            <p className="mt-1 text-sm text-muted">{s.l}</p>
-          </div>
-        ))}
-      </section>
-
-      <Saints met={met} />
-
-      <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_400px]">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_400px]">
         <div className="space-y-12">
-          <section>
-            <h2 className="text-3xl font-bold">My causes</h2>
+          <section aria-label="Causes you've said yes to">
             {mine.length === 0 ? (
-              <div className="card mt-6 p-8 text-center">
+              <div className="card p-8 text-center">
                 <Sprout aria-hidden className="mx-auto h-12 w-12 text-ok" strokeWidth={1.5} />
                 <p className="mt-3 font-serif text-2xl text-purple-deep">Every yes begins small.</p>
                 <p className="mt-2 text-lg text-muted">When you offer to help, it will appear here, with news of what your help made possible.</p>
                 <Link href="/causes" className="btn-primary mt-5">Find a cause</Link>
               </div>
             ) : (
-              <ul className="mt-6 space-y-4">
+              <ul className="space-y-4">
                 {mine.map((m) => {
                   const { when, time } = fmtSchedule(m.request);
                   return (
@@ -137,6 +132,13 @@ export default async function MePage() {
 
         {/* Headings sit outside the cards, as "My causes" does, so the cards start on one line. */}
         <aside id="skills" className="scroll-mt-28 space-y-12">
+          <Link href="/faith" className="card flex items-center justify-between gap-4 border-2 border-gold/60 p-5 no-underline hover:shadow-md">
+            <span>
+              <span className="block text-xl font-bold text-purple-deep">Your saints</span>
+              <span className="text-muted"><strong className="tabular-nums text-purple">{metCount}</strong> of {SAINTS.length} met</span>
+            </span>
+            <span aria-hidden className="font-bold text-purple">→</span>
+          </Link>
           <section>
             <h2 className="text-3xl font-bold">My gifts</h2>
             <div className="card mt-6 p-6">
@@ -163,57 +165,5 @@ export default async function MePage() {
         </aside>
       </div>
     </Container>
-  );
-}
-
-const TIER_PLACE = ["", "a one-off event", "a regular role", "a long-term role"];
-const grid = "mt-3 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6";
-
-// The saints met so far, by category, with one soft silhouette hinting at who comes next.
-function Saints({ met }: { met: Set<string> }) {
-  // Sharing the faith first: it's open to everyone, every day.
-  const groups = [...CATEGORIES].sort((a, b) => Number(b.id === "faith") - Number(a.id === "faith")).map((c) => {
-    const all = saintsIn(c.id);
-    if (!all.length) return null;
-    const mine = all.filter((s) => met.has(s.id));
-    let hint: string | null = null;
-    if (c.id === "faith") {
-      const task = FAITH_TASKS.find((t) => !met.has(t.saintId));
-      if (task) hint = task.title;
-    } else {
-      const tier = [1, 2, 3].find((t) => causePool(c.id, t).some((s) => !met.has(s.id)));
-      if (tier) hint = `Serve ${c.label.toLowerCase()} at ${TIER_PLACE[tier]}`;
-    }
-    return { c, mine, hint };
-  }).filter((g) => g !== null);
-
-  return (
-    <section id="saints" aria-labelledby="saints-title" className="mt-12 scroll-mt-28">
-      <h2 id="saints-title" className="text-3xl font-bold">Saints you've met</h2>
-      <p className="mt-1 text-lg text-muted">Each time you serve, pray or bring someone along, you meet a saint who did the same.</p>
-      <div className="mt-6 space-y-8">
-        {groups.map(({ c, mine, hint }) => (
-          <div key={c.id}>
-            <h3 className="text-xl font-bold">{c.label}</h3>
-            <ul className={grid}>
-              {mine.map((s: Saint) => (
-                <li key={s.id}>
-                  <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
-                    <SaintCard saint={saint(s.id)!} />
-                  </Link>
-                </li>
-              ))}
-              {hint && (
-                <li>
-                  <Link href={c.id === "faith" ? "/faith" : "/causes"} className="group block h-full rounded-[1.4rem] no-underline">
-                    <SaintWaiting hint={hint} />
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
