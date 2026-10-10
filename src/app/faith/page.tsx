@@ -27,6 +27,7 @@ export default async function FaithPage() {
       <p className="mt-3 max-w-2xl text-lg text-muted">
         “Come and see.” — John 1:46. Each time you share your faith, you'll meet a saint who did the same.
       </p>
+      <p className="mt-2 max-w-2xl text-muted">Each task below has a saint waiting. Do it, and their holy card joins your collection.</p>
 
       {inviteUrl ? (
         <section className="card mt-8 max-w-2xl border-2 border-gold/60 p-6">
@@ -36,7 +37,7 @@ export default async function FaithPage() {
             <ShareButtons
               url={inviteUrl}
               title="Fiat"
-              text={`${supporter!.name.split(" ")[0]} would like you to join Fiat: give your time, skills and prayers to Catholic causes in Singapore.`}
+              text={`${supporter!.name.split(" ")[0]} would like you to join Fiat: give your time, gifts and prayers to Catholic causes in Singapore.`}
             />
           </div>
         </section>
@@ -62,7 +63,10 @@ export default async function FaithPage() {
                   <SaintThumb saint={s} />
                 </Link>
               ) : (
-                <div className="shrink-0"><SaintThumb /></div>
+                <div className="shrink-0 text-center">
+                  <SaintThumb />
+                  <p className="mt-1 w-20 text-xs font-bold text-gold-ink">Saint to meet</p>
+                </div>
               )}
               <div className="min-w-0 flex-1">
                 <h2 className="text-xl font-bold">{t.title}</h2>

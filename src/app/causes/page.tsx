@@ -51,16 +51,16 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
             See the difference made
           </Link>
         </nav>
-        <details open={isFiltered || ["skill", "kind", "area"].some((k) => k in sp)}className="group open:basis-full">
+        <details open={isFiltered || ["skill", "kind", "area"].some((k) => k in sp)} className="group open:basis-full">
           <summary className="btn-ghost !min-h-14 cursor-pointer list-none">
-            <span className="group-open:hidden">Filter by skill, day or place</span>
+            <span className="group-open:hidden">Filter by gift, day or place</span>
             <span className="hidden group-open:inline">Hide filters</span>
           </summary>
           <AutoSubmitForm className="card mt-4 space-y-5 p-5">
             <label className="field max-w-md">
-              <span className="label">Skill</span>
+              <span className="label">Gift</span>
               <select name="skill" defaultValue={skill} className="input">
-                <option value="">Any skill</option>
+                <option value="">Any gift</option>
                 {SKILLS.map((s) => (
                   <option key={s.id} value={s.id}>{s.label}</option>
                 ))}
@@ -80,14 +80,14 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
       {user?.role === "supporter" && !mySkills.length && !showCompleted && (
         <div className="mt-8">
           <Notice>
-            <Link href="/me#skills" className="font-bold">Add your skills</Link> to see the causes that need you most.
+            <Link href="/me#skills" className="font-bold">Add your gifts</Link> to see the causes that need you most.
           </Notice>
         </div>
       )}
       {!user && !showCompleted && (
         <div className="mt-8">
           <Notice>
-            <Link href="/join" className="font-bold">Join Fiat</Link> to see the causes that match your skills first.
+            <Link href="/join" className="font-bold">Join Fiat</Link> to see the causes that match your gifts first.
           </Notice>
         </div>
       )}
@@ -107,7 +107,7 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
           {showCompleted ? "What volunteers made possible" : forYou.length ? "More causes" : isFiltered ? `${rest.length} matching ${rest.length === 1 ? "cause" : "causes"}` : "All causes"}
         </h2>
         {rest.length === 0 ? (
-          <p className="mt-6 text-lg text-muted">Nothing matches those filters yet. Try “Any skill” or “Anywhere”.</p>
+          <p className="mt-6 text-lg text-muted">Nothing matches those filters yet. Try “Any gift” or “Anywhere”.</p>
         ) : (
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rest.map((c) => <CauseCard key={c.request.id} cause={c} mySkills={mySkills} />)}

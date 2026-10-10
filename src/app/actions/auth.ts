@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { db, orgs, users } from "@/db";
 import { checkPassword, endSession, hashPassword, startSession } from "@/lib/auth";
 import { meetForTask } from "@/lib/meet";
+import { sendOffer } from "@/lib/offers";
 import { type FormState, list, safeNext, str, strOrNull } from "@/lib/forms";
 import { COVER_LIBRARY, isSkill } from "@/lib/skills";
 
@@ -18,7 +19,14 @@ export async function login(_: FormState, fd: FormData): Promise<FormState> {
     return { error: "That email and password don't match. Please try again." };
   }
   await startSession(user.id);
+  if (user.role === "supporter") await offerFrom(user.id, fd);
   redirect(safeNext(str(fd, "next"), homeFor(user.role)));
+}
+
+// "I'd like to help" sent someone to join or log in first; their yes goes through as they arrive.
+async function offerFrom(userId: number, fd: FormData) {
+  const id = Number(str(fd, "offer"));
+  if (Number.isInteger(id) && id > 0) await sendOffer(userId, id);
 }
 
 async function emailTaken(email: string) {
@@ -59,6 +67,7 @@ export async function joinSupporter(_: FormState, fd: FormData): Promise<FormSta
   if (inviter) await meetForTask(inviter.id, "invite");
   jar.delete("fiat_ref");
   await startSession(user.id);
+  await offerFrom(user.id, fd);
   redirect(safeNext(str(fd, "next"), "/causes?welcome=1"));
 }
 

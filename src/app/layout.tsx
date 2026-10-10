@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.SITE_URL ?? "https://fiat.anselmlong.com"),
   title: { default: "Fiat — Give my heart", template: "%s · Fiat" },
   description:
-    "Not everyone can give money. Everyone can give something. Offer your time, your skills and your prayers to Catholic organisations in Singapore.",
+    "Not everyone can give money. Everyone can give something. Offer your time, your gifts and your prayers to Catholic organisations in Singapore.",
   applicationName: "Fiat",
   appleWebApp: { capable: true, title: "Fiat", statusBarStyle: "default" },
 };

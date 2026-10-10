@@ -4,11 +4,12 @@ import { useActionState } from "react";
 import { login } from "@/app/actions/auth";
 import { Submit } from "@/components/submit";
 
-export function LoginForm({ next }: { next: string }) {
+export function LoginForm({ next, offer }: { next: string; offer?: number }) {
   const [state, action] = useActionState(login, undefined);
   return (
     <form action={action} className="space-y-5">
       <input type="hidden" name="next" value={next} />
+      {offer && <input type="hidden" name="offer" value={offer} />}
       <label className="field">
         <span className="label">Email</span>
         <input name="email" type="email" autoComplete="email" required className="input" />

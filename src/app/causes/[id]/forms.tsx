@@ -33,7 +33,7 @@ export function OfferForm({ requestId, orgName, firstName }: { requestId: number
       </label>
       {state?.error && <p className="font-bold text-bad" role="alert">{state.error}</p>}
       <Submit className="btn-primary w-full text-lg" pending="Sending…">I'd like to help</Submit>
-      <p className="hint">Your name, email, phone and skills will be shared with {orgName} so they can follow up with you.</p>
+      <p className="hint">Your name, email, phone and gifts will be shared with {orgName} so they can follow up with you.</p>
     </form>
   );
 }

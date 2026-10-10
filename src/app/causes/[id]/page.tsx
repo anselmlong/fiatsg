@@ -6,6 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { withdrawOffer } from "@/app/actions/supporter";
 import { ShareButtons } from "@/components/share-buttons";
+import { ScrollIntoView } from "@/components/scroll-into-view";
 import { MediaGallery } from "@/components/media-gallery";
 import { Container, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses, users } from "@/db";
@@ -69,6 +70,19 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
   const mySkills = user?.role === "supporter" ? user.skills : [];
   const spotsLeft = Math.max(0, r.volunteersNeeded - cause.acceptedCount);
   const orgShort = org.name.split(" — ")[0];
+  // Offers the organisation hasn't answered yet, so a full-looking cause doesn't seem wide open.
+  const waiting = Math.max(0, cause.offeredCount - cause.acceptedCount);
+  const bringAFriend = isPublic && r.status === "approved" && (
+    <div className="card p-6">
+      <h2 className="text-2xl font-bold">Bring a friend</h2>
+      <p className="mt-1 text-muted">
+        {user?.role === "supporter" ? "If a friend joins from your link, you'll meet a saint. Come together, and you'll both meet another." : "Know someone who'd love this? Send it to them."}
+      </p>
+      <div className="mt-4">
+        <ShareButtons url={shareUrl} title={r.title} text={`Come and help with me: ${r.title}, with ${orgShort}.`} />
+      </div>
+    </div>
+  );
 
   return (
     <article>
@@ -120,8 +134,9 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
           )}
 
           <section>
-            <p className="text-xl font-bold text-purple-deep">{r.summary}</p>
-            <div className="mt-5 space-y-4 text-lg leading-relaxed text-ink/90">
+            {/* On phones the summary sits above the help button instead (see the aside). */}
+            <p className="mb-5 hidden text-xl font-bold text-purple-deep lg:block">{r.summary}</p>
+            <div className="space-y-4 text-lg leading-relaxed text-ink/90">
               {r.story.split(/\n+/).map((para, i) => <p key={i}>{para}</p>)}
             </div>
           </section>
@@ -150,6 +165,8 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
               </ol>
             </section>
           )}
+
+          {bringAFriend && <div className="lg:hidden">{bringAFriend}</div>}
 
           {isPublic && r.status !== "completed" && (
             <section className="card p-6">
@@ -180,11 +197,12 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
 
         <aside className="order-first space-y-6 lg:order-none lg:sticky lg:top-28 lg:self-start">
           <div className="card space-y-5 p-6">
+            <p className="text-lg font-bold text-purple-deep lg:hidden">{r.summary}</p>
             <dl className="space-y-3 text-base">
               <div><dt className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</dt><dd>{when}<br />{time}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><MapPin aria-hidden className="h-5 w-5 text-purple" /> Where</dt><dd>{r.area === "Online" ? "Online — from home" : <>{r.address ?? r.area}<br /><span className="text-muted">{r.area}</span></>}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><UsersRound aria-hidden className="h-5 w-5 text-purple" /> Who can come</dt><dd>{ageLabel(r.ageGroup)}</dd></div>
-              <div><dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : spotsLeft === 0 ? "All places filled" : `${spotsLeft} ${spotsLeft === 1 ? "place" : "places"} open`}</dd></div>
+              <div><dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : spotsLeft === 0 ? "All places filled" : <>{spotsLeft} {spotsLeft === 1 ? "place" : "places"} open{waiting > 0 && <span className="text-muted"> · {waiting} waiting to hear back</span>}</>}</dd></div>
             </dl>
             <div>
               <p className="font-bold">Gifts needed</p>
@@ -199,8 +217,8 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
               <div>
                 {!user ? (
                   <div className="space-y-3">
-                    <Link href={`/join?next=/causes/${id}`} className="btn-primary w-full text-lg">I'd like to help</Link>
-                    <Link href={`/login?next=/causes/${id}`} className="btn-ghost w-full">I already have an account</Link>
+                    <Link href={`/join?next=/causes/${id}&offer=${id}`} className="btn-primary w-full text-lg">I'd like to help</Link>
+                    <Link href={`/login?next=/causes/${id}&offer=${id}`} className="btn-ghost w-full">I already have an account</Link>
                     <NextSteps orgName={orgShort} />
                   </div>
                 ) : user.role !== "supporter" ? (
@@ -209,6 +227,7 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
                   <div className="space-y-3">
                     {myResponse.status === "offered" && isFresh(myResponse.createdAt) ? (
                       <div className="relative isolate overflow-hidden rounded-2xl bg-purple-deep px-5 py-7 text-center" role="status">
+                        <ScrollIntoView />
                         <div aria-hidden className="received-glow absolute inset-0 -z-10 m-auto h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.55),transparent_70%)]" />
                         <p className="rise-in font-serif text-5xl font-bold italic !text-white">Fiat.</p>
                         <p className="rise-in mt-2 font-serif text-xl text-gold [animation-delay:150ms]">Your yes has been received.</p>
@@ -245,17 +264,7 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
           )}
           </div>
 
-          {isPublic && r.status === "approved" && (
-            <div className="card p-6">
-              <h2 className="text-2xl font-bold">Bring a friend</h2>
-              <p className="mt-1 text-muted">
-                {user?.role === "supporter" ? "If a friend joins from your link, you'll meet a saint. Come together, and you'll both meet another." : "Know someone who'd love this? Send it to them."}
-              </p>
-              <div className="mt-4">
-                <ShareButtons url={shareUrl} title={r.title} text={`Come and help with me: ${r.title}, with ${orgShort}.`} />
-              </div>
-            </div>
-          )}
+          {bringAFriend && <div className="hidden lg:block">{bringAFriend}</div>}
 
           {isOwner && (
             <Notice>

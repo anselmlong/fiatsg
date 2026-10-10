@@ -33,6 +33,9 @@ export default async function CheckInPage({ params, searchParams }: PageProps<"/
             <p className="font-serif text-2xl text-purple-deep">You're checked in. Thank you for coming, {user.name.split(" ")[0]}.</p>
             <Link href="/me#saints" className="btn-primary mt-5">See the saints you've met</Link>
           </>
+        ) : !token ? (
+          // Opened from history or a shared link rather than the venue's QR code.
+          <p className="text-lg">To check in, scan the QR code at the venue when you arrive.</p>
         ) : (
           <>
             <p className="text-lg">Welcome, {user.name.split(" ")[0]}. Tap below to let {orgShort} know you're here.</p>

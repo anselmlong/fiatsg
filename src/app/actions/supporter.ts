@@ -7,23 +7,14 @@ import { db, prayers, requests, responses, saintMeetings, users } from "@/db";
 import { currentUser, requireUser } from "@/lib/auth";
 import { type FormState, list, str, strOrNull } from "@/lib/forms";
 import { checkInToken, meetForCause, meetForTask } from "@/lib/meet";
+import { sendOffer } from "@/lib/offers";
 import { faithTask } from "@/lib/saints";
 import { isSkill } from "@/lib/skills";
 
 export async function offerHelp(requestId: number, _: FormState, fd: FormData): Promise<FormState> {
   const user = await requireUser(undefined, `/causes/${requestId}`);
   if (user.role !== "supporter") return { error: "Only supporter accounts can offer to help." };
-  const [req] = await db.select().from(requests).where(eq(requests.id, requestId));
-  if (!req || req.status !== "approved") return { error: "This cause is no longer taking offers." };
-
-  await db
-    .insert(responses)
-    .values({ requestId, userId: user.id, note: strOrNull(fd, "note") })
-    .onConflictDoUpdate({
-      target: [responses.requestId, responses.userId],
-      set: { note: strOrNull(fd, "note"), status: "offered" },
-    });
-  await meetForTask(user.id, "offer");
+  if (!(await sendOffer(user.id, requestId, strOrNull(fd, "note")))) return { error: "This cause is no longer taking offers." };
   revalidatePath(`/causes/${requestId}`);
   return { ok: "sent" };
 }

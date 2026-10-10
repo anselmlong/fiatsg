@@ -10,7 +10,7 @@ import { AREAS } from "@/lib/skills";
 // Two short steps: the account, then gifts. Someone arriving from a cause skips
 // the gifts step so they can offer help straight away; they can add gifts later.
 // Submits from onSubmit, not `action`, so a server error doesn't reset the gifts already picked.
-export function JoinForm({ next, quick }: { next: string; quick: boolean }) {
+export function JoinForm({ next, quick, offer }: { next: string; quick: boolean; offer: { id: number; orgName: string } | null }) {
   const [state, action, pending] = useActionState(joinSupporter, undefined);
   const [step, setStep] = useState(0);
   const first = useRef<HTMLFieldSetElement>(null);
@@ -37,6 +37,7 @@ export function JoinForm({ next, quick }: { next: string; quick: boolean }) {
       className="space-y-8"
     >
       <input type="hidden" name="next" value={next} />
+      {offer && <input type="hidden" name="offer" value={offer.id} />}
       {!quick && <p className="text-sm font-bold text-muted">Step {step + 1} of 2</p>}
 
       <fieldset ref={first} hidden={step !== 0} className="space-y-5">
@@ -87,7 +88,11 @@ export function JoinForm({ next, quick }: { next: string; quick: boolean }) {
       {quick ? (
         <>
           <Submit className="btn-primary w-full text-lg" pending="Creating your account…" busy={pending}>Join and offer my help</Submit>
-          <p className="hint text-center">You can add your gifts later, so we can suggest more causes for you.</p>
+          <p className="hint text-center">
+            {offer
+              ? `Your name, email and phone go to ${offer.orgName} so they can contact you. You can add your gifts later.`
+              : "You can add your gifts later, so we can suggest more causes for you."}
+          </p>
         </>
       ) : step === 0 ? (
         <button type="button" onClick={toGifts} className="btn-primary w-full text-lg">
