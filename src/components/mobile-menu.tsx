@@ -1,0 +1,63 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { TextSize } from "./text-size";
+
+export function MobileMenu({
+  links,
+  loggedIn,
+  textSize,
+  logout,
+}: {
+  links: { href: string; label: string }[];
+  loggedIn: boolean;
+  textSize: string;
+  logout: () => Promise<void>;
+}) {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  useEffect(() => setOpen(false), [pathname]);
+
+  return (
+    <div className="lg:hidden">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="mobile-nav"
+        onClick={() => setOpen((o) => !o)}
+        className="btn-ghost !min-h-11 !px-4"
+      >
+        {open ? "Close" : "Menu"}
+      </button>
+      {open && (
+        <div id="mobile-nav" className="absolute inset-x-0 top-full border-b border-line bg-paper px-4 pb-6 pt-2 shadow-lg">
+          <nav aria-label="Mobile" className="flex flex-col">
+            {links.map((l) => (
+              <Link key={l.href} href={l.href} className="border-b border-line py-4 text-lg font-bold text-ink no-underline">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <span className="font-bold">Text size</span>
+            <TextSize initial={textSize} />
+          </div>
+          <div className="mt-4 flex gap-3">
+            {loggedIn ? (
+              <form action={logout} className="w-full">
+                <button className="btn-ghost w-full">Log out</button>
+              </form>
+            ) : (
+              <>
+                <Link href="/login" className="btn-ghost flex-1">Log in</Link>
+                <Link href="/join" className="btn-primary flex-1">Join</Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
