@@ -62,6 +62,7 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
   const jar = await cookies();
   const alreadyPrayed = !!jar.get(`prayed_${id}`);
   const invitedBy = !user ? await inviterName((await searchParams).ref ?? jar.get("fiat_ref")?.value) : null;
+  const liftDetails = !confirmed && !invitedBy;
   const shareUrl = `${await siteUrl()}/causes/${id}${user?.role === "supporter" ? `?ref=${user.id}` : ""}`;
   const { when, time } = fmtSchedule(r);
   const mySkills = user?.role === "supporter" ? user.skills : [];
@@ -86,16 +87,18 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
       <div className="relative isolate bg-purple-deep">
         {r.coverUrl && <Image src={r.coverUrl} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-50" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-purple-deep via-purple-deep/70 to-transparent" />
-        <Container className="pb-10 pt-32 sm:pt-48">
-          <div className="flex flex-wrap items-center gap-2">
-            <Link href="/causes" className="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-purple-deep no-underline">← All causes</Link>
-            {!isPublic && <StatusBadge status={r.status} />}
-            {r.status === "completed" && <StatusBadge status="completed" />}
+        <Container className="pb-10 pt-20 sm:pt-24">
+          <div className={liftDetails ? "lg:mr-[calc(400px+2.5rem)]" : ""}>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href="/causes" className="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-purple-deep no-underline">← All causes</Link>
+              {!isPublic && <StatusBadge status={r.status} />}
+              {r.status === "completed" && <StatusBadge status="completed" />}
+            </div>
+            <h1 className="mt-4 max-w-4xl text-4xl font-bold !text-white sm:text-5xl">{r.title}</h1>
+            <p className="mt-3 text-xl text-white/90">
+              with <Link href={`/orgs/${org.id}`} className="font-bold text-gold underline-offset-4">{orgShort}</Link>
+            </p>
           </div>
-          <h1 className="mt-4 max-w-4xl text-4xl font-bold !text-white sm:text-5xl">{r.title}</h1>
-          <p className="mt-3 text-xl text-white/90">
-            with <Link href={`/orgs/${org.id}`} className="font-bold text-gold underline-offset-4">{orgShort}</Link>
-          </p>
         </Container>
       </div>
 
@@ -110,7 +113,7 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
 
       {confirmed && contact && <Confirmed request={r} org={org} contact={contact} firstName={user!.name.split(" ")[0]} />}
 
-      <Container className="grid gap-10 py-10 lg:grid-cols-[1fr_380px]">
+      <Container className="grid items-start gap-10 py-10 lg:grid-cols-[minmax(0,1fr)_400px]">
         <div className="min-w-0 space-y-10">
           {r.status === "completed" && (
             <section className="card border-2 border-gold/60 p-7">
@@ -163,7 +166,7 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
             </section>
           )}
 
-          {bringAFriend && <div className="lg:hidden">{bringAFriend}</div>}
+          {bringAFriend}
 
           <section>
             <h2 className="text-2xl font-bold">About {orgShort}</h2>
@@ -192,10 +195,10 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
 
         </div>
 
-        <aside className="order-first space-y-6 lg:order-none lg:sticky lg:top-28 lg:self-start">
+        <aside className={`relative order-first space-y-6 lg:order-none ${liftDetails ? "lg:-mt-40" : ""}`}>
           <div className="card space-y-5 p-6">
             <p className="text-lg font-bold text-purple-deep lg:hidden">{r.summary}</p>
-            <dl className="space-y-3 text-base">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-5 text-base">
               <div><dt className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</dt><dd>{when}<br />{time}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><MapPin aria-hidden className="h-5 w-5 text-purple" /> Where</dt><dd>{r.area === "Online" ? "Online — from home" : <>{r.address ?? r.area}<br /><span className="text-muted">{r.area}</span></>}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><UsersRound aria-hidden className="h-5 w-5 text-purple" /> Who can come</dt><dd>{ageLabel(r.ageGroup)}</dd></div>
@@ -260,8 +263,6 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
             </div>
           )}
           </div>
-
-          {bringAFriend && <div className="hidden lg:block">{bringAFriend}</div>}
 
           {isOwner && (
             <Notice>
