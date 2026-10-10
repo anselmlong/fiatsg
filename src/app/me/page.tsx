@@ -164,6 +164,7 @@ export default async function MePage() {
 }
 
 const TIER_PLACE = ["", "a one-off event", "a regular role", "a long-term role"];
+const grid = "mt-3 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6";
 
 // The saints met so far, by category, with one soft silhouette hinting at who comes next.
 function Saints({ met }: { met: Set<string> }) {
@@ -175,10 +176,10 @@ function Saints({ met }: { met: Set<string> }) {
     let hint: string | null = null;
     if (c.id === "faith") {
       const task = FAITH_TASKS.find((t) => !met.has(t.saintId));
-      if (task) hint = `Someone is waiting for you to ${task.title.charAt(0).toLowerCase()}${task.title.slice(1)}.`;
+      if (task) hint = task.title;
     } else {
       const tier = [1, 2, 3].find((t) => causePool(c.id, t).some((s) => !met.has(s.id)));
-      if (tier) hint = `Someone is waiting to meet you at ${TIER_PLACE[tier]} serving ${c.label.toLowerCase()}.`;
+      if (tier) hint = `Serve ${c.label.toLowerCase()} at ${TIER_PLACE[tier]}`;
     }
     return { c, mine, hint };
   }).filter((g) => g !== null);
@@ -191,17 +192,17 @@ function Saints({ met }: { met: Set<string> }) {
         {groups.map(({ c, mine, hint }) => (
           <div key={c.id}>
             <h3 className="text-xl font-bold">{c.label}</h3>
-            <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+            <ul className={grid}>
               {mine.map((s: Saint) => (
                 <li key={s.id}>
-                  <Link href={`/saints/${s.id}`} className="block no-underline transition hover:-translate-y-1">
+                  <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
                     <SaintCard saint={saint(s.id)!} />
                   </Link>
                 </li>
               ))}
               {hint && (
                 <li>
-                  <Link href={c.id === "faith" ? "/faith" : "/causes"} className="block h-full no-underline">
+                  <Link href={c.id === "faith" ? "/faith" : "/causes"} className="group block h-full rounded-[1.4rem] no-underline">
                     <SaintWaiting hint={hint} />
                   </Link>
                 </li>

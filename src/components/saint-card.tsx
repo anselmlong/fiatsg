@@ -1,36 +1,70 @@
 import Image from "next/image";
 import type { Saint } from "@/lib/saints";
 
-// A holy card: the saint's image inside one gold frame, so paintings from different centuries sit together.
+// Every holy card shares one geometry: a 5px gold frame, a 3:4 image, and a caption of fixed height,
+// so cards line up in any grid whatever the saint's name or feast.
+const frame = "flex h-full flex-col rounded-[1.4rem] p-[5px]";
+const inner = "flex flex-1 flex-col overflow-hidden rounded-[1.1rem]";
+const caption = "flex h-[4.75rem] flex-col items-center justify-center gap-0.5 px-3 text-center";
+
 export function SaintCard({ saint, size = "md", priority }: { saint: Saint; size?: "md" | "lg"; priority?: boolean }) {
+  const lg = size === "lg";
   return (
-    <figure className={`relative overflow-hidden rounded-[1.4rem] bg-gold p-[5px] shadow-lg ${size === "lg" ? "w-72 sm:w-80" : "w-full"}`}>
-      <div className="overflow-hidden rounded-[1.1rem] border-2 border-gold-soft bg-paper">
+    <figure className={`${frame} bg-gold shadow-[0_6px_18px_-8px_rgba(52,25,92,0.45)] ${lg ? "w-72 sm:w-80" : "w-full"}`}>
+      <div className={`${inner} border-2 border-gold-soft bg-paper`}>
         <div className="relative aspect-[3/4] bg-purple-deep">
-          <Image src={saint.image} alt={`${saint.name}`} fill priority={priority} sizes={size === "lg" ? "320px" : "(min-width:768px) 220px, 45vw"} className="object-cover" />
-          <div aria-hidden className="absolute inset-0 rounded-t-[1rem] ring-1 ring-inset ring-gold/60" />
+          <Image src={saint.image} alt={saint.name} fill priority={priority} sizes={lg ? "320px" : "(min-width:1024px) 180px, (min-width:640px) 30vw, 45vw"} className="object-cover" />
         </div>
-        <figcaption className="px-3 py-3 text-center">
-          <p className={`font-serif font-bold leading-tight text-purple-deep ${size === "lg" ? "text-2xl" : "text-lg"}`}>{saint.name}</p>
-          {saint.feast && <p className="text-xs font-bold uppercase tracking-wider text-gold-ink">Feast · {saint.feast}</p>}
+        <figcaption className={`${caption} ${lg ? "h-[5.5rem]" : ""}`}>
+          <p className={`line-clamp-2 text-balance font-serif font-bold leading-[1.15] text-purple-deep ${lg ? "text-2xl" : "text-[0.95rem]"}`}>{saint.name}</p>
+          {saint.feast && <p className="whitespace-nowrap text-[0.68rem] font-bold uppercase tracking-[0.08em] text-gold-ink">{saint.feast}</p>}
         </figcaption>
       </div>
     </figure>
   );
 }
 
-// Someone not yet met: a soft halo and a hint at the task that brings them. No names, no counts.
+// Someone not yet met: the same card, drawn in outline, with a hint at the task that brings them.
 export function SaintWaiting({ hint }: { hint: string }) {
   return (
-    <div className="flex h-full flex-col rounded-[1.4rem] border-2 border-dashed border-gold/60 bg-purple-soft/40 p-[5px]">
-      <div className="relative flex aspect-[3/4] items-center justify-center">
-        <svg viewBox="0 0 100 130" aria-hidden className="halo-breathe h-3/5 text-gold">
-          <circle cx="50" cy="34" r="24" fill="none" stroke="currentColor" strokeWidth="3" />
-          <circle cx="50" cy="40" r="15" fill="currentColor" opacity="0.18" />
-          <path d="M18 128c2-34 14-58 32-58s30 24 32 58" fill="currentColor" opacity="0.18" />
-        </svg>
+    <div className={`${frame} border-2 border-dashed border-gold/55 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>
+      <div className={inner}>
+        <div className="relative flex aspect-[3/4] flex-col items-center justify-center gap-3 px-3">
+          <Halo className="halo-breathe w-1/2 text-gold" />
+          <p className="text-balance text-center text-sm font-bold leading-snug text-purple-deep">{hint}</p>
+        </div>
+        <div className={caption}>
+          <p className="font-serif text-[0.95rem] font-bold leading-[1.15] text-gold-ink">Waiting for you</p>
+        </div>
       </div>
-      <p className="px-3 pb-3 text-center text-sm font-bold text-purple-deep">{hint}</p>
     </div>
+  );
+}
+
+// A small image-only card for lists, the same size whether met or waiting.
+export function SaintThumb({ saint }: { saint?: Saint }) {
+  if (!saint) {
+    return (
+      <div className="flex aspect-[3/4] w-20 items-center justify-center rounded-2xl border-2 border-dashed border-gold/55 bg-gold-soft/40">
+        <Halo className="halo-breathe w-1/2 text-gold" />
+      </div>
+    );
+  }
+  return (
+    <div className="w-20 rounded-2xl bg-gold p-[3px] shadow-[0_4px_12px_-6px_rgba(52,25,92,0.45)]">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.8rem] bg-purple-deep">
+        <Image src={saint.image} alt={saint.name} fill sizes="80px" className="object-cover" />
+      </div>
+    </div>
+  );
+}
+
+function Halo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 110" aria-hidden className={className}>
+      <circle cx="50" cy="30" r="24" fill="none" stroke="currentColor" strokeWidth="3" />
+      <circle cx="50" cy="36" r="15" fill="currentColor" opacity="0.2" />
+      <path d="M18 110c2-30 14-52 32-52s30 22 32 52" fill="currentColor" opacity="0.2" />
+    </svg>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SaintCard, SaintWaiting } from "@/components/saint-card";
+import { SaintThumb } from "@/components/saint-card";
 import { ShareButtons } from "@/components/share-buttons";
 import { Container } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
@@ -50,30 +50,34 @@ export default async function FaithPage() {
         </div>
       )}
 
-      <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {FAITH_TASKS.map((t) => {
           const s = saint(t.saintId)!;
           const done = met.has(s.id);
           const how = HOW[t.id];
           return (
-            <li key={t.id} className="card flex gap-4 p-4">
-              <Link href={done ? `/saints/${s.id}` : "#"} className={`w-28 shrink-0 no-underline ${done ? "" : "pointer-events-none"}`} aria-disabled={!done} tabIndex={done ? 0 : -1}>
-                {done ? <SaintCard saint={s} /> : <SaintWaiting hint="" />}
-              </Link>
+            <li key={t.id} className="card flex items-start gap-4 p-4">
+              {done ? (
+                <Link href={`/saints/${s.id}`} className="shrink-0 rounded-2xl no-underline" aria-label={`Read ${s.name}'s story`}>
+                  <SaintThumb saint={s} />
+                </Link>
+              ) : (
+                <div className="shrink-0"><SaintThumb /></div>
+              )}
               <div className="min-w-0 flex-1">
                 <h2 className="text-xl font-bold">{t.title}</h2>
                 <p className="mt-1 text-muted">{t.body}</p>
                 <div className="mt-3">
                   {done ? (
-                    <p className="font-bold text-ok">You met {s.name}.</p>
+                    <Link href={`/saints/${s.id}`} className="font-bold text-ok">You met {s.name}&nbsp;→</Link>
                   ) : !supporter ? null : t.kind === "honour" ? (
                     <TaskButton taskId={t.id} />
                   ) : how ? (
-                    <Link href={how.href} className="font-bold">{how.label} →</Link>
+                    <Link href={how.href} className="font-bold">{how.label}&nbsp;→</Link>
                   ) : t.id === "invite" ? (
                     <p className="text-sm font-bold text-gold-ink">Share your link above.</p>
                   ) : (
-                    <p className="text-sm text-muted">Share a cause with a friend you invited, and both check in when you get there.</p>
+                    <Link href="/causes" className="font-bold">Find a cause to share&nbsp;→</Link>
                   )}
                 </div>
               </div>
