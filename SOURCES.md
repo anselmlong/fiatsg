@@ -14,4 +14,4 @@ All photos in `public/images/` were downloaded from the organisations' own publi
 | vf-residents.jpg, vf-resident-smile.jpg | villafrancis.org.sg, catholicwelfare.org.sg |
 | caritas-seniors-outing.jpg, caritas-small-group.jpg | caritas-singapore.org |
 | acmi-care-packs.jpg, acmi-class.jpg, acmi-goodie-bags.jpg | acmi.org.sg |
-| hero-oyp-cross.jpg | oyp.org.sg |
+| hero-worship-crop.jpg | oyp.org.sg |
