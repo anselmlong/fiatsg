@@ -68,7 +68,7 @@ const ORGS: OrgSeed[] = [
         summary: "Serve the poor and destitute alongside CWS as a befriender or medical volunteer.",
         story:
           "Catholic Welfare Services is looking for befrienders and medical volunteers to serve the poor and destitute.\n\nVolunteers often work directly with clients and beneficiaries. Individuals aged 18 and above, regardless of race and creed, are welcome. CWS will match you to where you are needed after you sign up.",
-        coverUrl: "/images/cws-haw.jpg",
+        coverUrl: "/images/vf-residents.jpg",
         skills: ["befriending", "health", "eldercare"],
         volunteersNeeded: 10,
         kind: "regular",
@@ -86,7 +86,7 @@ const ORGS: OrgSeed[] = [
         summary: "Help residents of Villa Francis live with dignity, belonging and community.",
         story:
           "Villa Francis Home for the Aged, run by Catholic Welfare Services, has served the poor for 46 years. It offers nursing and medical care, rehabilitation and spiritual care, and aims to help residents live with dignity, with a sense of belonging and a sense of community.\n\nThe home says it always welcomes anyone who wants to help. Offer your time here and the home will arrange with you when to come.",
-        coverUrl: "/images/vf-banner2.jpg",
+        coverUrl: "/images/vf-resident-smile.jpg",
         skills: ["befriending", "eldercare", "music"],
         volunteersNeeded: 10,
         kind: "regular",
@@ -138,7 +138,7 @@ const ORGS: OrgSeed[] = [
         summary: "Help migrant learners one-to-one with pronunciation and vocabulary on the 2nd and 4th Sundays.",
         story:
           "ACMI's skills development programme teaches English to migrant workers on their day off. Assistant trainers support the lead trainer, give one-to-one help with pronunciation, vocabulary and other lesson needs, and help set up the classroom.\n\nClasses run on the 2nd and 4th Sundays of the month, 2pm to 5pm, for a commitment of six months to a year. You'll need good spoken and written English, a basic understanding of phonetics, and basic use of translation tools.",
-        coverUrl: "/images/acmi-volunteer.jpg",
+        coverUrl: "/images/acmi-class.jpg",
         skills: ["teaching", "translation"],
         volunteersNeeded: 4,
         kind: "regular",
@@ -156,7 +156,7 @@ const ORGS: OrgSeed[] = [
         summary: "Help migrant learners with basic computer skills and Microsoft Office on Sundays.",
         story:
           "Accompanying trainers assist the lead trainers in ACMI's Computer Literacy Level 1 and 2 classes, giving one-to-one help with basic computer skills and Microsoft Office, and supporting classroom setup.\n\nClasses run on the 1st and 3rd or the 2nd and 4th Sundays, 10am to 1pm or 2pm to 5pm, for six months to a year. You'll need good Word, Excel and PowerPoint skills, patience, empathy, and basic use of translation tools.",
-        coverUrl: "/images/acmi-stories.jpg",
+        coverUrl: "/images/acmi-events.jpg",
         skills: ["tech", "teaching"],
         volunteersNeeded: 4,
         kind: "regular",
@@ -174,7 +174,7 @@ const ORGS: OrgSeed[] = [
         summary: "Interpret between ACMI staff and migrant beneficiaries during office hours, for at least 3 months.",
         story:
           "ACMI needs interpreters and translators to help staff and migrant beneficiaries understand each other in conversations, engagements and correspondence.\n\nYou'll need to be aged 18 or above, fluent in English and at least one other language, comfortable with migrant communities, and respectful and patient. Hours are flexible within office hours, for a minimum of three months. A briefing is arranged by appointment.",
-        coverUrl: "/images/acmi-stories.jpg",
+        coverUrl: "/images/acmi-volunteer.jpg",
         skills: ["translation", "befriending"],
         volunteersNeeded: 5,
         kind: "regular",
@@ -192,7 +192,7 @@ const ORGS: OrgSeed[] = [
         summary: "A morning of carnival games and team activities for migrant workers.",
         story:
           "Volunteers welcomed and engaged migrant workers, joined carnival games and team activities, and helped with registration and care pack distribution.",
-        coverUrl: "/images/acmi-events.jpg",
+        coverUrl: "/images/acmi-care-packs.jpg",
         skills: ["events", "befriending"],
         volunteersNeeded: 20,
         kind: "one_off",
@@ -210,7 +210,7 @@ const ORGS: OrgSeed[] = [
         summary: "A day out for transnational families with ACMI Family Connectors.",
         story:
           "Event day facilitators welcomed families, helped with registration, guided the programme, facilitated activities, helped with lunch and looked out for everyone's safety.",
-        coverUrl: "/images/acmi-volunteer.jpg",
+        coverUrl: "/images/acmi-goodie-bags.jpg",
         skills: ["events", "childcare"],
         volunteersNeeded: 15,
         kind: "one_off",
@@ -244,7 +244,7 @@ const ORGS: OrgSeed[] = [
         summary: "Cook with and for stay-alone seniors at MontFort Care's GoodLife!@Marine Parade.",
         story:
           "MontFort Care, part of the Caritas Singapore family, needs volunteer cooks to engage seniors who live alone through its GoodLife!@Marine Parade programme.\n\nThis is a weekday role during office hours in Marine Parade.",
-        coverUrl: "/images/caritas-community.jpg",
+        coverUrl: "/images/caritas-seniors-outing.jpg",
         skills: ["cooking", "befriending", "eldercare"],
         volunteersNeeded: 6,
         kind: "regular",
@@ -262,7 +262,7 @@ const ORGS: OrgSeed[] = [
         summary: "Keep stay-alone seniors company online with MontFort Care's GoodLife!@Marine Parade.",
         story:
           "MontFort Care, part of the Caritas Singapore family, is looking for tech-savvy volunteers to engage seniors who live alone, online, through GoodLife!@Marine Parade.\n\nThis is a weekday role during office hours and can be done from anywhere.",
-        coverUrl: "/images/cws-haw.jpg",
+        coverUrl: "/images/caritas-small-group.jpg",
         skills: ["tech", "befriending", "eldercare"],
         volunteersNeeded: 6,
         kind: "regular",

@@ -41,50 +41,54 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
       )}
       <h1 className="text-4xl font-bold sm:text-5xl">Find a cause</h1>
 
-      <details open={isFiltered} className="mt-6">
-        <summary className="btn-ghost cursor-pointer list-none">{isFiltered ? "Change filters" : "Filter by skill, day or place"}</summary>
-      <form method="get" className="card mt-4 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
-        <label className="field">
-          <span className="label">Skill</span>
-          <select name="skill" defaultValue={skill} className="input">
-            <option value="">Any skill</option>
-            {SKILLS.map((s) => (
-              <option key={s.id} value={s.id}>{s.label}</option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          <span className="label">How often</span>
-          <select name="kind" defaultValue={kind} className="input">
-            <option value="">One-off or regular</option>
-            <option value="one_off">One-off</option>
-            <option value="regular">Regular (weekly)</option>
-          </select>
-        </label>
-        <label className="field">
-          <span className="label">Where</span>
-          <select name="area" defaultValue={area} className="input">
-            <option value="">Anywhere in Singapore</option>
-            {AREAS.map((a) => (
-              <option key={a} value={a}>{a === "Online" ? "Online / from home" : a}</option>
-            ))}
-          </select>
-        </label>
-        {showCompleted && <input type="hidden" name="show" value="completed" />}
-        <div className="flex items-end gap-2">
-          <button className="btn-primary w-full sm:w-auto">Search</button>
-          {isFiltered && <Link href={showCompleted ? "/causes?show=completed" : "/causes"} className="btn-ghost">Clear</Link>}
-        </div>
-      </form>
-      </details>
-
-      <div className="mt-6 flex gap-2" role="tablist">
-        <Link href="/causes" role="tab" aria-selected={!showCompleted} className={`rounded-full px-5 py-2 font-bold no-underline ${!showCompleted ? "bg-purple text-white" : "bg-white text-purple"}`}>
-          Needing help
-        </Link>
-        <Link href="/causes?show=completed" role="tab" aria-selected={showCompleted} className={`rounded-full px-5 py-2 font-bold no-underline ${showCompleted ? "bg-purple text-white" : "bg-white text-purple"}`}>
-          Stories of impact
-        </Link>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <nav aria-label="Which causes" className="flex w-full rounded-full border-2 border-purple bg-white p-1 sm:inline-flex sm:w-auto">
+          <Link href="/causes" aria-current={!showCompleted ? "page" : undefined} className={`flex min-h-11 flex-1 items-center justify-center rounded-full px-4 text-center leading-tight font-bold sm:flex-none sm:px-5 no-underline transition ${!showCompleted ? "bg-purple text-white" : "text-purple hover:bg-purple-soft"}`}>
+            Needs help now
+          </Link>
+          <Link href="/causes?show=completed" aria-current={showCompleted ? "page" : undefined} className={`flex min-h-11 flex-1 items-center justify-center rounded-full px-4 text-center leading-tight font-bold sm:flex-none sm:px-5 no-underline transition ${showCompleted ? "bg-purple text-white" : "text-purple hover:bg-purple-soft"}`}>
+            See the difference made
+          </Link>
+        </nav>
+        <details open={isFiltered} className="group open:basis-full">
+          <summary className="btn-ghost !min-h-14 cursor-pointer list-none">
+            <span className="group-open:hidden">Filter by skill, day or place</span>
+            <span className="hidden group-open:inline">Hide filters</span>
+          </summary>
+          <form method="get" className="card mt-4 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
+            <label className="field">
+              <span className="label">Skill</span>
+              <select name="skill" defaultValue={skill} className="input">
+                <option value="">Any skill</option>
+                {SKILLS.map((s) => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              <span className="label">How often</span>
+              <select name="kind" defaultValue={kind} className="input">
+                <option value="">One-off or regular</option>
+                <option value="one_off">One-off</option>
+                <option value="regular">Regular (weekly)</option>
+              </select>
+            </label>
+            <label className="field">
+              <span className="label">Where</span>
+              <select name="area" defaultValue={area} className="input">
+                <option value="">Anywhere in Singapore</option>
+                {AREAS.map((a) => (
+                  <option key={a} value={a}>{a === "Online" ? "Online / from home" : a}</option>
+                ))}
+              </select>
+            </label>
+            {showCompleted && <input type="hidden" name="show" value="completed" />}
+            <div className="flex items-end gap-2">
+              <button className="btn-primary w-full sm:w-auto">Search</button>
+              {isFiltered && <Link href={showCompleted ? "/causes?show=completed" : "/causes"} className="btn-ghost">Clear</Link>}
+            </div>
+          </form>
+        </details>
       </div>
 
       {user?.role === "supporter" && !mySkills.length && !showCompleted && (
@@ -114,7 +118,7 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
 
       <section className="mt-12" aria-labelledby="all">
         <h2 id="all" className="text-3xl font-bold">
-          {showCompleted ? "Completed causes" : forYou.length ? "More causes" : isFiltered ? `${rest.length} matching ${rest.length === 1 ? "cause" : "causes"}` : "All causes"}
+          {showCompleted ? "What volunteers made possible" : forYou.length ? "More causes" : isFiltered ? `${rest.length} matching ${rest.length === 1 ? "cause" : "causes"}` : "All causes"}
         </h2>
         {rest.length === 0 ? (
           <p className="mt-6 text-lg text-muted">Nothing matches those filters yet. Try “Any skill” or “Anywhere”.</p>

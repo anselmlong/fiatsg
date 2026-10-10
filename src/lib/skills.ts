@@ -34,6 +34,13 @@ export const AGE_GROUPS = [
 export const ageLabel = (id: string) => AGE_GROUPS.find((a) => a.id === id)?.label ?? id;
 
 export const COVER_LIBRARY = [
+  { url: "/images/vf-resident-smile.jpg", label: "A resident smiling" },
+  { url: "/images/vf-residents.jpg", label: "Residents with volunteers" },
+  { url: "/images/caritas-seniors-outing.jpg", label: "Outing with seniors" },
+  { url: "/images/caritas-small-group.jpg", label: "Small group conversation" },
+  { url: "/images/acmi-care-packs.jpg", label: "Workers with care packs" },
+  { url: "/images/acmi-class.jpg", label: "Migrant workers at a class" },
+  { url: "/images/acmi-goodie-bags.jpg", label: "Students packing goodie bags" },
   { url: "/images/cws-sjh.jpg", label: "Youth with seniors" },
   { url: "/images/vf-banner2.jpg", label: "Residents at a home for the aged" },
   { url: "/images/cws-haw.jpg", label: "Art & craft with seniors" },

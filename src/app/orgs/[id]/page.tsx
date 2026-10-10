@@ -58,7 +58,7 @@ export default async function OrgPage({ params }: PageProps<"/orgs/[id]">) {
         )}
         {done.length > 0 && (
           <>
-            <h2 className="mt-14 text-3xl font-bold">Stories of impact</h2>
+            <h2 className="mt-14 text-3xl font-bold">What volunteers made possible</h2>
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{done.map((c) => <CauseCard key={c.request.id} cause={c} />)}</div>
           </>
         )}
