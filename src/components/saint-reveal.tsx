@@ -49,8 +49,15 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
     if (!meeting) return;
     navigator.vibrate?.([30, 80, 30, 80, 120]);
     if (sound) bell();
-    const t = setTimeout(() => closeRef.current?.focus(), 400);
-    return () => clearTimeout(t);
+    // Hold the page behind still, and focus without letting the browser scroll the card away.
+    const root = document.documentElement;
+    const prev = root.style.overflow;
+    root.style.overflow = "hidden";
+    const t = setTimeout(() => closeRef.current?.focus({ preventScroll: true }), 400);
+    return () => {
+      clearTimeout(t);
+      root.style.overflow = prev;
+    };
     // Play once per saint.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting?.meetingId]);
@@ -73,15 +80,15 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
   if (!meeting) return null;
   const s = meeting.saint;
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="reveal-title" className="fixed inset-0 z-50 overflow-y-auto bg-[#1a0d2e]/95 backdrop-blur-sm" onKeyDown={(e) => e.key === "Escape" && close()}>
+    <div role="dialog" aria-modal="true" aria-labelledby="reveal-title" className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden overscroll-contain bg-[#1a0d2e]/95 backdrop-blur-sm" onKeyDown={(e) => e.key === "Escape" && close()}>
       <button onClick={toggleSound} className="absolute right-4 top-4 rounded-full p-3 text-white/80 hover:bg-white/10" aria-label={sound ? "Turn sound off" : "Turn sound on"}>
         {sound ? <Volume2 className="h-6 w-6" /> : <VolumeX className="h-6 w-6" />}
       </button>
-      <div className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center px-4 py-12 text-center">
+      <div className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center px-4 py-8 text-center">
         <p className="rise-in font-serif text-xl text-gold">{meeting.firstName}, you've met</p>
-        <div className="relative isolate mt-6">
+        <div className="relative isolate mt-4">
           <div aria-hidden className="halo-breathe absolute -inset-10 -z-10 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.55),transparent_68%)]" />
-          <div className="card-turn relative w-64 overflow-hidden rounded-[1.4rem] bg-gold p-[5px] shadow-2xl sm:w-72">
+          <div className="card-turn relative w-[clamp(8rem,calc((100dvh-27.5rem)*0.75),18rem)] overflow-hidden rounded-[1.4rem] bg-gold p-[5px] shadow-2xl">
             <div className="overflow-hidden rounded-[1.1rem] border-2 border-gold-soft bg-paper">
               <div className="relative aspect-[3/4] bg-purple-deep">
                 <Image src={s.image} alt={s.name} fill priority sizes="288px" className="object-cover" />
@@ -94,9 +101,9 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
             <div aria-hidden className="card-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent" />
           </div>
         </div>
-        <p className="rise-in mt-8 font-serif text-xl italic text-white [animation-delay:1200ms]">{s.why}</p>
+        <p className="rise-in mt-6 text-balance font-serif text-xl italic text-white [animation-delay:1200ms]">{s.why}</p>
         {s.patron && <p className="rise-in mt-2 text-white/75 [animation-delay:1300ms]">{s.patron}</p>}
-        <div className="rise-in mt-8 flex w-full flex-col gap-3 [animation-delay:1500ms]">
+        <div className="rise-in mt-6 flex w-full flex-col gap-3 [animation-delay:1500ms]">
           <a href={`/saints/${s.id}`} onClick={() => markSaintSeen(meeting.meetingId)} className="btn-gold w-full text-lg">Read {s.name.replace(/^St /, "")}'s story</a>
           <button ref={closeRef} onClick={close} className="btn w-full border-2 border-white/40 text-white hover:bg-white/10">Amen</button>
         </div>
