@@ -2,12 +2,14 @@ import {
   boolean,
   date,
   integer,
+  jsonb,
   pgTable,
   serial,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import type { MediaItem } from "../lib/media";
 
 export type Role = "supporter" | "org" | "cf_admin";
 export type OrgStatus = "pending" | "changes_requested" | "approved" | "rejected";
@@ -60,6 +62,7 @@ export const requests = pgTable("requests", {
   summary: text("summary").notNull(),
   story: text("story").notNull(),
   coverUrl: text("cover_url"),
+  media: jsonb("media").$type<MediaItem[]>().notNull().default([]),
   skills: text("skills").array().notNull().default([]),
   volunteersNeeded: integer("volunteers_needed").notNull().default(1),
   kind: text("kind").$type<"one_off" | "regular">().notNull(),

@@ -5,6 +5,7 @@ import type { Request } from "@/db";
 import type { FormState } from "@/lib/forms";
 import { AGE_GROUPS, AREAS, WEEKDAYS } from "@/lib/skills";
 import { CoverPicker } from "./cover-picker";
+import { MediaUploader } from "./media-uploader";
 import { Submit } from "./submit";
 import { SkillPicker } from "./ui";
 
@@ -40,7 +41,12 @@ export function RequestForm({
         </label>
         <div className="field">
           <span className="label">Cover photo</span>
-          <CoverPicker initial={initial?.coverUrl} />
+          <CoverPicker initial={initial?.coverUrl} upload />
+        </div>
+        <div className="field">
+          <span className="label">More photos and videos <span className="font-normal text-muted">(optional)</span></span>
+          <span className="hint">Show volunteers what they'll be part of. Up to 6, shown on your cause page. Videos up to 200 MB.</span>
+          <MediaUploader initial={initial?.media} />
         </div>
       </fieldset>
 

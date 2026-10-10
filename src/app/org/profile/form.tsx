@@ -19,7 +19,7 @@ export function ProfileForm({ org }: { org: Org }) {
         <label className="field"><span className="label">Phone</span><input name="contactPhone" defaultValue={org.contactPhone ?? ""} className="input" /></label>
         <label className="field"><span className="label">Year founded</span><input name="foundedYear" inputMode="numeric" defaultValue={org.foundedYear ?? ""} className="input" /></label>
       </div>
-      <div className="field"><span className="label">Cover photo</span><CoverPicker initial={org.coverUrl} /></div>
+      <div className="field"><span className="label">Cover photo</span><CoverPicker initial={org.coverUrl} upload /></div>
       {state?.error && <p className="font-bold text-bad" role="alert">{state.error}</p>}
       {state?.ok && <p className="font-bold text-ok" role="status">{state.ok}</p>}
       <Submit className="btn-primary text-lg" pending="Saving…">{org.status === "approved" ? "Save" : "Save and submit for review"}</Submit>

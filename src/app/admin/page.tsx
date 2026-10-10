@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { desc, eq, inArray } from "drizzle-orm";
 import { reviewOrg, reviewRequest } from "@/app/actions/admin";
+import { MediaGallery } from "@/components/media-gallery";
 import { Container, SkillChip, StatusBadge } from "@/components/ui";
 import { db, orgs, requests, users } from "@/db";
 import { requireUser } from "@/lib/auth";
@@ -109,6 +110,12 @@ export default async function AdminPage() {
                       <summary className="cursor-pointer font-bold text-purple">Read the full story</summary>
                       <div className="mt-2 space-y-2">{r.story.split(/\n+/).map((p, i) => <p key={i}>{p}</p>)}</div>
                     </details>
+                    {r.media.length > 0 && (
+                      <details className="mt-2" open>
+                        <summary className="cursor-pointer font-bold text-purple">Photos and videos ({r.media.length})</summary>
+                        <div className="mt-3"><MediaGallery items={r.media} sizes="320px" /></div>
+                      </details>
+                    )}
                     <p className="mt-3 text-sm text-muted">
                       {when} · {time} · {r.address ?? r.area} · {r.volunteersNeeded} volunteers · {ageLabel(r.ageGroup)}
                     </p>

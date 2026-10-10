@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { withdrawOffer } from "@/app/actions/supporter";
+import { MediaGallery } from "@/components/media-gallery";
 import { Container, DemoTag, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
@@ -76,6 +77,12 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
               {r.story.split(/\n+/).map((para, i) => <p key={i}>{para}</p>)}
             </div>
           </section>
+
+          {r.media.length > 0 && (
+            <section aria-label="Photos and videos">
+              <MediaGallery items={r.media} />
+            </section>
+          )}
 
           {updateList.length > 0 && (
             <section>

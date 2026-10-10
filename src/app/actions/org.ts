@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { db, orgs, requests, responses, updates, type ResponseStatus } from "@/db";
 import { requireOrg } from "@/lib/auth";
 import { type FormState, int, list, str, strOrNull } from "@/lib/forms";
+import { parseMedia } from "@/lib/media";
 import { AREAS, isSkill, WEEKDAYS } from "@/lib/skills";
 
 async function ownedRequest(requestId: number) {
@@ -23,6 +24,7 @@ function readRequest(fd: FormData) {
     summary: str(fd, "summary"),
     story: str(fd, "story"),
     coverUrl: strOrNull(fd, "coverUrl"),
+    media: parseMedia(str(fd, "media")),
     skills: list(fd, "skills").filter(isSkill),
     volunteersNeeded: Math.max(1, int(fd, "volunteersNeeded") ?? 1),
     kind: kind as "one_off" | "regular",
