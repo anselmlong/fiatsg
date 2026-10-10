@@ -25,17 +25,17 @@ export function SaintCard({ saint, size = "md", priority }: { saint: Saint; size
 }
 
 // Keep an unmet saint's identity hidden while showing their place in the collection.
-export function SaintLocked() {
+export function SaintLocked({ hint }: { hint: string }) {
   return (
-    <div className={`saint-tile ${frame} border-2 border-gold/35 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>
+    <div className={`saint-tile ${frame} border-2 border-gold/35 bg-paper !p-[3px] transition-colors group-hover:border-gold`}>
       <div className={inner}>
-        <div className="relative flex aspect-[3/4] items-center justify-center overflow-hidden">
-          <Halo className="w-4/5 text-gold-ink" />
-          <span aria-hidden className="absolute inset-0 flex items-center justify-center pt-10 font-serif text-5xl font-bold text-purple-deep">?</span>
+        <div className="relative flex aspect-[3/4] items-center justify-center overflow-hidden bg-gold-soft/35">
+          <SaintCardBack className="h-full w-full text-gold-ink/65 transition-colors group-hover:text-gold-ink" />
         </div>
-        <div className={caption}>
+        <div className="flex flex-1 flex-col items-center gap-2 px-3 py-4 text-center">
           <p className="font-serif text-[0.95rem] font-bold leading-[1.15] text-gold-ink">Saint to meet</p>
-          <p className="text-[0.68rem] font-bold uppercase tracking-[0.08em] text-muted">Locked</p>
+          <p className="text-balance text-xs leading-relaxed text-muted">{hint}</p>
+          <p className="mt-auto pt-1 text-xs font-bold text-purple group-hover:underline">See how <span aria-hidden>→</span></p>
         </div>
       </div>
     </div>
@@ -45,10 +45,10 @@ export function SaintLocked() {
 // A hint at the next way to meet a saint.
 export function SaintWaiting({ hint }: { hint: string }) {
   return (
-    <div className={`saint-tile ${frame} border-2 border-dashed border-gold/55 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>
+    <div className={`saint-tile ${frame} border-2 border-gold/35 bg-paper !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/30`}>
       <div className={inner}>
         <div className="relative flex aspect-[3/4] flex-col items-center justify-center gap-3 px-3">
-          <Halo className="halo-breathe w-1/2 text-gold" />
+          <SaintCardBack className="h-20 w-16 shrink-0 text-gold-ink/65" />
           <p className="text-balance text-center text-sm font-bold leading-snug text-purple-deep">{hint}</p>
         </div>
         <div className={caption}>
@@ -63,8 +63,8 @@ export function SaintWaiting({ hint }: { hint: string }) {
 export function SaintThumb({ saint }: { saint?: Saint }) {
   if (!saint) {
     return (
-      <div className="flex aspect-[3/4] w-20 items-center justify-center rounded-2xl border-2 border-dashed border-gold/55 bg-gold-soft/40">
-        <Halo className="halo-breathe w-1/2 text-gold" />
+      <div className="flex aspect-[3/4] w-20 items-center justify-center overflow-hidden rounded-2xl border border-gold/40 bg-gold-soft/35">
+        <SaintCardBack className="h-full w-full text-gold-ink/65" />
       </div>
     );
   }
@@ -77,12 +77,16 @@ export function SaintThumb({ saint }: { saint?: Saint }) {
   );
 }
 
-function Halo({ className }: { className?: string }) {
+// A printed holy-card reverse, shared by every unrevealed saint.
+function SaintCardBack({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 100 110" aria-hidden className={className}>
-      <circle cx="50" cy="30" r="24" fill="none" stroke="currentColor" strokeWidth="3" />
-      <circle cx="50" cy="36" r="15" fill="currentColor" opacity="0.2" />
-      <path d="M18 110c2-30 14-52 32-52s30 22 32 52" fill="currentColor" opacity="0.2" />
+    <svg viewBox="0 0 100 132" fill="none" aria-hidden="true" focusable="false" className={className}>
+      <rect x="9" y="9" width="82" height="114" rx="14" stroke="currentColor" strokeWidth="0.7" opacity="0.5" />
+      <rect x="13" y="13" width="74" height="106" rx="11" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+      <path d="M50 24v9m0 66v9M24 66h8m36 0h8" stroke="currentColor" strokeWidth="0.7" opacity="0.5" />
+      <circle cx="50" cy="66" r="22" stroke="currentColor" strokeWidth="0.7" opacity="0.6" />
+      <path d="M50 51v30M40 61h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="m50 37 2 3-2 3-2-3Zm0 52 2 3-2 3-2-3Z" fill="currentColor" opacity="0.65" />
     </svg>
   );
 }

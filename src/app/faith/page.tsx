@@ -4,7 +4,7 @@ import { ShareButtons } from "@/components/share-buttons";
 import { Container } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { metSaintIds } from "@/lib/meet";
-import { FAITH_TASKS, SAINTS, saint } from "@/lib/saints";
+import { FAITH_TASKS, SAINTS, categoryLabel, causePool, saint } from "@/lib/saints";
 import { siteUrl } from "@/lib/site";
 import { TaskButton } from "./task-button";
 
@@ -70,7 +70,7 @@ export default async function SaintsPage() {
             const done = met.has(s.id);
             const how = HOW[t.id];
             return (
-              <li key={t.id} className="card flex items-start gap-4 p-4">
+              <li key={t.id} id={`meet-${t.id}`} className="card scroll-mt-28 flex items-start gap-4 p-4">
                 {done ? (
                   <Link href={`/saints/${s.id}`} className="shrink-0 rounded-2xl no-underline" aria-label={`Read ${s.name}'s story`}>
                     <SaintThumb saint={s} />
@@ -126,13 +126,22 @@ function Collection({ met }: { met: Set<string> }) {
             </Link>
           </li>
         ))}
-        {locked.map((s, index) => (
-          <li key={s.id}>
-            <Link href="#meet-more" aria-label={`Locked saint ${index + 1} of ${locked.length}: see how to meet more saints`} className="group block h-full rounded-[1.4rem] no-underline">
-              <SaintLocked />
-            </Link>
-          </li>
-        ))}
+        {locked.map((s, index) => {
+          const task = FAITH_TASKS.find((t) => t.saintId === s.id);
+          const remaining = causePool(s.category, s.tier).filter((candidate) => !met.has(candidate.id));
+          const checkIns = remaining.findIndex((candidate) => candidate.id === s.id) + 1;
+          const commitment = s.tier === 1 ? "one-off" : s.tier === 2 ? "regular" : "long-term or skilled";
+          const unlockHint = task
+            ? `${task.body}${task.kind === "honour" ? " Then mark it done below." : ""}`
+            : `Check in at ${checkIns} more ${commitment} ${checkIns === 1 ? "cause" : "causes"} supporting ${categoryLabel(s.category).toLowerCase()}.`;
+          return (
+            <li key={s.id}>
+              <Link href={task ? `#meet-${task.id}` : "/causes"} aria-label={`Saint to meet ${index + 1}: ${unlockHint} See how`} className="group block h-full rounded-[1.4rem] no-underline">
+                <SaintLocked hint={unlockHint} />
+              </Link>
+            </li>
+          );
+        })}
         <li>
           <Link href="#meet-more" className="group block h-full rounded-[1.4rem] no-underline">
             <SaintWaiting hint={hint} />
