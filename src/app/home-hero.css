@@ -1,6 +1,6 @@
-/* Lavender at the edges, warm light behind the invitation. */
+/* Royal purple at the edges, warm light behind the invitation. */
 .home-hero .text-muted {
-  color: #5e5266;
+  color: #483650;
 }
 
 .home-hero-wash {
@@ -9,10 +9,10 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 8% 0%, #d9c9e9 0%, transparent 58%),
-    radial-gradient(ellipse at 38% 106%, #e4d7ef 0%, transparent 48%),
+    radial-gradient(ellipse at -8% -28%, #58218c 0%, #7543a899 30%, transparent 68%),
+    radial-gradient(ellipse at 110% 42%, #4f218866 0%, transparent 60%),
     radial-gradient(ellipse at 72% 8%, #f6ead0a6 0%, transparent 48%),
-    linear-gradient(100deg, #fbf4ef 8%, #fbf4effa 38%, #f1e7f1c9 61%, #f1e7f126 100%);
+    linear-gradient(100deg, #fbf4ef 8%, #fbf4effa 38%, #eadff3c9 61%, #dcc9ec26 100%);
 }
 
 .home-hero-wash::after {
@@ -25,8 +25,8 @@
 @media (max-width: 63.999rem) {
   .home-hero-wash {
     background:
-      radial-gradient(ellipse at 0% 0%, #d9c9e9 0%, transparent 62%),
-      radial-gradient(ellipse at 100% 65%, #e4d7efb3 0%, transparent 60%),
-      linear-gradient(115deg, #fbf4effa 8%, #faf2f2ed 55%, #f3e9f3db 100%);
+      radial-gradient(ellipse at -15% -30%, #58218c 0%, #7543a899 30%, transparent 70%),
+      radial-gradient(ellipse at 130% 60%, #7543a866 0%, transparent 65%),
+      linear-gradient(115deg, #fbf4effa 8%, #f5edf8ed 55%, #e9ddf2ed 100%);
   }
 }
