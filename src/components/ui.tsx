@@ -67,8 +67,8 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-sm font-bold text-purple">{cause.org.name.split(" — ")[0]}</p>
-        <h3 className="mt-1 line-clamp-2 min-h-[2lh] text-2xl text-purple-deep group-hover:underline">{r.title}</h3>
-        <p className="mt-2 line-clamp-2 min-h-[2lh] text-base text-ink">{r.summary}</p>
+        <h3 className="mt-1 text-2xl sm:line-clamp-2 sm:min-h-[2lh] text-purple-deep group-hover:underline">{r.title}</h3>
+        <p className="mt-2 text-base text-ink sm:line-clamp-2 sm:min-h-[2lh]">{r.summary}</p>
         {matched.length > 0 && (
           <p className="mt-3 flex items-start gap-2 rounded-xl bg-gold-soft px-3 py-2 text-sm font-bold text-purple-deep">
             <Sparkles aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink" />

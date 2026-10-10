@@ -43,8 +43,9 @@ export default async function OrgPage({ params }: PageProps<"/orgs/[id]">) {
         </div>
         <aside className="card h-fit space-y-4 p-6">
           {org.foundedYear && <p><strong>Serving since</strong><br /><span className="font-serif text-3xl font-bold text-purple">{org.foundedYear}</span></p>}
-          <p><strong>Hours given through Fiat</strong><br /><span className="font-serif text-3xl font-bold text-purple">{totals.h}</span></p>
-          <p><strong>People served</strong><br /><span className="font-serif text-3xl font-bold text-purple">{totals.p}</span></p>
+          {totals.h > 0 && <p><strong>Hours given through Fiat</strong><br /><span className="font-serif text-3xl font-bold tabular-nums text-purple">{totals.h}</span></p>}
+          {totals.p > 0 && <p><strong>People served</strong><br /><span className="font-serif text-3xl font-bold tabular-nums text-purple">{totals.p}</span></p>}
+          <p><strong>Open requests</strong><br /><span className="font-serif text-3xl font-bold tabular-nums text-purple">{open.length}</span></p>
           {org.website && <a href={org.website} target="_blank" rel="noreferrer" className="btn-ghost w-full">Website ↗</a>}
           <p className="hint">✓ Vetted by the Catholic Foundation</p>
         </aside>

@@ -9,7 +9,7 @@ export function UpdateForm({ requestId }: { requestId: number }) {
   const [state, action] = useActionState(postUpdate.bind(null, requestId), undefined);
   return (
     <form action={action} key={state?.ok} className="space-y-3">
-      <textarea name="body" rows={4} required className="input" placeholder="e.g. Thanks to you, Auntie Mary sang for the first time in months…" />
+      <textarea name="body" rows={4} required className="input" placeholder="e.g. Thank you to everyone who came on Sunday. The residents asked when you are coming back." />
       <label className="field">
         <span className="label">Photo (optional)</span>
         <select name="photoUrl" className="input" defaultValue="">

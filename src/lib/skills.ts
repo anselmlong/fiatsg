@@ -44,13 +44,9 @@ export const COVER_LIBRARY = [
   { url: "/images/cws-sjh.jpg", label: "Youth with seniors" },
   { url: "/images/vf-banner2.jpg", label: "Residents at a home for the aged" },
   { url: "/images/cws-haw.jpg", label: "Art & craft with seniors" },
-  { url: "/images/cws-haw2.jpg", label: "Night outreach" },
   { url: "/images/acmi-volunteer.jpg", label: "Volunteers packing donations" },
   { url: "/images/acmi-stories.jpg", label: "Listening to a migrant worker" },
   { url: "/images/acmi-events.jpg", label: "Backpack drive" },
   { url: "/images/caritas-community.jpg", label: "Parish community" },
   { url: "/images/oyp-community.webp", label: "Young people together" },
-  { url: "/images/oyp-1.webp", label: "Young adults outdoors" },
-  { url: "/images/cws-yr.jpg", label: "Youth outreach" },
-  { url: "/images/cps-mass.jpg", label: "Workplace Mass" },
 ] as const;

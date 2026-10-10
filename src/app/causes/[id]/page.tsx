@@ -69,13 +69,13 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
             <section className="card border-2 border-gold/60 p-7">
               <h2 className="text-3xl font-bold">What your help made possible</h2>
               <p className="mt-3 text-lg">{r.outcomeSummary}</p>
-              <dl className="mt-6 flex flex-wrap justify-around gap-4 text-center">
+              <dl className="flex flex-wrap justify-around gap-4 text-center empty:hidden [&:not(:empty)]:mt-6">
                 {[
                   { label: "Hours given", value: r.outcomeHours },
                   { label: "People served", value: r.outcomePeopleServed },
                   { label: "Prayers", value: cause.prayerCount },
                 ]
-                  .filter((s) => s.value != null)
+                  .filter((s) => s.value != null && s.value !== 0)
                   .map((s) => (
                     <div key={s.label} className="min-w-24 flex-1"><dt className="text-sm text-muted">{s.label}</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{s.value}</dd></div>
                   ))}
@@ -115,10 +115,10 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
             </section>
           )}
 
-          {isPublic && (
+          {isPublic && r.status !== "completed" && (
             <section className="card p-6">
               <h2 className="text-2xl font-bold">Can't come? You can still pray.</h2>
-              <div className="mt-4 max-w-lg">
+              <div className="mt-4">
                 <PrayForm requestId={id} count={cause.prayerCount} alreadyPrayed={alreadyPrayed} needsName={!user} />
               </div>
               {prayerList.length > 0 && (
@@ -223,7 +223,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
 
 function NextSteps({ orgName }: { orgName: string }) {
   return (
-    <div className="rounded-2xl bg-cream p-4">
+    <div className="border-t border-line pt-4">
       <p className="font-bold">What happens next</p>
       <ol className="mt-2 space-y-2 text-sm">
         {[

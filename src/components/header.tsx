@@ -46,12 +46,12 @@ export async function Header() {
           <div className="hidden lg:flex lg:items-center lg:gap-2">
             {user ? (
               <form action={logout}>
-                <button className="btn-ghost !min-h-11 !px-4">Log out</button>
+                <button className="btn-ghost !min-h-0 h-11 !py-0 !px-4">Log out</button>
               </form>
             ) : (
               <>
-                <Link href="/login" className="btn-ghost !min-h-11 !px-4">Log in</Link>
-                <Link href="/join" className="btn-primary !min-h-11 !px-4">Join</Link>
+                <Link href="/login" className="btn-ghost !min-h-0 h-11 !py-0 !px-4">Log in</Link>
+                <Link href="/join" className="btn-primary !min-h-0 h-11 !py-0 !px-4">Join</Link>
               </>
             )}
           </div>

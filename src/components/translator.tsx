@@ -1,6 +1,6 @@
 "use client";
 
-import { Languages } from "lucide-react";
+import { ChevronDown, Languages } from "lucide-react";
 import { useEffect, useSyncExternalStore } from "react";
 
 export const LANGS = [
@@ -186,7 +186,7 @@ export function Translator({ className = "" }: { className?: string }) {
       <select
         value={lang}
         onChange={(e) => setLang(e.target.value)}
-        className="min-h-11 w-[8.5rem] cursor-pointer appearance-none truncate rounded-full border-2 border-purple bg-white py-2 pl-10 pr-3 font-bold text-purple sm:w-auto sm:pr-4"
+        className="h-11 w-[8.5rem] cursor-pointer appearance-none truncate rounded-full border-2 border-purple bg-white pl-10 pr-9 font-bold text-purple hover:bg-purple-soft sm:w-[11.5rem]"
       >
         {LANGS.map((l) => (
           <option key={l.id} value={l.id}>
@@ -194,6 +194,7 @@ export function Translator({ className = "" }: { className?: string }) {
           </option>
         ))}
       </select>
+      <ChevronDown aria-hidden className="pointer-events-none absolute right-3 h-4 w-4 text-purple" />
     </label>
   );
 }

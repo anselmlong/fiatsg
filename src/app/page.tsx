@@ -43,7 +43,7 @@ export default async function Home() {
         <p className="absolute bottom-3 right-4 text-xs text-white/70">Photo: Office for Young People</p>
       </section>
 
-      <section className="py-16 sm:py-24">
+      <section className="pt-16 pb-12 sm:pt-24">
         <Container>
           <h2 className="text-4xl font-bold">{mySkills.length ? "Causes that need your gifts" : "Where the Church needs you"}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,7 +58,7 @@ export default async function Home() {
       </section>
 
       {!user && (
-        <section className="border-t border-line bg-paper py-12">
+        <section className="border-t border-line pt-12">
           <Container className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <p className="text-lg">
               <strong className="text-purple-deep">Part of a Catholic organisation?</strong> Ask for the volunteers you need.

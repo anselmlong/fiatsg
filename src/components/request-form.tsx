@@ -109,6 +109,8 @@ export function RequestForm({
               <DateField name="endDate" initial={initial?.endDate} min={startDate} placeholder="No end date" />
             </div>
           )}
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
           <label className="field">
             <span className="label">Start time</span>
             <TimeSelect name="startTime" initial={initial?.startTime ?? "10:00"} />
