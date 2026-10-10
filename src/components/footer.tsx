@@ -1,9 +1,13 @@
 import Image from "next/image";
+import { SaintDiscovery } from "./saint-discovery";
 
 export function Footer() {
   return (
     <footer className="border-t border-line bg-paper text-ink">
       <div className="mx-auto max-w-6xl px-4 pb-10 pt-14">
+        <div id="footer-bird" className="mb-3 flex scroll-mt-28 justify-center">
+          <SaintDiscovery discovery="bird" />
+        </div>
         <figure className="mx-auto max-w-xl text-center">
           <blockquote>
           <p className="font-serif text-xl text-gold-ink sm:text-3xl">What can I give Him, poor as I am?</p>

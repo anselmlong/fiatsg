@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import { saint } from "@/lib/saints";
+import { BONUS_SAINTS } from "@/lib/bonus-saints";
+import { SAINT_SOURCES } from "@/lib/saint-sources";
+import { SaintSources } from "@/components/saint-discovery";
 
 export async function generateMetadata({ params }: PageProps<"/saints/[id]">) {
   const s = saint((await params).id);
@@ -12,6 +15,8 @@ export async function generateMetadata({ params }: PageProps<"/saints/[id]">) {
 export default async function SaintPage({ params }: PageProps<"/saints/[id]">) {
   const s = saint((await params).id);
   if (!s) notFound();
+  const bonus = BONUS_SAINTS.find((entry) => entry.id === s.id);
+  const sources = bonus?.sources ?? SAINT_SOURCES[s.id] ?? [];
   return (
     <Container className="max-w-5xl py-8 sm:py-12">
       <Link href="/faith" className="font-bold">← Your saints</Link>
@@ -29,6 +34,7 @@ export default async function SaintPage({ params }: PageProps<"/saints/[id]">) {
 
         <article className="min-w-0">
           <h1 className="text-balance text-4xl font-bold sm:text-5xl">{s.name}</h1>
+          {bonus && <p className="mt-2 text-sm font-bold text-gold-ink">Bonus discovery card</p>}
           <p className="mt-3 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 text-sm font-bold uppercase tracking-[0.08em] text-gold-ink">
             {s.feast && <span>Feast · {s.feast}</span>}
             {s.feast && s.patron && <span aria-hidden className="hidden h-1 w-1 rounded-full bg-gold sm:block" />}
@@ -56,6 +62,7 @@ export default async function SaintPage({ params }: PageProps<"/saints/[id]">) {
               <p className="mt-4 font-serif text-lg italic text-gold">Amen.</p>
             </section>
           )}
+          {sources.length > 0 && <SaintSources sources={sources} />}
         </article>
       </div>
     </Container>

@@ -7,6 +7,7 @@ import { metSaintIds } from "@/lib/meet";
 import { FAITH_TASKS, SAINTS, categoryLabel, causePool, saint } from "@/lib/saints";
 import { siteUrl } from "@/lib/site";
 import { TaskButton } from "./task-button";
+import { BONUS_SAINTS } from "@/lib/bonus-saints";
 
 export const metadata = { title: "Saints" };
 
@@ -32,9 +33,27 @@ export default async function SaintsPage() {
       {supporter ? (
         <>
           <p className="mt-4 font-serif text-2xl text-ink">
-            <strong className="tabular-nums">{met.size}</strong> of {SAINTS.length} met
+            <strong className="tabular-nums">{SAINTS.filter((s) => met.has(s.id)).length}</strong> of {SAINTS.length} met
           </p>
           <Collection met={met} />
+          <section id="bonus-cards" aria-labelledby="bonus-heading" className="mt-12 scroll-mt-28 border-t border-line pt-8">
+            <h2 id="bonus-heading" className="text-3xl font-bold">Little discoveries</h2>
+            <p className="mt-2 max-w-xl text-muted">Three bonus cards for curious souls. These are separate from your main collection.</p>
+            <p className="mt-2 text-sm text-gold-ink">{BONUS_SAINTS.filter((s) => met.has(s.id)).length} of 3 discovered</p>
+            <ul className="mt-5 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-3">
+              {BONUS_SAINTS.map((s) => (
+                <li key={s.id}>
+                  {met.has(s.id) ? (
+                    <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline"><SaintCard saint={s} /></Link>
+                  ) : (
+                    <Link href={s.discovery === "lost-key" ? "/" : s.discovery === "bird" ? "#footer-bird" : "/saints/monica"} className="group block h-full rounded-[1.4rem] no-underline">
+                      <SaintLocked hint={s.hint} />
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
         </>
       ) : (
         <div className="card mt-8 max-w-2xl p-6">
@@ -110,7 +129,7 @@ export default async function SaintsPage() {
 // Set iteration preserves the newest-first order returned by metSaintIds.
 function Collection({ met }: { met: Set<string> }) {
   const mine = [...met].flatMap((id) => {
-    const s = saint(id);
+    const s = SAINTS.find((entry) => entry.id === id);
     return s ? [s] : [];
   });
   const hint = FAITH_TASKS.find((t) => !met.has(t.saintId))?.title ?? "Serve at any cause";

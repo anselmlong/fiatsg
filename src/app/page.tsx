@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { CauseCard, Container } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { listCauses } from "@/lib/queries";
+import { SaintDiscovery } from "@/components/saint-discovery";
 
 export default async function Home() {
   const [user, causes] = await Promise.all([currentUser(), listCauses(["approved"])]);
@@ -66,6 +67,9 @@ export default async function Home() {
           </Container>
         </section>
       )}
+      <Container className="mt-6 flex justify-end">
+        <SaintDiscovery discovery="lost-key" />
+      </Container>
     </>
   );
 }

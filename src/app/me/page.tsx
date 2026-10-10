@@ -46,7 +46,8 @@ export default async function MePage() {
   const completed = accepted.filter((m) => m.request.status === "completed");
   const peopleReached = completed.reduce((a, m) => a + (m.request.outcomePeopleServed ?? 0), 0);
   const first = user.name.split(" ")[0];
-  const metCount = (await metSaintIds(user.id)).length;
+  const met = new Set(await metSaintIds(user.id));
+  const metCount = SAINTS.filter((s) => met.has(s.id)).length;
   // A quiet line of thanks rather than a dashboard: the causes themselves come first.
   const numbers = [
     { n: mine.filter((m) => m.response.status !== "declined").length, l: "offered" },

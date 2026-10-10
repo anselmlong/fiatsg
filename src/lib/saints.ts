@@ -1,6 +1,7 @@
 // Saints a supporter can meet. One task brings one saint; each saint is met once.
 // Causes bring the next saint in their (category, tier) pool. Faith tasks each bring one fixed saint.
 import { SAINTS } from "./saint-roster";
+import { BONUS_SAINTS } from "./bonus-saints";
 
 export const CATEGORIES = [
   { id: "seniors", label: "Seniors" },
@@ -59,7 +60,7 @@ export const WELCOME_SAINT = "joseph";
 
 export const faithTask = (id: string) => FAITH_TASKS.find((t) => t.id === id);
 
-const byId = new Map(SAINTS.map((s) => [s.id, s]));
+const byId = new Map([...SAINTS, ...BONUS_SAINTS].map((s) => [s.id, s]));
 export const saint = (id: string) => byId.get(id);
 export const saintsIn = (category: string) => SAINTS.filter((s) => s.category === category);
 
