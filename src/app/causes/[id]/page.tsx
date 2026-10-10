@@ -14,16 +14,13 @@ import { currentOrg, currentUser } from "@/lib/auth";
 import { fmtSchedule, isFresh, timeAgo } from "@/lib/format";
 import { getCause, getRecentPrayers, getUpdates } from "@/lib/queries";
 import { ageLabel } from "@/lib/skills";
+import { inviterFrom } from "@/lib/invite";
 import { siteUrl } from "@/lib/site";
 import { Confirmed } from "./confirmed";
 import { OfferForm, PrayForm } from "./forms";
 
 // Who shared this link, if anyone: their name goes on the link preview and the welcome.
-async function inviterName(ref: unknown) {
-  if (typeof ref !== "string" || !/^\d{1,9}$/.test(ref)) return null;
-  const [u] = await db.select({ name: users.name, role: users.role }).from(users).where(eq(users.id, Number(ref)));
-  return u?.role === "supporter" ? u.name.split(" ")[0] : null;
-}
+const inviterName = async (ref: unknown) => (await inviterFrom(ref))?.firstName ?? null;
 
 export async function generateMetadata({ params, searchParams }: PageProps<"/causes/[id]">) {
   const id = Number((await params).id);

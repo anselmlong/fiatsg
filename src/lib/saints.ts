@@ -52,6 +52,9 @@ export const FAITH_TASKS: FaithTask[] = [
   { id: "with_friend", saintId: "frassati", kind: "auto", title: "Volunteer with a friend", body: "Serve at the same cause as a friend you invited, and both check in." },
   { id: "retreat", saintId: "ignatius", kind: "honour", title: "Bring a friend to a retreat", body: "Spend a day or a weekend with God, and bring someone along." },
 ];
+// The saint waiting for someone who opens a friend's invite link.
+export const WELCOME_SAINT = "joseph";
+
 export const faithTask = (id: string) => FAITH_TASKS.find((t) => t.id === id);
 
 const byId = new Map(SAINTS.map((s) => [s.id, s]));

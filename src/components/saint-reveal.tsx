@@ -17,17 +17,11 @@ type Phase = "sealed" | "charging" | "revealed";
 const CHARGE_MS = 1600;
 
 // Watches for a newly met saint (after a check-in, a prayer, or a friend joining from your link,
-// even on another phone). The holy card arrives face down; a tap gathers the light and turns it over.
+// even on another phone), and plays the reveal for it.
 export function SaintReveal({ enabled }: { enabled: boolean }) {
   const [meeting, setMeeting] = useState<Meeting | null>(null);
-  const [phase, setPhase] = useState<Phase>("sealed");
-  const [sound, setSound] = useState(() => {
-    try { return typeof window !== "undefined" && localStorage.getItem("fiat_sound") === "1"; } catch { return false; }
-  });
   const pathname = usePathname();
   const router = useRouter();
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const check = useCallback(async () => {
     if (!enabled || document.hidden) return;
@@ -51,8 +45,88 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
     };
   }, [check, pathname]);
 
+  if (!meeting) return null;
+  const s = meeting.saint;
+  async function close() {
+    const id = meeting!.meetingId;
+    setMeeting(null);
+    await markSaintSeen(id);
+    router.refresh();
+  }
+  return (
+    <RevealOverlay
+      key={meeting.meetingId}
+      saint={s}
+      sealedHeading={`${meeting.firstName}, someone is here`}
+      revealedHeading={`${meeting.firstName}, you've met`}
+      sealedLine="A saint who did what you did is waiting on the other side."
+      why={s.why}
+      onEscape={close}
+      actions={(tab) => (
+        <>
+          <a href={`/saints/${s.id}`} tabIndex={tab} onClick={() => markSaintSeen(meeting.meetingId)} className="btn-gold w-full text-lg">Read {s.name.replace(/^St /, "")}'s story</a>
+          <button tabIndex={tab} onClick={close} className="btn w-full border-2 border-white/40 text-white hover:bg-white/10">Amen</button>
+        </>
+      )}
+    />
+  );
+}
+
+// Someone opened a friend's invite link: before anything else, a saint is waiting for them too.
+// Joining keeps the card; either way it plays only once.
+export function WelcomeReveal({ inviterName, saint }: { inviterName: string; saint: Saint }) {
+  const [open, setOpen] = useState(true);
+  const pathname = usePathname();
+  if (!open) return null;
+  const done = () => {
+    document.cookie = "fiat_welcomed=1; path=/; max-age=2592000; samesite=lax";
+  };
+  // Joining from a cause goes straight back to it, ready to say yes.
+  const joinHref = pathname.startsWith("/causes/") ? `/join?next=${encodeURIComponent(pathname)}` : "/join";
+  return (
+    <RevealOverlay
+      saint={saint}
+      sealedHeading={`${inviterName} has sent you something`}
+      revealedHeading={`${inviterName} invited you to meet`}
+      sealedLine="A saint is waiting to meet you on the other side."
+      why={`Joseph's yes came without a word. ${inviterName} hopes you'll say yes too.`}
+      onEscape={() => { done(); setOpen(false); }}
+      actions={(tab) => (
+        <>
+          <a href={joinHref} tabIndex={tab} onClick={done} className="btn-gold w-full text-lg">Join Fiat to keep {saint.name}</a>
+          <button tabIndex={tab} onClick={() => { done(); setOpen(false); }} className="btn w-full border-2 border-white/40 text-white hover:bg-white/10">Look around first</button>
+        </>
+      )}
+    />
+  );
+}
+
+// The holy card arrives face down; a tap gathers the light and turns it over.
+function RevealOverlay({
+  saint: s,
+  sealedHeading,
+  revealedHeading,
+  sealedLine,
+  why,
+  actions,
+  onEscape,
+}: {
+  saint: Saint;
+  sealedHeading: string;
+  revealedHeading: string;
+  sealedLine: string;
+  why: string;
+  actions: (tabIndex: number) => React.ReactNode;
+  onEscape: () => void;
+}) {
+  const [phase, setPhase] = useState<Phase>("sealed");
+  const [sound, setSound] = useState(() => {
+    try { return typeof window !== "undefined" && localStorage.getItem("fiat_sound") === "1"; } catch { return false; }
+  });
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
   useEffect(() => {
-    if (!meeting) return;
     // Hold the page behind still, and focus without letting the browser scroll the card away.
     const root = document.documentElement;
     const prev = root.style.overflow;
@@ -66,9 +140,7 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
       pending.forEach(clearTimeout);
       root.style.overflow = prev;
     };
-    // Once per saint.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.meetingId]);
+  }, []);
 
   function reveal() {
     if (phase !== "sealed") return;
@@ -87,15 +159,6 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
     );
   }
 
-  async function close() {
-    if (!meeting) return;
-    const id = meeting.meetingId;
-    setMeeting(null);
-    setPhase("sealed");
-    await markSaintSeen(id);
-    router.refresh();
-  }
-
   function toggleSound() {
     const on = !sound;
     setSound(on);
@@ -103,8 +166,6 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
     if (on) bell();
   }
 
-  if (!meeting) return null;
-  const s = meeting.saint;
   const shown = phase === "revealed";
   return (
     <div
@@ -114,8 +175,8 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
       aria-modal="true"
       aria-labelledby="reveal-heading"
       data-phase={phase}
-      className="reveal-in group/reveal fixed inset-0 outline-none z-50 overflow-y-auto overflow-x-hidden overscroll-contain bg-[#1a0d2e]/95 backdrop-blur-sm"
-      onKeyDown={(e) => e.key === "Escape" && shown && close()}
+      className="reveal-in group/reveal fixed inset-0 z-50 overflow-y-auto overflow-x-hidden overscroll-contain bg-[#1a0d2e]/95 outline-none backdrop-blur-sm"
+      onKeyDown={(e) => e.key === "Escape" && shown && onEscape()}
     >
       <Light phase={phase} />
       {/* The moment of turning: one flash of gold-white light. */}
@@ -127,9 +188,9 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
 
       <div className="relative mx-auto flex min-h-full max-w-md flex-col items-center justify-center px-4 py-8 text-center">
         {/* Both headings share one cell, so swapping them never moves the card. */}
-        <h2 id="reveal-heading" className="grid font-serif text-xl text-gold">
-          <span className={`col-start-1 row-start-1 transition-opacity duration-500 ${shown ? "opacity-0" : "rise-in"}`}>{meeting.firstName}, someone is here</span>
-          <span className={`col-start-1 row-start-1 transition-opacity duration-500 ${shown ? "opacity-100" : "opacity-0"}`} aria-hidden={!shown}>{meeting.firstName}, you've met</span>
+        <h2 id="reveal-heading" className="grid text-balance px-10 font-serif text-xl text-gold">
+          <span className={`col-start-1 row-start-1 transition-opacity duration-500 ${shown ? "opacity-0" : "rise-in"}`}>{sealedHeading}</span>
+          <span className={`col-start-1 row-start-1 transition-opacity duration-500 ${shown ? "opacity-100" : "opacity-0"}`} aria-hidden={!shown}>{revealedHeading}</span>
         </h2>
 
         <div className="relative isolate mt-4">
@@ -166,17 +227,14 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
         {/* Before and after share one cell too. */}
         <div className="mt-6 grid w-full">
           <div className={`col-start-1 row-start-1 flex flex-col items-center justify-start gap-4 transition-opacity duration-300 ${phase === "sealed" ? "" : "pointer-events-none opacity-0"}`} aria-hidden={phase !== "sealed"}>
-            <p className="rise-in text-balance text-white/80 [animation-delay:300ms]">A saint who did what you did is waiting on the other side.</p>
+            <p className="rise-in text-balance text-white/80 [animation-delay:300ms]">{sealedLine}</p>
             <button onClick={reveal} tabIndex={phase === "sealed" ? 0 : -1} className="rise-in btn-gold w-full text-lg [animation-delay:500ms]">Turn the card over</button>
           </div>
           {/* Always laid out, so the space under the card never changes size when it turns. */}
           <div className={`col-start-1 row-start-1 ${shown ? "" : "invisible"}`} aria-hidden={!shown}>
-            <p className={`text-balance font-serif text-xl italic text-white ${shown ? "rise-in [animation-delay:700ms]" : ""}`}>{s.why}</p>
+            <p className={`text-balance font-serif text-xl italic text-white ${shown ? "rise-in [animation-delay:700ms]" : ""}`}>{why}</p>
             {s.patron && <p className={`mt-2 text-white/75 ${shown ? "rise-in [animation-delay:850ms]" : ""}`}>{s.patron}</p>}
-            <div className={`mt-6 flex w-full flex-col gap-3 ${shown ? "rise-in [animation-delay:1100ms]" : ""}`}>
-              <a href={`/saints/${s.id}`} tabIndex={shown ? 0 : -1} onClick={() => markSaintSeen(meeting.meetingId)} className="btn-gold w-full text-lg">Read {s.name.replace(/^St /, "")}'s story</a>
-              <button tabIndex={shown ? 0 : -1} onClick={close} className="btn w-full border-2 border-white/40 text-white hover:bg-white/10">Amen</button>
-            </div>
+            <div className={`mt-6 flex w-full flex-col gap-3 ${shown ? "rise-in [animation-delay:1100ms]" : ""}`}>{actions(shown ? 0 : -1)}</div>
           </div>
         </div>
       </div>

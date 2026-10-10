@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db, orgs, users } from "@/db";
 import { checkPassword, endSession, hashPassword, startSession } from "@/lib/auth";
-import { meetForTask } from "@/lib/meet";
+import { currentInviter } from "@/lib/invite";
+import { meetForTask, meetSaint } from "@/lib/meet";
+import { WELCOME_SAINT } from "@/lib/saints";
 import { sendOffer } from "@/lib/offers";
 import { type FormState, list, safeNext, str, strOrNull } from "@/lib/forms";
 import { COVER_LIBRARY, isSkill } from "@/lib/skills";
@@ -47,7 +49,7 @@ export async function joinSupporter(_: FormState, fd: FormData): Promise<FormSta
   const email = str(fd, "email").toLowerCase();
   if (await emailTaken(email)) return { error: "An account with this email already exists. Try logging in instead." };
   const jar = await cookies();
-  const inviter = await inviterFrom(jar.get("fiat_ref")?.value);
+  const inviter = await currentInviter();
 
   const [user] = await db
     .insert(users)
@@ -64,17 +66,15 @@ export async function joinSupporter(_: FormState, fd: FormData): Promise<FormSta
     })
     .returning();
   // The friend who shared the link meets St Andrew, who brought his brother Peter to Jesus.
-  if (inviter) await meetForTask(inviter.id, "invite");
+  if (inviter) {
+    await meetForTask(inviter.id, "invite");
+    // The friend already turned their card over on arriving; keep it for them.
+    await meetSaint(user.id, WELCOME_SAINT, { taskId: "welcome", seen: true });
+  }
   jar.delete("fiat_ref");
   await startSession(user.id);
   await offerFrom(user.id, fd);
   redirect(safeNext(str(fd, "next"), "/causes?welcome=1"));
-}
-
-async function inviterFrom(ref: string | undefined) {
-  if (!ref || !/^\d+$/.test(ref)) return null;
-  const [u] = await db.select({ id: users.id, role: users.role }).from(users).where(eq(users.id, Number(ref)));
-  return u?.role === "supporter" ? u : null;
 }
 
 export async function joinOrg(_: FormState, fd: FormData): Promise<FormState> {

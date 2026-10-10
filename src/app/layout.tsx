@@ -2,8 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Caudex, Nunito_Sans } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { SaintReveal } from "@/components/saint-reveal";
+import { cookies } from "next/headers";
+import { SaintReveal, WelcomeReveal } from "@/components/saint-reveal";
 import { currentUser } from "@/lib/auth";
+import { currentInviter } from "@/lib/invite";
+import { saint, WELCOME_SAINT } from "@/lib/saints";
 import "./globals.css";
 
 const heading = Caudex({ variable: "--font-heading", subsets: ["latin"], weight: ["400", "700"] });
@@ -22,6 +25,8 @@ export const viewport: Viewport = { themeColor: "#4e2984" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const user = await currentUser();
+  // A visitor who arrived on a friend's invite link meets a saint before anything else, once.
+  const inviter = !user && !(await cookies()).get("fiat_welcomed") ? await currentInviter() : null;
   return (
     <html lang="en" className={`${heading.variable} ${body.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
@@ -34,6 +39,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <SaintReveal enabled={user?.role === "supporter"} />
+        {inviter && <WelcomeReveal inviterName={inviter.firstName} saint={saint(WELCOME_SAINT)!} />}
       </body>
     </html>
   );

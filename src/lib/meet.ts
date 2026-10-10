@@ -5,10 +5,10 @@ import { db, saintMeetings, type Request } from "@/db";
 import { causePool, faithTask, type FaithTaskId } from "./saints";
 
 // Records that a supporter met a saint. Each saint is met once; returns false if already met.
-export async function meetSaint(userId: number, saintId: string, from: { taskId?: string; requestId?: number } = {}) {
+export async function meetSaint(userId: number, saintId: string, from: { taskId?: string; requestId?: number; seen?: boolean } = {}) {
   const rows = await db
     .insert(saintMeetings)
-    .values({ userId, saintId, taskId: from.taskId ?? null, requestId: from.requestId ?? null })
+    .values({ userId, saintId, taskId: from.taskId ?? null, requestId: from.requestId ?? null, seenAt: from.seen ? new Date() : null })
     .onConflictDoNothing()
     .returning({ id: saintMeetings.id });
   return rows.length > 0;
