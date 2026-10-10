@@ -24,7 +24,25 @@ export function SaintCard({ saint, size = "md", priority }: { saint: Saint; size
   );
 }
 
-// Someone not yet met: the same card, drawn in outline, with a hint at the task that brings them.
+// Keep an unmet saint's identity hidden while showing their place in the collection.
+export function SaintLocked() {
+  return (
+    <div className={`saint-tile ${frame} border-2 border-gold/35 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>
+      <div className={inner}>
+        <div className="relative flex aspect-[3/4] items-center justify-center overflow-hidden">
+          <Halo className="w-4/5 text-gold-ink" />
+          <span aria-hidden className="absolute inset-0 flex items-center justify-center pt-10 font-serif text-5xl font-bold text-purple-deep">?</span>
+        </div>
+        <div className={caption}>
+          <p className="font-serif text-[0.95rem] font-bold leading-[1.15] text-gold-ink">Saint to meet</p>
+          <p className="text-[0.68rem] font-bold uppercase tracking-[0.08em] text-muted">Locked</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// A hint at the next way to meet a saint.
 export function SaintWaiting({ hint }: { hint: string }) {
   return (
     <div className={`saint-tile ${frame} border-2 border-dashed border-gold/55 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>

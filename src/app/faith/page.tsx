@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SaintCard, SaintThumb, SaintWaiting } from "@/components/saint-card";
+import { SaintCard, SaintLocked, SaintThumb, SaintWaiting } from "@/components/saint-card";
 import { ShareButtons } from "@/components/share-buttons";
 import { Container } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
@@ -114,14 +114,22 @@ function Collection({ met }: { met: Set<string> }) {
     return s ? [s] : [];
   });
   const hint = FAITH_TASKS.find((t) => !met.has(t.saintId))?.title ?? "Serve at any cause";
+  const locked = SAINTS.filter((s) => !met.has(s.id));
 
   return (
-    <section id="collection" aria-label="Saints you've met" className="mt-8 scroll-mt-28">
+    <section id="collection" aria-label="Your saint collection" className="mt-8 scroll-mt-28">
       <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {mine.map((s) => (
           <li key={s.id}>
             <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1">
               <SaintCard saint={s} />
+            </Link>
+          </li>
+        ))}
+        {locked.map((s, index) => (
+          <li key={s.id}>
+            <Link href="#meet-more" aria-label={`Locked saint ${index + 1} of ${locked.length}: see how to meet more saints`} className="group block h-full rounded-[1.4rem] no-underline">
+              <SaintLocked />
             </Link>
           </li>
         ))}
