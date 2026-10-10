@@ -30,6 +30,16 @@ All photos in `public/images/` were downloaded from the organisations' own publi
 | acmi-care-packs.jpg, acmi-class.jpg, acmi-goodie-bags.jpg | acmi.org.sg |
 | hero-worship-crop.jpg | oyp.org.sg |
 
+## Homepage slideshow
+
+The arch hero reuses three existing demo assets from the organisation image library; no new photo licence is claimed. The visible credit changes with each slide. Images are displayed with a responsive crop, without altering the source files.
+
+| Image | Visible credit | Source site |
+| --- | --- | --- |
+| acmi-volunteer.jpg | Photo via ACMI | [ACMI volunteering](https://acmi.org.sg/get-involved/volunteer/individual/) |
+| oyp-community.webp | Photo via Office for Young People | [OYP communities](https://www.oyp.org.sg/communities) |
+| caritas-seniors-outing.jpg | Photo via Caritas Singapore | [Caritas Singapore](https://www.caritas-singapore.org/) |
+
 ## Saints
 
 Images in `public/saints/` come from Wikimedia Commons. Each one is cropped to 3:4, resized to 600×800 and given the same warm gold tone. Crops of CC-licensed files are derivatives and are shared under the same licence. Story facts come from Franciscan Media's Saint of the Day, Vatican News and the Holy See. Quotes from Scripture are marked with the verse.

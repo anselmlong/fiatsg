@@ -1,0 +1,57 @@
+.arch-hero { background: var(--cream); }
+.arch-hero-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 660px;
+  max-width: 84rem;
+  margin-inline: auto;
+}
+.arch-hero-copy {
+  align-self: center;
+  padding: 4rem clamp(1.5rem, 4vw, 4rem);
+}
+.arch-hero h1 {
+  max-width: 10ch;
+  color: #482078;
+  font-size: clamp(2.75rem, 4.5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.arch-hero-invitation {
+  margin-top: 1.5rem;
+  max-width: 27ch;
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  line-height: 1.35;
+  color: #3e3048;
+}
+.arch-hero-description { margin-top: 1.5rem; max-width: 46ch; color: #5e5266; }
+.hero-slideshow { position: relative; min-width: 0; margin: 2.5rem clamp(1.5rem, 4vw, 4rem) 2.5rem 1.5rem; display: flex; flex-direction: column; }
+.hero-slideshow-frame { flex: 1; min-height: 420px; position: relative; border: 2px solid #482078; border-radius: 50% 50% 0 0 / 40% 40% 0 0; padding: 0.5rem; }
+.hero-slideshow-images { position: absolute; inset: 0.5rem; overflow: hidden; border-radius: 50% 50% 0 0 / 40% 40% 0 0; background: var(--gold-soft); }
+.hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 700ms ease; }
+.hero-slide[data-active="true"] { opacity: 1; }
+.hero-slideshow-caption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.25rem 0.5rem; padding-top: 0.5rem; }
+.hero-photo-credit { font-size: 0.7rem; color: var(--muted); }
+.hero-slideshow-controls { display: flex; align-items: center; margin-left: auto; }
+.hero-slideshow-controls button { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; color: #482078; cursor: pointer; }
+.hero-slideshow-controls button:hover { background: var(--purple-soft); }
+.hero-slideshow-controls svg { width: 18px; height: 18px; }
+.hero-slide-count { min-width: 2rem; text-align: center; font-size: 0.7rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+/* The invitation settles, then the arched window opens onto community life. */
+@keyframes arch-copy-enter { from { opacity: 0.7; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes arch-window-enter { from { opacity: 0.55; clip-path: inset(0 0 14% 0); } to { opacity: 1; clip-path: inset(0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .arch-hero-copy { animation: arch-copy-enter 650ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .hero-slideshow { animation: arch-window-enter 800ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-slide { transition: none; } }
+@media (max-width: 63.999rem) {
+  .arch-hero-layout { grid-template-columns: 1fr; min-height: auto; }
+  .arch-hero-copy { padding: 3rem 1rem 2rem; }
+  .arch-hero h1 { font-size: clamp(2.75rem, 8vw, 4.5rem); }
+  .hero-slideshow { margin: 0 1rem 2rem; }
+  .hero-slideshow-frame { min-height: clamp(380px, 75vw, 560px); }
+}
