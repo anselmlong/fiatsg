@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Link2, Share2 } from "lucide-react";
+import { Check, Link2, Send, Share2 } from "lucide-react";
 import { useState } from "react";
 
 function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -11,7 +11,7 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-// One share sheet button for everything, and a WhatsApp button for those who'd never find WhatsApp inside it.
+// Direct messaging shortcuts alongside the device share sheet and copy link.
 export function ShareButtons({ url, text, title }: { url: string; text: string; title: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -36,7 +36,10 @@ export function ShareButtons({ url, text, title }: { url: string; text: string; 
         <a href={`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`} target="_blank" rel="noreferrer" className="btn bg-[#1f8f4e] text-white hover:brightness-110">
           <WhatsAppIcon aria-hidden className="h-5 w-5" /> WhatsApp
         </a>
-        <button type="button" onClick={share} className="btn-ghost">
+        <a href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer" className="btn bg-[#087eaf] text-white hover:brightness-110">
+          <Send aria-hidden className="h-5 w-5" /> Telegram
+        </a>
+        <button type="button" onClick={share} className="btn-ghost col-span-2">
           <Share2 aria-hidden className="h-5 w-5" /> Share
         </button>
       </div>
