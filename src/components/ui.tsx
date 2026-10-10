@@ -95,10 +95,10 @@ export function SkillPicker({ name = "skills", selected = [] }: { name?: string;
       {SKILLS.map((s) => (
         <label
           key={s.id}
-          className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-white px-4 py-3 font-semibold transition has-[:checked]:border-purple has-[:checked]:bg-purple-soft has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold"
+          className="gift-option flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-white px-4 py-3 font-semibold transition has-[:checked]:border-purple has-[:checked]:bg-purple-soft has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold"
         >
           <input type="checkbox" name={name} value={s.id} defaultChecked={selected.includes(s.id)} className="h-6 w-6 accent-[var(--purple)]" />
-          <SkillIcon id={s.id} className="h-6 w-6 shrink-0 text-purple" />
+          <SkillIcon id={s.id} className="gift-icon h-6 w-6 shrink-0 text-purple" />
           <span>{s.label}</span>
         </label>
       ))}

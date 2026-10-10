@@ -47,7 +47,7 @@ export function MediaUploader({ name = "media", initial = [] }: { name?: string;
       {(items.length > 0 || pending.length > 0) && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {items.map((m, i) => (
-            <li key={m.url} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-purple-soft">
+            <li key={m.url} className="settle-in relative aspect-[4/3] overflow-hidden rounded-xl bg-purple-soft">
               {m.kind === "video" ? (
                 <video src={m.url} muted playsInline preload="metadata" className="h-full w-full object-cover" />
               ) : (

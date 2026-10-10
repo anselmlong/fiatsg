@@ -23,18 +23,21 @@ export function Confirmed({
   return (
     <section id="confirmed" aria-labelledby="confirmed-title" className="scroll-mt-28 border-b border-line bg-ok-soft/60">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
-        <p className="font-bold uppercase tracking-wide text-ok">You're confirmed</p>
-        <h2 id="confirmed-title" className="mt-1 font-serif text-3xl font-bold sm:text-4xl">
-          {orgShort} is expecting you, {firstName}.
-        </h2>
+        <div className="flex items-center gap-4">
+          <Seal />
+          <div>
+            <h2 id="confirmed-title" className="font-serif text-3xl font-bold sm:text-4xl">You're confirmed, {firstName}.</h2>
+            <p className="mt-1 text-lg text-ink/80">{orgShort} is expecting you.</p>
+          </div>
+        </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="card p-5">
+          <div className="card rise-in p-5 [animation-delay:250ms]">
             <p className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</p>
             <p className="mt-2 text-lg">{when}</p>
             <p className="text-lg">{time}</p>
           </div>
-          <div className="card p-5">
+          <div className="card rise-in p-5 [animation-delay:330ms]">
             <p className="flex items-center gap-2 font-bold"><MapPin aria-hidden className="h-5 w-5 text-purple" /> Where</p>
             <p className="mt-2 text-lg">{place}</p>
             {!online && (
@@ -48,7 +51,7 @@ export function Confirmed({
               </a>
             )}
           </div>
-          <div className="card p-5">
+          <div className="card rise-in p-5 [animation-delay:410ms]">
             <p className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Your contact</p>
             <p className="mt-2 text-lg font-bold">{contact.name}</p>
             <p className="text-muted">{orgShort}</p>
@@ -79,5 +82,18 @@ export function Confirmed({
         <p className="mt-3 text-muted">Can't make it after all? Please let {orgShort} know as early as you can.</p>
       </div>
     </section>
+  );
+}
+
+// A gold seal whose ring and check draw in once, set inside a soft glow.
+function Seal() {
+  return (
+    <span aria-hidden className="relative isolate flex h-14 w-14 shrink-0 items-center justify-center">
+      <span className="seal-glow absolute -inset-4 -z-10 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.9),transparent_70%)]" />
+      <svg viewBox="0 0 56 56" className="h-14 w-14 text-gold" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="28" cy="28" r="24" className="seal-ring" transform="rotate(-90 28 28)" />
+        <path d="M17 28.5l7 7 14-14.5" className="seal-check" stroke="var(--ok)" />
+      </svg>
+    </span>
   );
 }

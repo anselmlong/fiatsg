@@ -80,7 +80,7 @@ export function DateField({
         </button>
       )}
       {open && (
-        <div role="dialog" aria-label="Choose a date" className="card absolute left-0 top-full z-30 mt-2 p-3 shadow-xl">
+        <div role="dialog" aria-label="Choose a date" className="card pop-in absolute left-0 top-full z-30 mt-2 p-3 shadow-xl">
           <DayPicker
             mode="single"
             locale={enGB}
