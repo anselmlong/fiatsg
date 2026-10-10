@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const PHOTOS = [
-  { src: "/images/acmi-volunteer.jpg", alt: "Volunteers smiling as they pack food and clothing into donation boxes", credit: "ACMI", href: "https://acmi.org.sg/get-involved/volunteer/individual/", position: "52% center" },
+  { src: "/images/acmi-care-packs.jpg", alt: "Migrant workers and volunteers holding blue care packs at an ACMI outreach visit", credit: "ACMI", href: "https://acmi.org.sg/outreach-engagement/", position: "50% center" },
   { src: "/images/oyp-community.webp", alt: "Young people smiling together during a community gathering", credit: "Office for Young People", href: "https://www.oyp.org.sg/communities", position: "55% center" },
   { src: "/images/caritas-seniors-outing.jpg", alt: "Seniors and companions enjoying a group outing at Bird Paradise", credit: "Caritas Singapore", href: "https://www.caritas-singapore.org/", position: "50% 65%" },
 ] as const;

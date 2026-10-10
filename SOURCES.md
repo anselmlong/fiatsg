@@ -36,7 +36,7 @@ The arch hero reuses three existing demo assets from the organisation image libr
 
 | Image | Visible credit | Source site |
 | --- | --- | --- |
-| acmi-volunteer.jpg | Photo via ACMI | [ACMI volunteering](https://acmi.org.sg/get-involved/volunteer/individual/) |
+| acmi-care-packs.jpg | Photo via ACMI | [ACMI outreach](https://acmi.org.sg/outreach-engagement/) |
 | oyp-community.webp | Photo via Office for Young People | [OYP communities](https://www.oyp.org.sg/communities) |
 | caritas-seniors-outing.jpg | Photo via Caritas Singapore | [Caritas Singapore](https://www.caritas-singapore.org/) |
 
