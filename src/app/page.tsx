@@ -1,4 +1,5 @@
 import Image from "next/image";
+import "./home-hero.css";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CauseCard, Container } from "@/components/ui";
@@ -23,8 +24,7 @@ export default async function Home() {
           sizes="100vw"
           className="home-hero-image -z-10 object-cover object-[70%_center]"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cream via-cream/95 to-cream/20" />
-        <div className="absolute inset-0 -z-10 bg-cream/70 lg:hidden" />
+        <div aria-hidden="true" className="home-hero-wash" />
         <Container className="py-20 sm:py-28 lg:py-32">
           <h1 className="font-serif text-5xl font-bold !text-ink sm:text-7xl">
             <span lang="la" data-no-translate>Fiat</span> — let it be done.
