@@ -12,7 +12,7 @@ export default async function EditRequestPage({ params }: PageProps<"/org/reques
   const [req] = await db.select().from(requests).where(and(eq(requests.id, id), eq(requests.orgId, org.id)));
   if (!req || req.status === "completed") notFound();
   return (
-    <Container className="max-w-3xl py-10">
+    <Container className="max-w-2xl py-10">
       <h1 className="text-4xl font-bold">Edit request</h1>
       {req.reviewComment && req.status === "changes_requested" && (
         <div className="mt-6"><Notice tone="warn"><strong>The Catholic Foundation asked:</strong> “{req.reviewComment}”</Notice></div>

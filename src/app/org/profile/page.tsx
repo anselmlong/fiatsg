@@ -8,7 +8,7 @@ export const metadata = { title: "Our profile" };
 export default async function OrgProfilePage() {
   const org = await requireOrg();
   return (
-    <Container className="max-w-3xl py-10">
+    <Container className="max-w-2xl py-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-4xl font-bold">Our profile</h1>
         <StatusBadge status={org.status} label={org.status === "approved" ? "✓ Approved by CF" : undefined} />

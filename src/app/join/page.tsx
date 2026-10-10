@@ -8,7 +8,7 @@ export default async function JoinPage({ searchParams }: PageProps<"/join">) {
   const next = (await searchParams).next;
   const fromCause = typeof next === "string" && next.startsWith("/causes/");
   return (
-    <Container className="max-w-3xl py-14">
+    <Container className="max-w-2xl py-14">
       <h1 className=" text-4xl font-bold sm:text-5xl">{fromCause ? "Join to offer your help" : "What gifts has God given you?"}</h1>
       <p className="mt-3 text-lg text-muted">
         {fromCause

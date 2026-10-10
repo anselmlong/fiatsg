@@ -5,7 +5,7 @@ export const metadata = { title: "Register your organisation" };
 
 export default function OrgJoinPage() {
   return (
-    <Container className="max-w-3xl py-14">
+    <Container className="max-w-2xl py-14">
       <h1 className=" text-4xl font-bold sm:text-5xl">Register your organisation</h1>
       <p className="mt-3 text-lg text-muted">
         The Catholic Foundation reviews every organisation before it can post requests. This usually takes a few days —

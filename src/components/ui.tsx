@@ -8,7 +8,9 @@ import { CalendarDays, Clock, MapPin, Sparkles } from "lucide-react";
 import { SkillIcon } from "./icons";
 
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-6xl px-4 ${className}`}>{children}</div>;
+  // A page's own max-w-* replaces the default; with both, CSS order decides and 6xl can win.
+  const width = /(^|\s)max-w-/.test(className) ? "" : "max-w-6xl";
+  return <div className={`mx-auto w-full px-4 ${width} ${className}`}>{children}</div>;
 }
 
 export function SkillChip({ id, highlight = false }: { id: string; highlight?: boolean }) {
@@ -91,7 +93,7 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
 
 export function SkillPicker({ name = "skills", selected = [] }: { name?: string; selected?: string[] }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {SKILLS.map((s) => (
         <label
           key={s.id}
