@@ -344,7 +344,7 @@ const ORGS: OrgSeed[] = [
       "For many working adults, a lunchtime Mass is the only quiet moment in a long week. Volunteers make it possible.",
     website: "https://www.cps.org.sg",
     foundedYear: null,
-    coverUrl: "/images/cps-mass.jpg",
+    coverUrl: "/images/caritas-involved.jpg",
     status: "pending",
     requests: [],
   },

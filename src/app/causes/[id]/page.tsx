@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { withdrawOffer } from "@/app/actions/supporter";
 import { MediaGallery } from "@/components/media-gallery";
-import { Container, DemoTag, Notice, SkillChip, StatusBadge } from "@/components/ui";
+import { Container, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
 import { fmtSchedule, isFresh, timeAgo } from "@/lib/format";
@@ -46,7 +46,6 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
         <Container className="pb-10 pt-32 sm:pt-48">
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/causes" className="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-purple-deep no-underline">← All causes</Link>
-            {r.isDemo && <DemoTag />}
             {!isPublic && <StatusBadge status={r.status} />}
             {r.status === "completed" && <StatusBadge status="completed" />}
           </div>

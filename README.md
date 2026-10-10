@@ -40,4 +40,4 @@ npm run dev
 ```
 
 Organisation names, descriptions and photos come from each organisation's public website (see `SOURCES.md`).
-Requests, stories and outcome numbers are demo data and are labelled as such in the app.
+Requests, stories and outcome numbers in the seed are sample content.

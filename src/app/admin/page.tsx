@@ -59,11 +59,11 @@ export default async function AdminPage() {
         <div className="mt-6 space-y-6">
           {orgQueue.map(({ org, contact }) => (
             <article key={org.id} className="card overflow-hidden">
-              <div className="grid sm:grid-cols-[220px_1fr]">
-                <div className="relative min-h-40 bg-purple-soft">
-                  {org.coverUrl && <Image src={org.coverUrl} alt="" fill sizes="220px" className="object-cover" />}
+              <div className="grid gap-5 p-5 sm:grid-cols-[200px_1fr] sm:p-6">
+                <div className="relative aspect-[4/3] self-start overflow-hidden rounded-2xl bg-purple-soft">
+                  {org.coverUrl && <Image src={org.coverUrl} alt="" fill sizes="200px" className="object-cover" />}
                 </div>
-                <div className="p-6">
+                <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={org.status} label={org.status === "changes_requested" ? "Waiting for their changes" : "New — needs review"} />
                     <span className="text-sm text-muted">Registered {timeAgo(org.createdAt)}</span>
@@ -94,11 +94,11 @@ export default async function AdminPage() {
             const { when, time } = fmtSchedule(r);
             return (
               <article key={r.id} className="card overflow-hidden">
-                <div className="grid sm:grid-cols-[220px_1fr]">
-                  <div className="relative min-h-40 bg-purple-soft">
-                    {r.coverUrl && <Image src={r.coverUrl} alt="" fill sizes="220px" className="object-cover" />}
+                <div className="grid gap-5 p-5 sm:grid-cols-[200px_1fr] sm:p-6">
+                  <div className="relative aspect-[4/3] self-start overflow-hidden rounded-2xl bg-purple-soft">
+                    {r.coverUrl && <Image src={r.coverUrl} alt="" fill sizes="200px" className="object-cover" />}
                   </div>
-                  <div className="p-6">
+                  <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusBadge status={r.status} label={r.status === "changes_requested" ? "Waiting for their changes" : "New — needs review"} />
                       <span className="chip">{r.kind === "regular" ? "Regular" : "One-off"}</span>

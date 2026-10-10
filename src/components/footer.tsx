@@ -14,7 +14,7 @@ export function Footer() {
           <div className="w-fit rounded-xl bg-white px-3 py-2">
             <Image src="/images/cf-logo.png" alt="Catholic Foundation" width={150} height={43} className="h-8 w-auto" />
           </div>
-          <p className="max-w-sm text-sm text-white/75 sm:text-right">A Fiat Catholic Hackathon prototype. Requests and stories shown are demo data.</p>
+          <p className="max-w-sm text-sm text-white/75 sm:text-right">Built with the Catholic Foundation, Singapore.</p>
         </div>
       </div>
     </footer>

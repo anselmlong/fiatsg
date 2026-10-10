@@ -36,3 +36,15 @@ export const timeAgo = (d: Date) => {
 
 // True for a few minutes after an action, so its confirmation can play once.
 export const isFresh = (d: Date, minutes = 5) => Date.now() - new Date(d).getTime() < minutes * 60_000;
+
+// Compact schedule for cards: "Every Mon & Wed" or "Sat, 21 Nov".
+export function fmtScheduleShort(r: Pick<Request, "kind" | "startDate" | "weekdays" | "startTime" | "endTime">) {
+  const time = `${fmtTime(r.startTime)} – ${fmtTime(r.endTime)}`;
+  if (r.kind === "one_off") {
+    const day = new Intl.DateTimeFormat("en-SG", { weekday: "short", day: "numeric", month: "short" }).format(new Date(r.startDate));
+    return { day, time };
+  }
+  const d = r.weekdays;
+  const day = d.length === 1 ? `Every ${DAY_NAMES[d[0]] ?? d[0]}` : `Every ${d.slice(0, -1).join(", ")} & ${d.at(-1)}`;
+  return { day, time };
+}

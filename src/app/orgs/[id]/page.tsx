@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { CauseCard, Container, DemoTag } from "@/components/ui";
+import { CauseCard, Container } from "@/components/ui";
 import { db, orgs } from "@/db";
 import { currentUser } from "@/lib/auth";
 import { listCauses } from "@/lib/queries";
@@ -26,7 +26,6 @@ export default async function OrgPage({ params }: PageProps<"/orgs/[id]">) {
         {org.coverUrl && <Image src={org.coverUrl} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-45" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-purple-deep via-purple-deep/70 to-transparent" />
         <Container className="pb-10 pt-32 sm:pt-44">
-          {org.isDemo && <DemoTag />}
           <h1 className="mt-3 max-w-4xl text-4xl font-bold !text-white sm:text-5xl">{org.name}</h1>
           <p className="mt-3 font-serif text-2xl italic text-gold">{org.tagline}</p>
         </Container>

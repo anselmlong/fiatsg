@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { fmtSchedule } from "@/lib/format";
+import { fmtScheduleShort } from "@/lib/format";
 import type { CauseRow } from "@/lib/queries";
 import { SKILLS, skillLabel } from "@/lib/skills";
-import { CalendarDays, MapPin, Sparkles } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Sparkles } from "lucide-react";
 import { SkillIcon } from "./icons";
 
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -41,14 +41,6 @@ export function StatusBadge({ status, label }: { status: string; label?: string 
   return <span className={`inline-flex rounded-full px-3 py-1 text-sm font-bold ${s.cls}`}>{label ?? s.label}</span>;
 }
 
-export function DemoTag() {
-  return (
-    <span title="Sample content for the hackathon demo" className="rounded-full border border-line bg-white/90 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-muted">
-      Demo data
-    </span>
-  );
-}
-
 export function Notice({ tone = "info", children }: { tone?: "info" | "ok" | "warn" | "bad"; children: ReactNode }) {
   const cls = {
     info: "border-purple/30 bg-purple-soft text-purple-deep",
@@ -62,46 +54,36 @@ export function Notice({ tone = "info", children }: { tone?: "info" | "ok" | "wa
 export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?: string[] }) {
   const r = cause.request;
   const matched = r.skills.filter((s) => mySkills.includes(s));
-  const { when, time } = fmtSchedule(r);
+  const { day, time } = fmtScheduleShort(r);
   return (
     <Link
       href={`/causes/${r.id}`}
-      className="card group flex flex-col overflow-hidden no-underline transition hover:-translate-y-0.5 hover:shadow-lg"
+      className="card group flex h-full flex-col overflow-hidden no-underline transition hover:-translate-y-0.5 hover:shadow-lg"
     >
       <div className="relative aspect-[16/9] bg-purple-soft">
         {r.coverUrl && (
           <Image src={r.coverUrl} alt="" fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
         )}
-        <div className="absolute left-3 top-3 flex gap-2">
-          <span className="rounded-full bg-white/95 px-3 py-1 text-sm font-bold text-purple-deep">
-            {r.kind === "regular" ? "Regular" : "One-off"}
-          </span>
-          {r.area === "Online" && <span className="rounded-full bg-white/95 px-3 py-1 text-sm font-bold text-purple-deep">From home</span>}
-        </div>
-        {r.isDemo && (
-          <div className="absolute right-3 top-3">
-            <DemoTag />
-          </div>
-        )}
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <p className="text-sm font-bold text-muted">{cause.org.name.split(" — ")[0]}</p>
-        <h3 className="text-2xl text-purple-deep group-hover:underline">{r.title}</h3>
-        <p className="text-ink/85">{r.summary}</p>
+      <div className="flex flex-1 flex-col p-5">
+        <p className="text-sm font-bold text-purple">{cause.org.name.split(" — ")[0]}</p>
+        <h3 className="mt-1 line-clamp-2 min-h-[2lh] text-2xl text-purple-deep group-hover:underline">{r.title}</h3>
+        <p className="mt-2 line-clamp-2 min-h-[2lh] text-base text-ink">{r.summary}</p>
         {matched.length > 0 && (
-          <p className="flex items-start gap-2 rounded-2xl bg-gold-soft px-4 py-2 text-sm font-bold text-purple-deep">
+          <p className="mt-3 flex items-start gap-2 rounded-xl bg-gold-soft px-3 py-2 text-sm font-bold text-purple-deep">
             <Sparkles aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-ink" />
             <span>Needs your gifts: {matched.map(skillLabel).join(", ")}</span>
           </p>
         )}
-        <div className="mt-auto space-y-1 pt-2 text-sm text-muted">
-          <p className="flex items-start gap-2">
-            <CalendarDays aria-hidden className="mt-0.5 h-4 w-4 shrink-0" /> <span>{when} · {time}</span>
-          </p>
-          <p className="flex items-center gap-2">
-            <MapPin aria-hidden className="h-4 w-4 shrink-0" /> {r.area === "Online" ? "Online / from home" : r.area}
-          </p>
-        </div>
+        <div className="mt-auto pt-4" />
+        <dl className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5 border-t border-line pt-4 text-base text-ink">
+          <dt><CalendarDays aria-label="When" className="h-5 w-5 text-purple" /></dt>
+          <dd>{day}</dd>
+          <dt><Clock aria-label="Time" className="h-5 w-5 text-purple" /></dt>
+          <dd className="tabular-nums">{time}</dd>
+          <dt><MapPin aria-label="Where" className="h-5 w-5 text-purple" /></dt>
+          <dd>{r.area === "Online" ? "Online, from home" : r.area}</dd>
+        </dl>
       </div>
     </Link>
   );

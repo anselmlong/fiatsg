@@ -68,11 +68,25 @@ export default async function OrgDashboard({ searchParams }: PageProps<"/org">) 
                     <p className="text-sm text-muted">{when}</p>
                     {r.status === "changes_requested" && r.reviewComment && <p className="mt-1 text-sm font-bold text-warn">CF: “{r.reviewComment}”</p>}
                   </div>
-                  <div className="flex gap-6 text-center">
-                    <div><p className="font-serif text-3xl font-bold text-purple">{acceptedCount}/{r.volunteersNeeded}</p><p className="text-sm text-muted">confirmed</p></div>
-                    <div><p className={`font-serif text-3xl tabular-nums font-bold ${waiting ? "text-gold-ink" : "text-purple"}`}>{waiting}</p><p className="text-sm text-muted">new offers</p></div>
-                    <div><p className="font-serif text-3xl font-bold text-purple">{prayerCount}</p><p className="text-sm text-muted">praying</p></div>
-                  </div>
+                  <dl className="grid grid-cols-3 gap-2 text-center sm:w-80">
+                    {(r.status === "completed"
+                      ? [
+                          { n: r.outcomeHours ?? 0, l: "hours given" },
+                          { n: r.outcomePeopleServed ?? 0, l: "people served" },
+                          { n: prayerCount, l: "praying" },
+                        ]
+                      : [
+                          { n: `${acceptedCount}/${r.volunteersNeeded}`, l: "confirmed" },
+                          { n: waiting, l: "new offers", hot: waiting > 0 },
+                          { n: prayerCount, l: "praying" },
+                        ]
+                    ).map((x) => (
+                      <div key={x.l} className="flex flex-col-reverse">
+                        <dt className="text-sm text-muted">{x.l}</dt>
+                        <dd className={`font-serif text-3xl font-bold tabular-nums ${"hot" in x && x.hot ? "text-gold-ink" : "text-purple"}`}>{x.n}</dd>
+                      </div>
+                    ))}
+                  </dl>
                 </Link>
               </li>
             );
