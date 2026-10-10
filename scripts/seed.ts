@@ -7,6 +7,7 @@ import { sql } from "drizzle-orm";
 
 const ADMIN = { email: "cf@fiat.sg", password: "fiat-cf-2026" };
 const ORG_PASSWORD = "fiat-org-2026";
+const VOLUNTEER = { email: "maria@fiat.sg", password: "fiat-2026", name: "Maria Tan" };
 
 type Req = {
   title: string;
@@ -25,6 +26,9 @@ type Req = {
   address?: string;
   ageGroup: string;
   status: "approved" | "pending_review" | "completed";
+  category: string;
+  // 1 one-off, 2 regular, 3 long-term or skilled. Defaults from kind.
+  tier?: number;
   outcome?: { hours?: number; served?: number; summary: string };
   updates?: { body: string; photoUrl?: string; daysAgo: number }[];
   prayers?: { name: string; message: string }[];
@@ -42,7 +46,8 @@ type OrgSeed = {
   foundedYear: number | null;
   coverUrl: string;
   status: "approved" | "pending";
-  requests: Req[];
+  requests: (Omit<Req, "category"> & { category?: string })[];
+  category: string;
 };
 
 // Content below is taken from each organisation's own public website (Oct 2026):
@@ -51,6 +56,7 @@ type OrgSeed = {
 const ORGS: OrgSeed[] = [
   {
     email: "cws@fiat.sg",
+    category: "seniors",
     contact: "Volunteer Team, CWS",
     name: "Catholic Welfare Services",
     tagline: "We journey with people-in-need to live life to the fullest.",
@@ -103,6 +109,7 @@ const ORGS: OrgSeed[] = [
   },
   {
     email: "acmi@fiat.sg",
+    category: "migrants",
     contact: "Volunteer Team, ACMI",
     name: "ACMI — Archdiocesan Commission for the Pastoral Care of Migrants & Itinerant People",
     tagline: "Family to migrants.",
@@ -117,6 +124,7 @@ const ORGS: OrgSeed[] = [
     requests: [
       {
         title: "Helpline volunteers for ACMI Family Connectors",
+        tier: 3,
         summary: "Answer the helpline, take in clients and make engagement calls, one 3-hour shift a week.",
         story:
           "ACMI Family Connectors supports transnational families. Helpline volunteers handle helpline support, client intake and referrals, client engagement calls and administrative support.\n\nYou'll need to be aged 18 or above, comfortable on the phone, have basic computer skills and commit to one 3-hour shift a week. Additional languages and a social work or counselling background are an advantage.",
@@ -171,6 +179,7 @@ const ORGS: OrgSeed[] = [
       },
       {
         title: "Interpreter and translator",
+        tier: 3,
         summary: "Interpret between ACMI staff and migrant beneficiaries during office hours, for at least 3 months.",
         story:
           "ACMI needs interpreters and translators to help staff and migrant beneficiaries understand each other in conversations, engagements and correspondence.\n\nYou'll need to be aged 18 or above, fluent in English and at least one other language, comfortable with migrant communities, and respectful and patient. Hours are flexible within office hours, for a minimum of three months. A briefing is arranged by appointment.",
@@ -227,6 +236,7 @@ const ORGS: OrgSeed[] = [
   },
   {
     email: "caritas@fiat.sg",
+    category: "seniors",
     contact: "Caritas Singapore",
     name: "Caritas Singapore",
     tagline: "God's love in action.",
@@ -276,6 +286,7 @@ const ORGS: OrgSeed[] = [
       },
       {
         title: "Volunteer gardener at CHIJ Sanctuary for Children",
+        category: "children",
         summary: "Tend the garden at IJ Village on alternate Wednesdays and Fridays.",
         story:
           "CHIJ Sanctuary for Children, part of the Caritas Singapore family, is looking for a volunteer gardener at IJ Village on Wednesdays and Fridays, on alternate weeks.",
@@ -296,6 +307,7 @@ const ORGS: OrgSeed[] = [
   },
   {
     email: "oyp@fiat.sg",
+    category: "children",
     contact: "Office for Young People",
     name: "Office for Young People",
     tagline: "Raising up a generation for Christ.",
@@ -310,6 +322,7 @@ const ORGS: OrgSeed[] = [
   },
   {
     email: "cps@fiat.sg",
+    category: "faith",
     contact: "Catholic Prayer Society",
     name: "Catholic Prayer Society",
     tagline: "Help us enrich the faith in the workplace.",
@@ -329,9 +342,10 @@ function daysAgo(n: number) {
 }
 
 async function main() {
-  const { db, orgs, prayers, requests, updates, users } = await import("../src/db");
+  const { db, orgs, prayers, requests, responses, saintMeetings, updates, users } = await import("../src/db");
 
-  await db.execute(sql`truncate table updates, prayers, responses, requests, orgs, users restart identity cascade`);
+  await db.execute(sql`truncate table saint_meetings, updates, prayers, responses, requests, orgs, users restart identity cascade`);
+  const byTitle = new Map<string, number>();
 
   await db.insert(users).values({
     email: ADMIN.email,
@@ -382,6 +396,8 @@ async function main() {
           area: r.area,
           address: r.address ?? null,
           ageGroup: r.ageGroup,
+          category: r.category ?? o.category,
+          tier: r.tier ?? (r.kind === "one_off" ? 1 : 2),
           status: r.status,
           outcomeHours: r.outcome?.hours ?? null,
           outcomePeopleServed: r.outcome?.served ?? null,
@@ -391,6 +407,7 @@ async function main() {
           createdAt: daysAgo(30),
         })
         .returning();
+      byTitle.set(r.title, req.id);
       for (const u of r.updates ?? []) {
         await db.insert(updates).values({ requestId: req.id, body: u.body, photoUrl: u.photoUrl ?? null, createdAt: daysAgo(u.daysAgo) });
       }
@@ -402,7 +419,37 @@ async function main() {
     }
   }
 
+  // A demo volunteer who has already met St Monica (praying), St Joseph (offering help) and St Frances Cabrini (Games Day).
+  // She's confirmed for Sunday's English class, where checking in by QR brings St Josephine Bakhita.
+  const [maria] = await db
+    .insert(users)
+    .values({
+      email: VOLUNTEER.email,
+      name: VOLUNTEER.name,
+      passwordHash: await bcrypt.hash(VOLUNTEER.password, 10),
+      role: "supporter",
+      phone: "9123 4567",
+      skills: ["befriending", "teaching", "translation"],
+      area: "Central",
+      createdAt: daysAgo(40),
+    })
+    .returning();
+  const gamesDay = byTitle.get("Games Day for migrant workers")!;
+  const english = byTitle.get("English Level 1 assistant trainer")!;
+  const villa = byTitle.get("Help at Villa Francis Home for the Aged")!;
+  await db.insert(prayers).values({ requestId: villa, userId: maria.id, name: "Maria", createdAt: daysAgo(20) });
+  await db.insert(responses).values([
+    { requestId: gamesDay, userId: maria.id, status: "accepted", checkedInAt: daysAgo(34), createdAt: daysAgo(38) },
+    { requestId: english, userId: maria.id, status: "accepted", note: "I taught English in a parish catechism class for years.", createdAt: daysAgo(5) },
+  ]);
+  await db.insert(saintMeetings).values([
+    { userId: maria.id, saintId: "monica", taskId: "pray", seenAt: daysAgo(20), createdAt: daysAgo(20) },
+    { userId: maria.id, saintId: "joseph", taskId: "offer", seenAt: daysAgo(38), createdAt: daysAgo(38) },
+    { userId: maria.id, saintId: "cabrini", requestId: gamesDay, seenAt: daysAgo(34), createdAt: daysAgo(34) },
+  ]);
+
   console.log("\nSeeded. Demo logins:");
+  console.log(`  Volunteer: ${VOLUNTEER.email} / ${VOLUNTEER.password}`);
   console.log(`  Catholic Foundation admin: ${ADMIN.email} / ${ADMIN.password}`);
   for (const o of ORGS) console.log(`  ${o.status === "pending" ? "(pending) " : ""}${o.name.split(" — ")[0]}: ${o.email} / ${ORG_PASSWORD}`);
 }

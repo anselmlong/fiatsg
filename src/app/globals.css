@@ -190,6 +190,20 @@ input, textarea, select { font: inherit; }
   from { opacity: 0; transform: scale(0.94); filter: blur(4px); }
   to { opacity: 1; transform: none; filter: none; }
 }
+/* Meeting a saint: the holy card turns over out of the dark, and gold light passes across it. */
+@keyframes card-turn {
+  from { transform: perspective(1200px) rotateY(-180deg) scale(0.7); opacity: 0; }
+  60% { opacity: 1; }
+  to { transform: perspective(1200px) rotateY(0) scale(1); opacity: 1; }
+}
+@keyframes card-shimmer {
+  from { transform: translateX(-120%) skewX(-18deg); }
+  to { transform: translateX(220%) skewX(-18deg); }
+}
+@keyframes halo-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
 .seal-ring { stroke-dasharray: 151; }
 .seal-check { stroke-dasharray: 30; }
 .gift-option:active { transform: scale(0.98); }
@@ -206,4 +220,7 @@ input, textarea, select { font: inherit; }
   .candle-ignite { animation: candle-ignite 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
   .received-glow { animation: received-glow 1.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
   .rise-in { animation: rise-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .card-turn { animation: card-turn 1100ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both; }
+  .card-shimmer { animation: card-shimmer 1400ms ease-in-out 1100ms both; }
+  .halo-breathe { animation: halo-breathe 3.6s ease-in-out infinite; }
 }

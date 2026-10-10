@@ -31,6 +31,8 @@ export const users = pgTable("users", {
   skills: text("skills").array().notNull().default([]),
   otherSkill: text("other_skill"),
   area: text("area"),
+  // The supporter whose share link brought this person to Fiat.
+  invitedBy: integer("invited_by"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -77,6 +79,9 @@ export const requests = pgTable("requests", {
   // Shown only to volunteers the organisation has accepted.
   volunteerNotes: text("volunteer_notes"),
   ageGroup: text("age_group").notNull().default("all"),
+  // Which saints a cause brings: see lib/saints.ts. Null until the org picks a category.
+  category: text("category"),
+  tier: integer("tier").notNull().default(1),
   status: text("status").$type<RequestStatus>().notNull().default("pending_review"),
   reviewComment: text("review_comment"),
   outcomeHours: integer("outcome_hours"),
@@ -99,6 +104,7 @@ export const responses = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     note: text("note"),
     status: text("status").$type<ResponseStatus>().notNull().default("offered"),
+    checkedInAt: timestamp("checked_in_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (t) => [uniqueIndex("responses_request_user").on(t.requestId, t.userId)],
@@ -125,8 +131,26 @@ export const updates = pgTable("updates", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Each saint a supporter has met, and the task that brought them. seenAt is set once the reveal has played.
+export const saintMeetings = pgTable(
+  "saint_meetings",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    saintId: text("saint_id").notNull(),
+    taskId: text("task_id"),
+    requestId: integer("request_id").references(() => requests.id, { onDelete: "set null" }),
+    seenAt: timestamp("seen_at"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("saint_meetings_user_saint").on(t.userId, t.saintId)],
+);
+
 export type User = typeof users.$inferSelect;
 export type Org = typeof orgs.$inferSelect;
 export type Request = typeof requests.$inferSelect;
 export type Response = typeof responses.$inferSelect;
 export type Update = typeof updates.$inferSelect;
+export type SaintMeeting = typeof saintMeetings.$inferSelect;

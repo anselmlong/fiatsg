@@ -7,6 +7,7 @@ import { db, orgs, requests, responses, updates, type ResponseStatus } from "@/d
 import { requireOrg } from "@/lib/auth";
 import { type FormState, int, list, str, strOrNull } from "@/lib/forms";
 import { parseMedia } from "@/lib/media";
+import { defaultTier, isCategory } from "@/lib/saints";
 import { AREAS, isSkill, WEEKDAYS } from "@/lib/skills";
 
 async function ownedRequest(requestId: number) {
@@ -37,6 +38,8 @@ function readRequest(fd: FormData) {
     address: remote ? null : strOrNull(fd, "address"),
     volunteerNotes: strOrNull(fd, "volunteerNotes"),
     ageGroup: str(fd, "ageGroup") || "all",
+    category: isCategory(str(fd, "category")) ? str(fd, "category") : null,
+    tier: defaultTier(kind),
   };
   let error: string | undefined;
   if (!values.title) error = "Please give your request a title.";
@@ -66,7 +69,7 @@ export async function editRequest(requestId: number, _: FormState, fd: FormData)
   if (req.status === "completed") return { error: "Completed requests can't be edited." };
   const { values, error } = readRequest(fd);
   if (error) return { error };
-  await db.update(requests).set({ ...values, status: "pending_review" }).where(eq(requests.id, requestId));
+  await db.update(requests).set({ ...values, tier: req.tier, status: "pending_review" }).where(eq(requests.id, requestId));
   revalidatePath("/org");
   redirect(`/org/requests/${requestId}?submitted=1`);
 }

@@ -6,6 +6,9 @@ import { db, orgs, prayers, requests, responses, updates } from "@/db";
 import { requireUser } from "@/lib/auth";
 import { fmtSchedule, timeAgo } from "@/lib/format";
 import { SkillsForm } from "./skills-form";
+import { SaintCard, SaintWaiting } from "@/components/saint-card";
+import { metSaintIds } from "@/lib/meet";
+import { CATEGORIES, FAITH_TASKS, causePool, saint, saintsIn, type Saint } from "@/lib/saints";
 import { Sprout } from "lucide-react";
 
 export const metadata = { title: "My impact" };
@@ -44,6 +47,8 @@ export default async function MePage() {
   const completed = accepted.filter((m) => m.request.status === "completed");
   const peopleReached = completed.reduce((a, m) => a + (m.request.outcomePeopleServed ?? 0), 0);
   const first = user.name.split(" ")[0];
+  const metIds = await metSaintIds(user.id);
+  const met = new Set(metIds);
 
   return (
     <Container className="py-10">
@@ -65,6 +70,8 @@ export default async function MePage() {
           </div>
         ))}
       </section>
+
+      <Saints met={met} />
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_400px]">
         <div className="space-y-12">
@@ -153,5 +160,56 @@ export default async function MePage() {
         </aside>
       </div>
     </Container>
+  );
+}
+
+const TIER_PLACE = ["", "a one-off event", "a regular role", "a long-term role"];
+
+// The saints met so far, by category, with one soft silhouette hinting at who comes next.
+function Saints({ met }: { met: Set<string> }) {
+  // Sharing the faith first: it's open to everyone, every day.
+  const groups = [...CATEGORIES].sort((a, b) => Number(b.id === "faith") - Number(a.id === "faith")).map((c) => {
+    const all = saintsIn(c.id);
+    if (!all.length) return null;
+    const mine = all.filter((s) => met.has(s.id));
+    let hint: string | null = null;
+    if (c.id === "faith") {
+      const task = FAITH_TASKS.find((t) => !met.has(t.saintId));
+      if (task) hint = `Someone is waiting for you to ${task.title.charAt(0).toLowerCase()}${task.title.slice(1)}.`;
+    } else {
+      const tier = [1, 2, 3].find((t) => causePool(c.id, t).some((s) => !met.has(s.id)));
+      if (tier) hint = `Someone is waiting to meet you at ${TIER_PLACE[tier]} serving ${c.label.toLowerCase()}.`;
+    }
+    return { c, mine, hint };
+  }).filter((g) => g !== null);
+
+  return (
+    <section id="saints" aria-labelledby="saints-title" className="mt-12 scroll-mt-28">
+      <h2 id="saints-title" className="text-3xl font-bold">Saints you've met</h2>
+      <p className="mt-1 text-lg text-muted">Each time you serve, pray or bring someone along, you meet a saint who did the same.</p>
+      <div className="mt-6 space-y-8">
+        {groups.map(({ c, mine, hint }) => (
+          <div key={c.id}>
+            <h3 className="text-xl font-bold">{c.label}</h3>
+            <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+              {mine.map((s: Saint) => (
+                <li key={s.id}>
+                  <Link href={`/saints/${s.id}`} className="block no-underline transition hover:-translate-y-1">
+                    <SaintCard saint={saint(s.id)!} />
+                  </Link>
+                </li>
+              ))}
+              {hint && (
+                <li>
+                  <Link href={c.id === "faith" ? "/faith" : "/causes"} className="block h-full no-underline">
+                    <SaintWaiting hint={hint} />
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

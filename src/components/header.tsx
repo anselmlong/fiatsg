@@ -22,6 +22,7 @@ export async function Header() {
           ]
         : [
             { href: "/causes", label: "Find a cause" },
+            { href: "/faith", label: "Share your faith" },
             ...(user ? [{ href: "/me", label: "My impact" }] : []),
           ];
 

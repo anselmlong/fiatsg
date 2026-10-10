@@ -2,12 +2,15 @@ import type { Metadata, Viewport } from "next";
 import { Caudex, Nunito_Sans } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { SaintReveal } from "@/components/saint-reveal";
+import { currentUser } from "@/lib/auth";
 import "./globals.css";
 
 const heading = Caudex({ variable: "--font-heading", subsets: ["latin"], weight: ["400", "700"] });
 const body = Nunito_Sans({ variable: "--font-body", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.SITE_URL ?? "https://fiat.anselmlong.com"),
   title: { default: "Fiat — Give my heart", template: "%s · Fiat" },
   description:
     "Not everyone can give money. Everyone can give something. Offer your time, your skills and your prayers to Catholic organisations in Singapore.",
@@ -18,6 +21,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#4e2984" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const user = await currentUser();
   return (
     <html lang="en" className={`${heading.variable} ${body.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
@@ -29,6 +33,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
+        <SaintReveal enabled={user?.role === "supporter"} />
       </body>
     </html>
   );

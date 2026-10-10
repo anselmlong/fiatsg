@@ -1,9 +1,11 @@
 "use server";
 
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db, orgs, users } from "@/db";
 import { checkPassword, endSession, hashPassword, startSession } from "@/lib/auth";
+import { meetForTask } from "@/lib/meet";
 import { type FormState, list, safeNext, str, strOrNull } from "@/lib/forms";
 import { COVER_LIBRARY, isSkill } from "@/lib/skills";
 
@@ -36,6 +38,8 @@ export async function joinSupporter(_: FormState, fd: FormData): Promise<FormSta
   if (problem) return { error: problem };
   const email = str(fd, "email").toLowerCase();
   if (await emailTaken(email)) return { error: "An account with this email already exists. Try logging in instead." };
+  const jar = await cookies();
+  const inviter = await inviterFrom(jar.get("fiat_ref")?.value);
 
   const [user] = await db
     .insert(users)
@@ -45,13 +49,23 @@ export async function joinSupporter(_: FormState, fd: FormData): Promise<FormSta
       phone: strOrNull(fd, "phone"),
       passwordHash: await hashPassword(str(fd, "password")),
       role: "supporter",
+      invitedBy: inviter?.id ?? null,
       skills: list(fd, "skills").filter(isSkill),
       otherSkill: strOrNull(fd, "otherSkill"),
       area: strOrNull(fd, "area"),
     })
     .returning();
+  // The friend who shared the link meets St Andrew, who brought his brother Peter to Jesus.
+  if (inviter) await meetForTask(inviter.id, "invite");
+  jar.delete("fiat_ref");
   await startSession(user.id);
   redirect(safeNext(str(fd, "next"), "/causes?welcome=1"));
+}
+
+async function inviterFrom(ref: string | undefined) {
+  if (!ref || !/^\d+$/.test(ref)) return null;
+  const [u] = await db.select({ id: users.id, role: users.role }).from(users).where(eq(users.id, Number(ref)));
+  return u?.role === "supporter" ? u : null;
 }
 
 export async function joinOrg(_: FormState, fd: FormData): Promise<FormState> {

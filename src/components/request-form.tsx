@@ -6,6 +6,7 @@ import type { Request } from "@/db";
 import { fmtSchedule } from "@/lib/format";
 import type { FormState } from "@/lib/forms";
 import { AGE_GROUPS, AREAS, WEEKDAYS, ageLabel, skillLabel } from "@/lib/skills";
+import { CATEGORIES, categoryLabel } from "@/lib/saints";
 import { CoverPicker } from "./cover-picker";
 import { DateField, Select, TimeSelect, timeLabel } from "./date-time";
 import { MediaUploader } from "./media-uploader";
@@ -153,6 +154,13 @@ export function RequestForm({
         <legend className="text-2xl font-bold text-purple-deep">Which gifts do you need?</legend>
         <p className="text-muted">Tap all that apply. Volunteers with these gifts will see your cause first.</p>
         <SkillPicker selected={initial?.skills ?? []} />
+        <label className="field">
+          <span className="label">Who does this cause serve?</span>
+          <Select name="category" defaultValue={initial?.category ?? ""}>
+            <option value="" disabled>Choose one</option>
+            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+          </Select>
+        </label>
         <div className="grid gap-5 sm:grid-cols-[12rem_1fr]">
           <label className="field">
             <span className="label">How many volunteers?</span>
@@ -299,7 +307,7 @@ function fromRequest(r: Request) {
   const fd = new FormData();
   const fields: [string, string | number | null][] = [
     ["title", r.title], ["summary", r.summary], ["story", r.story], ["volunteersNeeded", r.volunteersNeeded],
-    ["ageGroup", r.ageGroup], ["kind", r.kind], ["startDate", r.startDate], ["endDate", r.endDate],
+    ["ageGroup", r.ageGroup], ["category", r.category], ["kind", r.kind], ["startDate", r.startDate], ["endDate", r.endDate],
     ["startTime", r.startTime], ["endTime", r.endTime], ["area", r.area], ["address", r.address], ["volunteerNotes", r.volunteerNotes],
   ];
   for (const [k, val] of fields) if (val != null) fd.set(k, String(val));
@@ -328,6 +336,7 @@ function Review({ fd, onEdit }: { fd: FormData; onEdit: (step: number) => void }
         ["Gifts needed", fd.getAll("skills").map(String).map(skillLabel).join(", ")],
         ["Volunteers", v("volunteersNeeded")],
         ["Who can come", ageLabel(v("ageGroup"))],
+        ["Serves", v("category") ? categoryLabel(v("category")) : ""],
       ],
     },
     { step: 2, title: "When", rows: [["Date", when], ["Time", time]] },

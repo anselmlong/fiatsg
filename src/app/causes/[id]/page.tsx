@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { withdrawOffer } from "@/app/actions/supporter";
+import { ShareButtons } from "@/components/share-buttons";
 import { MediaGallery } from "@/components/media-gallery";
 import { Container, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses, users } from "@/db";
@@ -12,10 +13,33 @@ import { currentOrg, currentUser } from "@/lib/auth";
 import { fmtSchedule, isFresh, timeAgo } from "@/lib/format";
 import { getCause, getRecentPrayers, getUpdates } from "@/lib/queries";
 import { ageLabel } from "@/lib/skills";
+import { siteUrl } from "@/lib/site";
 import { Confirmed } from "./confirmed";
 import { OfferForm, PrayForm } from "./forms";
 
-export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
+// Who shared this link, if anyone: their name goes on the link preview and the welcome.
+async function inviterName(ref: unknown) {
+  if (typeof ref !== "string" || !/^\d{1,9}$/.test(ref)) return null;
+  const [u] = await db.select({ name: users.name, role: users.role }).from(users).where(eq(users.id, Number(ref)));
+  return u?.role === "supporter" ? u.name.split(" ")[0] : null;
+}
+
+export async function generateMetadata({ params, searchParams }: PageProps<"/causes/[id]">) {
+  const id = Number((await params).id);
+  const cause = Number.isInteger(id) ? await getCause(id) : null;
+  if (!cause) return {};
+  const from = await inviterName((await searchParams).ref);
+  const title = from ? `${from} invites you: ${cause.request.title}` : cause.request.title;
+  const images = cause.request.coverUrl ? [{ url: cause.request.coverUrl }] : undefined;
+  return {
+    title: cause.request.title,
+    description: cause.request.summary,
+    openGraph: { title, description: cause.request.summary, images, siteName: "Fiat" },
+    twitter: { card: "summary_large_image", title, description: cause.request.summary, images },
+  };
+}
+
+export default async function CausePage({ params, searchParams }: PageProps<"/causes/[id]">) {
   const id = Number((await params).id);
   if (!Number.isInteger(id)) notFound();
   const [cause, user, myOrg] = await Promise.all([getCause(id), currentUser(), currentOrg()]);
@@ -37,7 +61,10 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
   const [contact] = confirmed
     ? await db.select({ name: users.name, email: users.email, phone: users.phone }).from(users).where(eq(users.id, org.ownerId))
     : [];
-  const alreadyPrayed = !!(await cookies()).get(`prayed_${id}`);
+  const jar = await cookies();
+  const alreadyPrayed = !!jar.get(`prayed_${id}`);
+  const invitedBy = !user ? await inviterName((await searchParams).ref ?? jar.get("fiat_ref")?.value) : null;
+  const shareUrl = `${await siteUrl()}/causes/${id}${user?.role === "supporter" ? `?ref=${user.id}` : ""}`;
   const { when, time } = fmtSchedule(r);
   const mySkills = user?.role === "supporter" ? user.skills : [];
   const spotsLeft = Math.max(0, r.volunteersNeeded - cause.acceptedCount);
@@ -60,6 +87,15 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
           </p>
         </Container>
       </div>
+
+      {invitedBy && (
+        <div className="border-b border-gold/40 bg-gold-soft">
+          <Container className="py-4">
+            <p className="font-serif text-xl text-purple-deep"><strong>{invitedBy}</strong> invited you. A saint is waiting to meet you.</p>
+            <p className="text-ink/80">Join Fiat, say yes to a cause like this one, and see who you meet.</p>
+          </Container>
+        </div>
+      )}
 
       {confirmed && contact && <Confirmed request={r} org={org} contact={contact} firstName={user!.name.split(" ")[0]} />}
 
@@ -208,6 +244,18 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
             </div>
           )}
           </div>
+
+          {isPublic && r.status === "approved" && (
+            <div className="card p-6">
+              <h2 className="text-2xl font-bold">Bring a friend</h2>
+              <p className="mt-1 text-muted">
+                {user?.role === "supporter" ? "If a friend joins from your link, you'll meet a saint. Come together, and you'll both meet another." : "Know someone who'd love this? Send it to them."}
+              </p>
+              <div className="mt-4">
+                <ShareButtons url={shareUrl} title={r.title} text={`Come and help with me: ${r.title}, with ${orgShort}.`} />
+              </div>
+            </div>
+          )}
 
           {isOwner && (
             <Notice>

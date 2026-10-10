@@ -9,6 +9,9 @@ import { fmtSchedule, timeAgo } from "@/lib/format";
 import { getUpdates, respondents } from "@/lib/queries";
 import { CompleteForm, UpdateForm } from "./forms";
 import { Mail, Phone } from "lucide-react";
+import QRCode from "qrcode";
+import { checkInToken } from "@/lib/meet";
+import { siteUrl } from "@/lib/site";
 
 export default async function OrgRequestPage({ params, searchParams }: PageProps<"/org/requests/[id]">) {
   const org = await requireOrg();
@@ -21,6 +24,10 @@ export default async function OrgRequestPage({ params, searchParams }: PageProps
   const accepted = people.filter((p) => p.response.status === "accepted").length;
   const order = { offered: 0, accepted: 1, declined: 2 } as const;
   people.sort((a, b) => order[a.response.status] - order[b.response.status]);
+  const checkInUrl = `${await siteUrl()}/causes/${id}/check-in?k=${checkInToken(id)}`;
+  const qr = req.status === "approved"
+    ? await QRCode.toString(checkInUrl, { type: "svg", margin: 1, color: { dark: "#34195c", light: "#fffdf9" } })
+    : null;
 
   return (
     <Container className="py-10">
@@ -65,7 +72,10 @@ export default async function OrgRequestPage({ params, searchParams }: PageProps
                       <p className="text-xl font-bold text-purple-deep">{user.name}</p>
                       <p className="text-sm text-muted">Offered {timeAgo(response.createdAt)}{user.area ? ` · Lives near ${user.area}` : ""}</p>
                     </div>
-                    <StatusBadge status={response.status} label={response.status === "offered" ? "New" : undefined} />
+                    <div className="flex flex-wrap gap-2">
+                      {response.checkedInAt && <span className="chip bg-ok-soft text-ok">Checked in</span>}
+                      <StatusBadge status={response.status} label={response.status === "offered" ? "New" : undefined} />
+                    </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-lg">
                     <a href={`mailto:${user.email}`} className="inline-flex items-center gap-2 font-bold"><Mail aria-hidden className="h-5 w-5" /> {user.email}</a>
@@ -106,6 +116,14 @@ export default async function OrgRequestPage({ params, searchParams }: PageProps
         </section>
 
         <aside className="space-y-6">
+          {qr && (
+            <div className="card p-6 text-center">
+              <h2 className="text-2xl font-bold">Check-in code</h2>
+              <p className="mt-1 text-sm text-muted">Show this at the venue. Confirmed volunteers scan it with their phone camera when they arrive.</p>
+              <div className="mx-auto mt-4 w-56 [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: qr }} />
+              <a href={checkInUrl} className="mt-3 inline-block break-all text-xs text-muted">{checkInUrl}</a>
+            </div>
+          )}
           {(req.status === "approved" || req.status === "completed") && (
             <div className="card p-6">
               <h2 className="text-2xl font-bold">Share an update</h2>

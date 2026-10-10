@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { offerHelp, pray } from "@/app/actions/supporter";
 import { Submit } from "@/components/submit";
 import { Candle } from "@/components/candle";
+import { pingSaints } from "@/components/saint-reveal";
 import { PrayIcon } from "@/components/icons";
 
 export function OfferForm({ requestId, orgName, firstName }: { requestId: number; orgName: string; firstName: string }) {
   const [state, action] = useActionState(offerHelp.bind(null, requestId), undefined);
+  useEffect(() => {
+    if (state?.ok) pingSaints();
+  }, [state]);
   if (state?.ok) {
     return (
       <div className="rounded-2xl bg-ok-soft p-5 text-ok" role="status">
@@ -36,6 +40,10 @@ export function OfferForm({ requestId, orgName, firstName }: { requestId: number
 
 export function PrayForm({ requestId, count, alreadyPrayed, needsName }: { requestId: number; count: number; alreadyPrayed: boolean; needsName: boolean }) {
   const [state, action] = useActionState(pray.bind(null, requestId), undefined);
+  useEffect(() => {
+    // Let the candle light first.
+    if (state?.ok === "prayed") setTimeout(pingSaints, 1800);
+  }, [state]);
   const done = alreadyPrayed || !!state?.ok;
   if (done) {
     // The server re-renders with the new prayer already counted.
