@@ -168,6 +168,12 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
 
           {bringAFriend && <div className="lg:hidden">{bringAFriend}</div>}
 
+          <section>
+            <h2 className="text-2xl font-bold">About {orgShort}</h2>
+            <p className="mt-3 line-clamp-3 text-ink/85">{org.history}</p>
+            <Link href={`/orgs/${org.id}`} className="mt-3 inline-block font-bold">Read more about {orgShort} →</Link>
+          </section>
+
           {isPublic && r.status !== "completed" && (
             <section className="card p-6">
               <h2 className="text-2xl font-bold">Can't come? You can still pray.</h2>
@@ -186,12 +192,6 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
               )}
             </section>
           )}
-
-          <section>
-            <h2 className="text-2xl font-bold">About {orgShort}</h2>
-            <p className="mt-3 line-clamp-3 text-ink/85">{org.history}</p>
-            <Link href={`/orgs/${org.id}`} className="mt-3 inline-block font-bold">Read more about {orgShort} →</Link>
-          </section>
 
         </div>
 

@@ -135,27 +135,30 @@ export default async function MePage() {
           </section>
         </div>
 
-        <aside id="skills" className="scroll-mt-28 space-y-6">
-          <div className="card p-6">
-            <h2 className="text-2xl font-bold">My gifts</h2>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {user.skills.length ? user.skills.map((s) => <SkillChip key={s} id={s} />) : <p className="text-muted">None chosen yet.</p>}
-              {user.otherSkill && <span className="chip">{user.otherSkill}</span>}
-            </div>
-            <details className="mt-5">
-              <summary className="btn-ghost w-full cursor-pointer list-none">Change my gifts & details</summary>
-              <div className="mt-5">
-                <SkillsForm skills={user.skills} otherSkill={user.otherSkill} area={user.area} phone={user.phone} />
+        {/* Headings sit outside the cards, as "My causes" does, so the cards start on one line. */}
+        <aside id="skills" className="scroll-mt-28 space-y-12">
+          <section>
+            <h2 className="text-3xl font-bold">My gifts</h2>
+            <div className="card mt-6 p-6">
+              <div className="flex flex-wrap gap-2">
+                {user.skills.length ? user.skills.map((s) => <SkillChip key={s} id={s} />) : <p className="text-muted">None chosen yet.</p>}
+                {user.otherSkill && <span className="chip">{user.otherSkill}</span>}
               </div>
-            </details>
-          </div>
+              <details className="mt-5">
+                <summary className="btn-ghost w-full cursor-pointer list-none">Change my gifts & details</summary>
+                <div className="mt-5">
+                  <SkillsForm skills={user.skills} otherSkill={user.otherSkill} area={user.area} phone={user.phone} />
+                </div>
+              </details>
+            </div>
+          </section>
           {prayed.length > 0 && (
-            <div className="card p-6">
-              <h2 className="text-2xl font-bold">I'm praying for</h2>
-              <ul className="mt-3 space-y-2">
+            <section>
+              <h2 className="text-3xl font-bold">I'm praying for</h2>
+              <ul className="card mt-6 space-y-2 p-6">
                 {prayed.map((p) => <li key={p.requestId}><Link href={`/causes/${p.requestId}`}>{p.title}</Link></li>)}
               </ul>
-            </div>
+            </section>
           )}
         </aside>
       </div>
