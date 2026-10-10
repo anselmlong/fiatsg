@@ -33,14 +33,14 @@ export function ShareButtons({ url, text, title }: { url: string; text: string; 
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-2 gap-2">
-        <a href={`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`} target="_blank" rel="noreferrer" className="btn bg-[#1f8f4e] text-white hover:brightness-110">
-          <WhatsAppIcon aria-hidden className="h-5 w-5" /> WhatsApp
+        <a href={`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`} target="_blank" rel="noreferrer" className="btn !px-3 bg-[#1f8f4e] text-white hover:brightness-110">
+          <WhatsAppIcon aria-hidden className="h-5 w-5 shrink-0" /> WhatsApp
         </a>
-        <a href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer" className="btn bg-[#087eaf] text-white hover:brightness-110">
-          <Send aria-hidden className="h-5 w-5" /> Telegram
+        <a href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer" className="btn !px-3 bg-[#087eaf] text-white hover:brightness-110">
+          <Send aria-hidden className="h-5 w-5 shrink-0" /> Telegram
         </a>
         <button type="button" onClick={share} className="btn-ghost col-span-2">
-          <Share2 aria-hidden className="h-5 w-5" /> Share
+          <Share2 aria-hidden className="h-5 w-5 shrink-0" /> Share
         </button>
       </div>
       <button type="button" onClick={copy} className="mx-auto flex items-center gap-2 text-sm font-bold text-purple">
