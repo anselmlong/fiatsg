@@ -1,7 +1,8 @@
 "use client";
 
 import { Check, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
-import { useActionState, useRef, useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import type { Request } from "@/db";
 import { fmtSchedule } from "@/lib/format";
 import type { FormState } from "@/lib/forms";
@@ -24,6 +25,8 @@ const TIME_PRESETS = [
 
 // One form split into steps. Every step stays in the DOM (just hidden), so
 // the final submit sends all fields together and nothing is lost going back.
+// It submits from onSubmit rather than `action`: React resets a form after its
+// action returns, which would silently empty the hidden steps on a server error.
 export function RequestForm({
   action: serverAction,
   initial,
@@ -33,7 +36,7 @@ export function RequestForm({
   initial?: Request;
   submitLabel: string;
 }) {
-  const [state, action] = useActionState(serverAction, undefined);
+  const [state, action, pending] = useActionState(serverAction, undefined);
   const form = useRef<HTMLFormElement>(null);
   // Editing starts on the summary, so people jump straight to what they want to change.
   const [step, setStep] = useState(initial ? REVIEW : 0);
@@ -47,11 +50,29 @@ export function RequestForm({
   const [endTime, setEndTime] = useState(initial?.endTime ?? "12:00");
 
   // Native validation for one step, plus the checks the browser can't do.
+  // On a problem it shows that step, so the message sits next to the field.
   function stepIsValid(i: number) {
     const fieldset = form.current?.querySelector<HTMLFieldSetElement>(`[data-step="${i}"]`);
     if (!fieldset) return true;
     const fields = [...fieldset.querySelectorAll<HTMLInputElement>("input, select, textarea")];
     const bad = fields.find((f) => !f.checkValidity());
+    const fd = new FormData(form.current!);
+    const endDate = String(fd.get("endDate") ?? "");
+    const problem = bad
+      ? ""
+      : i === 0 && String(fd.get("story") ?? "").trim().length < 30
+        ? "Please tell volunteers a little more about why this matters (a few sentences)."
+        : i === 1 && !fd.getAll("skills").length
+          ? "Please choose at least one gift you need."
+          : i === 2 && kind === "regular" && !fd.getAll("weekdays").length
+            ? "Please choose which day(s) of the week."
+            : i === 2 && kind === "regular" && endDate && endDate < String(fd.get("startDate") ?? "")
+              ? "The end date can't be before the start date."
+              : i === 2 && endTime <= startTime
+                ? "The end time needs to be after the start time."
+                : "";
+    if (!bad && !problem) return true;
+    if (i !== step) flushSync(() => setStep(i));
     if (bad) {
       // The date field's real input is hidden; point at its calendar button instead.
       if (bad.classList.contains("sr-only")) {
@@ -61,31 +82,13 @@ export function RequestForm({
         setStepError("");
         bad.reportValidity();
       }
-      return false;
-    }
-    const fd = new FormData(form.current!);
-    const problem =
-      i === 0 && String(fd.get("story") ?? "").trim().length < 30
-        ? "Please tell volunteers a little more about why this matters (a few sentences)."
-        : i === 1 && !fd.getAll("skills").length
-          ? "Please choose at least one gift you need."
-          : i === 2 && kind === "regular" && !fd.getAll("weekdays").length
-            ? "Please choose which day(s) of the week."
-            : i === 2 && endTime <= startTime
-              ? "The end time needs to be after the start time."
-              : "";
-    setStepError(problem);
-    return !problem;
+    } else setStepError(problem);
+    return false;
   }
 
   function go(to: number) {
     if (to > step) {
-      for (let i = step; i < to; i++) {
-        if (!stepIsValid(i)) {
-          setStep(i);
-          return;
-        }
-      }
+      for (let i = step; i < to; i++) if (!stepIsValid(i)) return;
     } else setStepError("");
     if (to === REVIEW) setSnapshot(new FormData(form.current!));
     setStep(to);
@@ -94,7 +97,19 @@ export function RequestForm({
   }
 
   return (
-    <form ref={form} action={action} onChange={() => setStepError("")} className="scroll-mt-28 space-y-8">
+    <form
+      ref={form}
+      noValidate
+      onSubmit={(e) => {
+        e.preventDefault();
+        // Re-check every step: an edit opens on Check without visiting the others.
+        for (let i = 0; i < REVIEW; i++) if (!stepIsValid(i)) return;
+        const fd = new FormData(e.currentTarget);
+        startTransition(() => action(fd));
+      }}
+      onChange={() => setStepError("")}
+      className="scroll-mt-28 space-y-8"
+    >
       <ol aria-label="Steps" className="flex gap-1.5 sm:gap-2">
         {STEPS.map((label, i) => {
           const done = i < step;
@@ -294,7 +309,7 @@ export function RequestForm({
             {step === REVIEW - 1 ? "Check and send" : "Next"} <ChevronRight aria-hidden className="h-5 w-5" />
           </button>
         ) : (
-          <Submit className="btn-primary text-lg" pending="Sending…">{submitLabel}</Submit>
+          <Submit className="btn-primary text-lg" pending="Sending…" busy={pending}>{submitLabel}</Submit>
         )}
       </div>
       {step === REVIEW && <p className="hint sm:text-right">The Catholic Foundation will review your request before it goes live.</p>}

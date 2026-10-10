@@ -39,6 +39,26 @@ export function CardGridSkeleton({ count = 6 }: { count?: number }) {
   );
 }
 
+// Loading screen for the narrow single-form pages, so they don't flash a wide layout first.
+export function FormPageSkeleton({ width = "max-w-2xl" }: { width?: string }) {
+  return (
+    <Container className={`${width} py-10`}>
+      <Skeleton className="h-10 w-2/3" />
+      <Skeleton className="mt-3 h-5 w-full" />
+      <div className="card mt-8 space-y-6 p-6 sm:p-8">
+        {Array.from({ length: 3 }, (_, i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        ))}
+        <Skeleton className="h-12 w-40 rounded-full" />
+      </div>
+      <p className="sr-only" role="status">Loading…</p>
+    </Container>
+  );
+}
+
 export function SkillChip({ id, highlight = false }: { id: string; highlight?: boolean }) {
   return (
     <span

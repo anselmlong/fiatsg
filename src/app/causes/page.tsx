@@ -51,7 +51,7 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
             See the difference made
           </Link>
         </nav>
-        <details open={isFiltered} className="group open:basis-full">
+        <details open={isFiltered || ["skill", "kind", "area"].some((k) => k in sp)}className="group open:basis-full">
           <summary className="btn-ghost !min-h-14 cursor-pointer list-none">
             <span className="group-open:hidden">Filter by skill, day or place</span>
             <span className="hidden group-open:inline">Hide filters</span>

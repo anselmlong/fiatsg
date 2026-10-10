@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useActionState, useRef, useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 import { joinSupporter } from "@/app/actions/auth";
 import { Submit } from "@/components/submit";
 import { SkillPicker } from "@/components/ui";
@@ -9,9 +9,9 @@ import { AREAS } from "@/lib/skills";
 
 // Two short steps: the account, then gifts. Someone arriving from a cause skips
 // the gifts step so they can offer help straight away; they can add gifts later.
-export function JoinForm({ next }: { next: string }) {
-  const [state, action] = useActionState(joinSupporter, undefined);
-  const quick = next.startsWith("/causes/");
+// Submits from onSubmit, not `action`, so a server error doesn't reset the gifts already picked.
+export function JoinForm({ next, quick }: { next: string; quick: boolean }) {
+  const [state, action, pending] = useActionState(joinSupporter, undefined);
   const [step, setStep] = useState(0);
   const first = useRef<HTMLFieldSetElement>(null);
   // Every error the server can return is about the account fields, so show those again.
@@ -28,7 +28,14 @@ export function JoinForm({ next }: { next: string }) {
   }
 
   return (
-    <form action={action} className="space-y-8">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        startTransition(() => action(fd));
+      }}
+      className="space-y-8"
+    >
       <input type="hidden" name="next" value={next} />
       {!quick && <p className="text-sm font-bold text-muted">Step {step + 1} of 2</p>}
 
@@ -79,7 +86,7 @@ export function JoinForm({ next }: { next: string }) {
 
       {quick ? (
         <>
-          <Submit className="btn-primary w-full text-lg" pending="Creating your account…">Join and offer my help</Submit>
+          <Submit className="btn-primary w-full text-lg" pending="Creating your account…" busy={pending}>Join and offer my help</Submit>
           <p className="hint text-center">You can add your gifts later, so we can suggest more causes for you.</p>
         </>
       ) : step === 0 ? (
@@ -88,7 +95,7 @@ export function JoinForm({ next }: { next: string }) {
         </button>
       ) : (
         <div className="space-y-3">
-          <Submit className="btn-primary w-full text-lg" pending="Creating your account…">Join and find my causes</Submit>
+          <Submit className="btn-primary w-full text-lg" pending="Creating your account…" busy={pending}>Join and find my causes</Submit>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <button type="button" onClick={() => setStep(0)} className="btn-ghost">
               <ChevronLeft aria-hidden className="h-5 w-5" /> Back
