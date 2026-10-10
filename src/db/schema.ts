@@ -74,6 +74,8 @@ export const requests = pgTable("requests", {
   endTime: text("end_time").notNull(),
   area: text("area").notNull(),
   address: text("address"),
+  // Shown only to volunteers the organisation has accepted.
+  volunteerNotes: text("volunteer_notes"),
   ageGroup: text("age_group").notNull().default("all"),
   status: text("status").$type<RequestStatus>().notNull().default("pending_review"),
   reviewComment: text("review_comment"),

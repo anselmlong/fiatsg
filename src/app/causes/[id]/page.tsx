@@ -7,11 +7,12 @@ import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-re
 import { withdrawOffer } from "@/app/actions/supporter";
 import { MediaGallery } from "@/components/media-gallery";
 import { Container, Notice, SkillChip, StatusBadge } from "@/components/ui";
-import { db, responses } from "@/db";
+import { db, responses, users } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
 import { fmtSchedule, isFresh, timeAgo } from "@/lib/format";
 import { getCause, getRecentPrayers, getUpdates } from "@/lib/queries";
 import { ageLabel } from "@/lib/skills";
+import { Confirmed } from "./confirmed";
 import { OfferForm, PrayForm } from "./forms";
 
 export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
@@ -32,6 +33,10 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
       ? db.select().from(responses).where(and(eq(responses.requestId, id), eq(responses.userId, user.id))).then((x) => x[0])
       : undefined,
   ]);
+  const confirmed = myResponse?.status === "accepted" && r.status !== "completed";
+  const [contact] = confirmed
+    ? await db.select({ name: users.name, email: users.email, phone: users.phone }).from(users).where(eq(users.id, org.ownerId))
+    : [];
   const alreadyPrayed = !!(await cookies()).get(`prayed_${id}`);
   const { when, time } = fmtSchedule(r);
   const mySkills = user?.role === "supporter" ? user.skills : [];
@@ -56,16 +61,24 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
         </Container>
       </div>
 
+      {confirmed && contact && <Confirmed request={r} org={org} contact={contact} firstName={user!.name.split(" ")[0]} />}
+
       <Container className="grid gap-10 py-10 lg:grid-cols-[1fr_380px]">
         <div className="min-w-0 space-y-10">
           {r.status === "completed" && (
             <section className="card border-2 border-gold/60 p-7">
               <h2 className="text-3xl font-bold">What your help made possible</h2>
               <p className="mt-3 text-lg">{r.outcomeSummary}</p>
-              <dl className="mt-6 grid grid-cols-3 gap-4 text-center">
-                <div><dt className="text-sm text-muted">Hours given</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{r.outcomeHours ?? "—"}</dd></div>
-                <div><dt className="text-sm text-muted">People served</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{r.outcomePeopleServed ?? "—"}</dd></div>
-                <div><dt className="text-sm text-muted">Prayers</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{cause.prayerCount}</dd></div>
+              <dl className="mt-6 flex flex-wrap justify-around gap-4 text-center">
+                {[
+                  { label: "Hours given", value: r.outcomeHours },
+                  { label: "People served", value: r.outcomePeopleServed },
+                  { label: "Prayers", value: cause.prayerCount },
+                ]
+                  .filter((s) => s.value != null)
+                  .map((s) => (
+                    <div key={s.label} className="min-w-24 flex-1"><dt className="text-sm text-muted">{s.label}</dt><dd className="font-serif text-4xl font-bold tabular-nums text-purple">{s.value}</dd></div>
+                  ))}
               </dl>
             </section>
           )}
@@ -135,7 +148,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
               <div><dt className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</dt><dd>{when}<br />{time}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><MapPin aria-hidden className="h-5 w-5 text-purple" /> Where</dt><dd>{r.area === "Online" ? "Online — from home" : <>{r.address ?? r.area}<br /><span className="text-muted">{r.area}</span></>}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><UsersRound aria-hidden className="h-5 w-5 text-purple" /> Who can come</dt><dd>{ageLabel(r.ageGroup)}</dd></div>
-              <div><dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : `${spotsLeft} of ${r.volunteersNeeded} places still open`}</dd></div>
+              <div><dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : spotsLeft === 0 ? "All places filled" : `${spotsLeft} ${spotsLeft === 1 ? "place" : "places"} open`}</dd></div>
             </dl>
             <div>
               <p className="font-bold">Gifts needed</p>
@@ -152,6 +165,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
                   <div className="space-y-3">
                     <Link href={`/join?next=/causes/${id}`} className="btn-primary w-full text-lg">I'd like to help</Link>
                     <Link href={`/login?next=/causes/${id}`} className="btn-ghost w-full">I already have an account</Link>
+                    <NextSteps orgName={orgShort} />
                   </div>
                 ) : user.role !== "supporter" ? (
                   <p className="text-muted">You're signed in as an organisation or CF account. Volunteers offer help from a supporter account.</p>
@@ -171,7 +185,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
                         <StatusBadge status={myResponse.status} />
                         <p>
                           {myResponse.status === "accepted"
-                            ? `${orgShort} has welcomed your offer. They'll be in touch with the details.`
+                            ? <>{orgShort} has welcomed your offer. <a href="#confirmed" className="font-bold">See where to go and who to contact ↑</a></>
                             : myResponse.status === "declined"
                               ? `${orgShort} has enough help for now. Thank you for offering — there are other causes that need you.`
                               : `Your details have been sent to ${orgShort}. They'll contact you to follow up.`}
@@ -185,7 +199,10 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
                     )}
                   </div>
                 ) : (
-                  <OfferForm requestId={id} orgName={orgShort} firstName={user.name.split(" ")[0]} />
+                  <div className="space-y-4">
+                    <OfferForm requestId={id} orgName={orgShort} firstName={user.name.split(" ")[0]} />
+                    <NextSteps orgName={orgShort} />
+                  </div>
                 )}
               </div>
             </div>
@@ -201,5 +218,25 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
       </Container>
 
     </article>
+  );
+}
+
+function NextSteps({ orgName }: { orgName: string }) {
+  return (
+    <div className="rounded-2xl bg-cream p-4">
+      <p className="font-bold">What happens next</p>
+      <ol className="mt-2 space-y-2 text-sm">
+        {[
+          "You offer to help. It takes a minute.",
+          `${orgName} looks at your offer and confirms you.`,
+          "You'll see the address, your contact person and a calendar invite right here.",
+        ].map((step, i) => (
+          <li key={i} className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple text-xs font-bold text-white">{i + 1}</span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }

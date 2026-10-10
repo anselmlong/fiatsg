@@ -134,6 +134,11 @@ export function RequestForm({
             <input name="address" defaultValue={initial?.address ?? ""} className="input" placeholder="e.g. Church of St Michael, 17 St Michael's Road" />
           </label>
         )}
+        <label className="field">
+          <span className="label">Details for confirmed volunteers <span className="font-normal text-muted">(optional)</span></span>
+          <textarea name="volunteerNotes" rows={3} defaultValue={initial?.volunteerNotes ?? ""} className="input" placeholder="e.g. Meet at the lobby counter and ask for Mary. Wear covered shoes; we'll provide lunch." />
+          <span className="hint">Only volunteers you accept will see this, with your contact details and a calendar invite.</span>
+        </label>
       </fieldset>
 
       {state?.error && <p className="rounded-2xl bg-bad-soft p-4 font-bold text-bad" role="alert">{state.error}</p>}

@@ -2,9 +2,11 @@ import "server-only";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db, orgs, prayers, requests, responses, updates, users } from "@/db";
 
-const prayerCount = sql<number>`(select count(*)::int from ${prayers} where ${prayers.requestId} = ${requests.id})`;
-const acceptedCount = sql<number>`(select count(*)::int from ${responses} where ${responses.requestId} = ${requests.id} and ${responses.status} = 'accepted')`;
-const offeredCount = sql<number>`(select count(*)::int from ${responses} where ${responses.requestId} = ${requests.id} and ${responses.status} <> 'declined')`;
+// The outer table is named explicitly: without a join Drizzle renders ${requests.id} as a bare "id",
+// which inside these subqueries would resolve to the inner table's own id and count the wrong rows.
+const prayerCount = sql<number>`(select count(*)::int from ${prayers} where ${prayers.requestId} = "requests"."id")`;
+const acceptedCount = sql<number>`(select count(*)::int from ${responses} where ${responses.requestId} = "requests"."id" and ${responses.status} = 'accepted')`;
+const offeredCount = sql<number>`(select count(*)::int from ${responses} where ${responses.requestId} = "requests"."id" and ${responses.status} <> 'declined')`;
 
 const causeFields = {
   request: requests,

@@ -95,6 +95,9 @@ export default async function MePage() {
                           <p className="mt-2 text-xl font-bold text-purple-deep">{m.request.title}</p>
                           <p className="text-sm text-muted">{m.orgName.split(" — ")[0]} · {when} · {time}</p>
                           {m.response.status === "offered" && <p className="mt-1 text-sm">They'll contact you soon to follow up.</p>}
+                          {m.response.status === "accepted" && m.request.status !== "completed" && (
+                            <p className="mt-1 text-sm font-bold text-ok">You're confirmed. Open for the address, your contact and a calendar invite.</p>
+                          )}
                         </div>
                       </Link>
                     </li>

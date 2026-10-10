@@ -35,6 +35,7 @@ function readRequest(fd: FormData) {
     endTime: str(fd, "endTime"),
     area: (AREAS as readonly string[]).includes(str(fd, "area")) ? str(fd, "area") : "Central",
     address: remote ? null : strOrNull(fd, "address"),
+    volunteerNotes: strOrNull(fd, "volunteerNotes"),
     ageGroup: str(fd, "ageGroup") || "all",
   };
   let error: string | undefined;
