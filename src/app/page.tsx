@@ -29,7 +29,7 @@ export default async function Home() {
             <span lang="la" data-no-translate>Fiat</span> — let it be done.
           </h1>
           <p className="mt-6 max-w-2xl font-serif text-2xl text-balance !text-white sm:text-4xl">
-            Mary's yes changed everything. Yours can be an hour, a skill or a prayer.
+            Mary's yes changed everything. Yours can be an hour, a skill, a prayer or an invite.
           </p>
           <p className="mt-6 max-w-xl text-lg text-white/90 sm:text-xl">
             Fiat connects you with Catholic organisations in Singapore that need help. Every request is vetted by the
