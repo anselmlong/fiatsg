@@ -13,6 +13,32 @@ export function Container({ children, className = "" }: { children: ReactNode; c
   return <div className={`mx-auto w-full px-4 ${width} ${className}`}>{children}</div>;
 }
 
+// A pulsing placeholder block for loading screens.
+export function Skeleton({ className = "" }: { className?: string }) {
+  // Defaults step aside when overridden, so CSS order can't pick the wrong one.
+  const bg = /(^|\s)bg-/.test(className) ? "" : "bg-purple-soft";
+  const radius = /(^|\s)rounded-/.test(className) ? "" : "rounded-2xl";
+  return <div aria-hidden className={`animate-pulse motion-reduce:animate-none ${bg} ${radius} ${className}`} />;
+}
+
+export function CardGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: count }, (_, i) => (
+        <div key={i} className="card overflow-hidden">
+          <Skeleton className="aspect-[16/9] rounded-none" />
+          <div className="space-y-3 p-5">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-7 w-5/6" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function SkillChip({ id, highlight = false }: { id: string; highlight?: boolean }) {
   return (
     <span
