@@ -35,7 +35,7 @@ export default async function Home() {
             Fiat connects you with Catholic organisations in Singapore that need help. Every request is vetted by the
             Catholic Foundation.
           </p>
-          <Link href="/causes" className="btn-gold mt-10 text-lg">
+          <Link href="/causes" className="btn-gold hero-cta mt-10 text-lg">
             Find a way to help <ArrowRight aria-hidden className="h-5 w-5" />
           </Link>
         </Container>
