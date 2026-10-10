@@ -11,4 +11,4 @@ All photos in `public/images/` were downloaded from the organisations' own publi
 | caritas-*.jpg | caritas-singapore.org |
 | oyp-*.webp | oyp.org.sg |
 | cps-mass.jpg | cps.org.sg |
-| hero-volunteer.jpg | catholicwelfare.org.sg (cropped) |
+| hero-worship-crop.jpg | oyp.org.sg |
