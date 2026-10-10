@@ -2,17 +2,14 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { TextSize } from "./text-size";
 
 export function MobileMenu({
   links,
   loggedIn,
-  textSize,
   logout,
 }: {
   links: { href: string; label: string }[];
   loggedIn: boolean;
-  textSize: string;
   logout: () => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
@@ -37,10 +34,6 @@ export function MobileMenu({
               </Link>
             ))}
           </nav>
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <span className="font-bold">Text size</span>
-            <TextSize initial={textSize} />
-          </div>
           <div className="mt-4 flex gap-3">
             {loggedIn ? (
               <form action={logout} className="w-full">

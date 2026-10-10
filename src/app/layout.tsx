@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Caudex, Nunito_Sans } from "next/font/google";
-import { cookies } from "next/headers";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import "./globals.css";
@@ -19,9 +18,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#4e2984" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const textSize = (await cookies()).get("fiat_text")?.value ?? "normal";
   return (
-    <html lang="en" data-text={textSize} className={`${heading.variable} ${body.variable} h-full antialiased`}>
+    <html lang="en" className={`${heading.variable} ${body.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-gold">
           Skip to content

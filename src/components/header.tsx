@@ -1,14 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { logout } from "@/app/actions/auth";
 import { currentUser } from "@/lib/auth";
 import { MobileMenu } from "./mobile-menu";
-import { TextSize } from "./text-size";
 
 export async function Header() {
   const user = await currentUser();
-  const textSize = (await cookies()).get("fiat_text")?.value ?? "normal";
 
   const links: { href: string; label: string }[] =
     user?.role === "org"
@@ -44,9 +41,6 @@ export async function Header() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2 lg:ml-2">
-          <div className="hidden sm:block">
-            <TextSize initial={textSize} />
-          </div>
           <div className="hidden lg:flex lg:items-center lg:gap-2">
             {user ? (
               <form action={logout}>
@@ -59,7 +53,7 @@ export async function Header() {
               </>
             )}
           </div>
-          <MobileMenu links={links} loggedIn={!!user} textSize={textSize} logout={logout} />
+          <MobileMenu links={links} loggedIn={!!user} logout={logout} />
         </div>
       </div>
       {user && (

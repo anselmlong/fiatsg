@@ -14,45 +14,38 @@ export default async function Home() {
   return (
     <>
       <section className="relative isolate overflow-hidden bg-purple-deep">
-        <Image src="/images/hero-volunteer.jpg" alt="" fill priority sizes="100vw" className="-z-10 object-cover object-[60%_30%] opacity-25 lg:hidden" />
-        <div className="grid lg:grid-cols-[1fr_minmax(0,40vw)]">
-          <div className="px-4 py-16 sm:py-24 lg:py-28 lg:pr-12 lg:pl-[max(1rem,calc((100vw-72rem)/2+1rem))]">
-            <h1 className="font-serif text-7xl font-bold leading-none tracking-tight !text-white sm:text-9xl">Fiat.</h1>
-            <blockquote className="mt-8 max-w-2xl">
-              <p className="font-serif text-2xl text-balance text-gold sm:text-4xl">What can I give Him, poor as I am?</p>
-              <div className="mt-4 space-y-1 font-serif text-lg italic leading-relaxed text-white/90 sm:text-2xl">
-                <p>If I were a shepherd, I would bring a lamb;</p>
-                <p>If I were a wise man, I would do my part;</p>
-                <p>Yet what I can I give Him:</p>
-              </div>
-              <p className="mt-3 font-serif text-4xl font-bold !text-white sm:text-5xl">Give my heart.</p>
-              <footer className="mt-3 text-sm text-white/75">Christina Rossetti</footer>
-            </blockquote>
-            <p className="mt-8 max-w-md text-xl text-white/90">Give your time, your skills or your prayer to someone who needs it.</p>
-            <Link href="/causes" className="btn-gold mt-8 text-lg">
-              Find a way to help <ArrowRight aria-hidden className="h-5 w-5" />
-            </Link>
-          </div>
-          <figure className="relative hidden lg:block">
-            <Image
-              src="/images/hero-volunteer.jpg"
-              alt="A young volunteer laughing with a senior in a wheelchair"
-              fill
-              priority
-              sizes="40vw"
-              className="object-cover object-[60%_30%]"
-            />
-            <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-purple-deep to-transparent" />
-            <figcaption className="absolute bottom-4 right-4 rounded-full bg-purple-deep/80 px-3 py-1 text-sm text-white">
-              Photo: catholicwelfare.org.sg
-            </figcaption>
-          </figure>
-        </div>
+        <Image
+          src="/images/hero-worship-crop.jpg"
+          alt="Young Catholics worshipping together, hands raised, before a crucifix"
+          fill
+          priority
+          sizes="100vw"
+          className="-z-10 object-cover object-[70%_center]"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-deep via-purple-deep/85 to-purple-deep/20" />
+        <div className="absolute inset-0 -z-10 bg-purple-deep/40 lg:hidden" />
+        <Container className="py-20 sm:py-28 lg:py-32">
+          <blockquote className="max-w-2xl">
+            <h1 className="font-serif text-4xl font-bold text-balance !text-gold sm:text-6xl">What can I give Him, poor as I am?</h1>
+            <div className="mt-6 space-y-1 font-serif text-lg italic leading-relaxed text-white/90 sm:text-2xl">
+              <p>If I were a shepherd, I would bring a lamb;</p>
+              <p>If I were a wise man, I would do my part;</p>
+              <p>Yet what I can I give Him:</p>
+            </div>
+            <p className="mt-4 font-serif text-4xl font-bold !text-white sm:text-6xl">Give my heart.</p>
+            <footer className="mt-3 text-sm text-white/75">Christina Rossetti</footer>
+          </blockquote>
+          <p className="mt-8 max-w-md text-xl text-white/90">Offer your time, your skills and your prayer to the mission of the Church in Singapore.</p>
+          <Link href="/causes" className="btn-gold mt-8 text-lg">
+            Find a way to help <ArrowRight aria-hidden className="h-5 w-5" />
+          </Link>
+        </Container>
+        <p className="absolute bottom-3 right-4 text-xs text-white/70">Photo: Office for Young People</p>
       </section>
 
       <section className="py-16 sm:py-24">
         <Container>
-          <h2 className="text-4xl font-bold">{mySkills.length ? "Causes that need your gifts" : "Someone is waiting for you"}</h2>
+          <h2 className="text-4xl font-bold">{mySkills.length ? "Causes that need your gifts" : "Where the Church needs you"}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((c) => (
               <CauseCard key={c.request.id} cause={c} mySkills={mySkills} />
