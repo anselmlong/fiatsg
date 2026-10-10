@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { CalendarDays, MapPin, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { withdrawOffer } from "@/app/actions/supporter";
-import { PrayIcon } from "@/components/icons";
 import { Container, DemoTag, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
@@ -39,7 +38,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
   const orgShort = org.name.split(" — ")[0];
 
   return (
-    <article className="pb-24 lg:pb-0">
+    <article>
       <div className="relative isolate bg-purple-deep">
         {r.coverUrl && <Image src={r.coverUrl} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-50" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-purple-deep via-purple-deep/70 to-transparent" />
@@ -97,33 +96,34 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
             </section>
           )}
 
-          <section className="card p-7">
-            <h2 className="text-2xl font-bold">Why this matters</h2>
-            <p className="mt-3 font-serif text-xl italic leading-relaxed text-ink/90">{org.whyItMatters}</p>
-            <h2 className="mt-8 text-2xl font-bold">About {orgShort}</h2>
-            <p className="mt-3 text-ink/85">{org.history}</p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href={`/orgs/${org.id}`} className="btn-ghost">More about {orgShort}</Link>
-              {org.website && <a href={org.website} target="_blank" rel="noreferrer" className="btn-ghost">Visit their website ↗</a>}
-            </div>
-          </section>
-
-          {prayerList.length > 0 && (
-            <section>
-              <h2 className="flex items-center gap-3 text-3xl font-bold"><PrayIcon aria-hidden className="h-7 w-7 text-gold" strokeWidth={1.75} /> Prayers for this cause</h2>
-              <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-                {prayerList.map((p, i) => (
-                  <li key={i} className="rounded-2xl bg-purple-soft/70 p-5">
-                    <p className="font-serif text-lg italic">“{p.message}”</p>
-                    <p className="mt-2 text-sm font-bold text-muted">— {p.name ?? "Someone"}, {timeAgo(p.createdAt)}</p>
-                  </li>
-                ))}
-              </ul>
+          {isPublic && (
+            <section className="card p-6">
+              <h2 className="text-2xl font-bold">Can't come? You can still pray.</h2>
+              <div className="mt-4 max-w-lg">
+                <PrayForm requestId={id} count={cause.prayerCount} alreadyPrayed={alreadyPrayed} needsName={!user} />
+              </div>
+              {prayerList.length > 0 && (
+                <ul className="mt-6 space-y-3 border-t border-line pt-5">
+                  {prayerList.slice(0, 3).map((p, i) => (
+                    <li key={i}>
+                      <p className="font-serif text-lg italic">“{p.message}”</p>
+                      <p className="text-sm text-muted">{p.name ?? "Someone"}, {timeAgo(p.createdAt)}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
+
+          <section>
+            <h2 className="text-2xl font-bold">About {orgShort}</h2>
+            <p className="mt-3 line-clamp-3 text-ink/85">{org.history}</p>
+            <Link href={`/orgs/${org.id}`} className="mt-3 inline-block font-bold">Read more about {orgShort} →</Link>
+          </section>
+
         </div>
 
-        <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+        <aside className="order-first space-y-6 lg:order-none lg:sticky lg:top-28 lg:self-start">
           <div className="card space-y-5 p-6">
             <dl className="space-y-3 text-base">
               <div><dt className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</dt><dd>{when}<br />{time}</dd></div>
@@ -138,15 +138,12 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
               </div>
               {r.skills.some((s) => mySkills.includes(s)) && <p className="mt-2 flex items-center gap-2 text-sm font-bold text-gold-ink"><Sparkles aria-hidden className="h-4 w-4" /> Highlighted gifts match yours</p>}
             </div>
-          </div>
 
           {r.status === "approved" && isPublic && (
-            <div id="offer" className="card scroll-mt-28 p-6">
-              <h2 className="text-2xl font-bold">Offer your help</h2>
-              <div className="mt-4">
+            <div id="offer" className="scroll-mt-28 border-t border-line pt-5">
+              <div>
                 {!user ? (
                   <div className="space-y-3">
-                    <p>Create a free account in about a minute. We'll bring you straight back here.</p>
                     <Link href={`/join?next=/causes/${id}`} className="btn-primary w-full text-lg">I'd like to help</Link>
                     <Link href={`/login?next=/causes/${id}`} className="btn-ghost w-full">I already have an account</Link>
                   </div>
@@ -175,15 +172,7 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
               </div>
             </div>
           )}
-
-          {isPublic && (
-            <div className="card p-6">
-              <h2 className="text-2xl font-bold">Can't come? You can still pray.</h2>
-              <div className="mt-4">
-                <PrayForm requestId={id} count={cause.prayerCount} alreadyPrayed={alreadyPrayed} needsName={!user} />
-              </div>
-            </div>
-          )}
+          </div>
 
           {isOwner && (
             <Notice>
@@ -193,11 +182,6 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
         </aside>
       </Container>
 
-      {r.status === "approved" && isPublic && !myResponse && user?.role !== "org" && user?.role !== "cf_admin" && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 px-4 py-3 shadow-[0_-4px_16px_rgba(52,25,92,0.08)] backdrop-blur lg:hidden">
-          <a href="#offer" className="btn-primary w-full text-lg">I'd like to help</a>
-        </div>
-      )}
     </article>
   );
 }

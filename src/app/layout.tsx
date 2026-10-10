@@ -9,7 +9,7 @@ const heading = Caudex({ variable: "--font-heading", subsets: ["latin"], weight:
 const body = Nunito_Sans({ variable: "--font-body", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { default: "Fiat — Mary said yes. How about us?", template: "%s · Fiat" },
+  title: { default: "Fiat — Give my heart", template: "%s · Fiat" },
   description:
     "Not everyone can give money. Everyone can give something. Offer your time, your skills and your prayers to Catholic organisations in Singapore.",
   applicationName: "Fiat",

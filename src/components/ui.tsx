@@ -5,7 +5,7 @@ import { fmtSchedule } from "@/lib/format";
 import type { CauseRow } from "@/lib/queries";
 import { SKILLS, skillLabel } from "@/lib/skills";
 import { CalendarDays, MapPin, Sparkles } from "lucide-react";
-import { PrayIcon, SkillIcon } from "./icons";
+import { SkillIcon } from "./icons";
 
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-6xl px-4 ${className}`}>{children}</div>;
@@ -63,7 +63,6 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
   const r = cause.request;
   const matched = r.skills.filter((s) => mySkills.includes(s));
   const { when, time } = fmtSchedule(r);
-  const spotsLeft = Math.max(0, r.volunteersNeeded - cause.acceptedCount);
   return (
     <Link
       href={`/causes/${r.id}`}
@@ -101,9 +100,6 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
           </p>
           <p className="flex items-center gap-2">
             <MapPin aria-hidden className="h-4 w-4 shrink-0" /> {r.area === "Online" ? "Online / from home" : r.area}
-          </p>
-          <p className="flex items-center gap-2 tabular-nums">
-            <PrayIcon aria-hidden className="h-4 w-4 shrink-0" /> {cause.prayerCount} praying · {r.status === "completed" ? "Completed" : `${spotsLeft} of ${r.volunteersNeeded} places open`}
           </p>
         </div>
       </div>
