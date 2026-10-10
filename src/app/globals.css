@@ -317,3 +317,35 @@ input, textarea, select { font: inherit; }
   .hero-cta:hover::after, .hero-cta:focus-visible::after { animation: none; }
   .hero-cta:hover svg, .hero-cta:focus-visible svg { transform: none; }
 }
+
+/* Scroll: cards, saint cards and section headings rise gently into place as they come into view.
+   Pure CSS scroll-driven animation, so nothing waits on JavaScript; browsers without it, and
+   anyone who prefers less motion, see the page exactly as it is. Things already on screen at
+   load are past their range and simply sit in place. Sticky and sidebar items stay still. */
+@keyframes scroll-rise {
+  from { opacity: 0; transform: translateY(28px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes scroll-settle {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main :is(.card, .saint-tile):not(aside *, [class*="sticky"], [class*="sticky"] *, .card *) {
+      animation: scroll-rise cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0px entry 180px;
+    }
+    /* A soft stagger across a row: later columns start a touch later. */
+    main li:nth-child(3n + 2) :is(.card, .saint-tile),
+    main :is(.grid, ul) > .card:nth-child(3n + 2) { animation-range: entry 30px entry 210px; }
+    main li:nth-child(3n) :is(.card, .saint-tile),
+    main :is(.grid, ul) > .card:nth-child(3n) { animation-range: entry 60px entry 240px; }
+    main section h2:not(aside *, [class*="sticky"] *) {
+      animation: scroll-settle cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0px entry 140px;
+    }
+  }
+}

@@ -10,7 +10,7 @@ const caption = "flex h-[4.75rem] flex-col items-center justify-center gap-0.5 p
 export function SaintCard({ saint, size = "md", priority }: { saint: Saint; size?: "md" | "lg"; priority?: boolean }) {
   const lg = size === "lg";
   return (
-    <figure className={`${frame} bg-gold shadow-[0_6px_18px_-8px_rgba(52,25,92,0.45)] ${lg ? "w-72 sm:w-80" : "w-full"}`}>
+    <figure className={`saint-tile ${frame} bg-gold shadow-[0_6px_18px_-8px_rgba(52,25,92,0.45)] ${lg ? "w-72 sm:w-80" : "w-full"}`}>
       <div className={`${inner} border-2 border-gold-soft bg-paper`}>
         <div className="relative aspect-[3/4] bg-purple-deep">
           <Image src={saint.image} alt={saint.name} fill priority={priority} sizes={lg ? "320px" : "(min-width:1024px) 180px, (min-width:640px) 30vw, 45vw"} className="object-cover" />
@@ -27,7 +27,7 @@ export function SaintCard({ saint, size = "md", priority }: { saint: Saint; size
 // Someone not yet met: the same card, drawn in outline, with a hint at the task that brings them.
 export function SaintWaiting({ hint }: { hint: string }) {
   return (
-    <div className={`${frame} border-2 border-dashed border-gold/55 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>
+    <div className={`saint-tile ${frame} border-2 border-dashed border-gold/55 bg-gold-soft/40 !p-[3px] transition-colors group-hover:border-gold group-hover:bg-gold-soft/70`}>
       <div className={inner}>
         <div className="relative flex aspect-[3/4] flex-col items-center justify-center gap-3 px-3">
           <Halo className="halo-breathe w-1/2 text-gold" />
