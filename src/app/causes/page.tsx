@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AutoSubmitForm } from "@/components/auto-submit-form";
 import { CauseCard, Container, Notice } from "@/components/ui";
 import { currentUser } from "@/lib/auth";
 import { listCauses } from "@/lib/queries";
@@ -55,8 +56,8 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
             <span className="group-open:hidden">Filter by skill, day or place</span>
             <span className="hidden group-open:inline">Hide filters</span>
           </summary>
-          <form method="get" className="card mt-4 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
-            <label className="field">
+          <AutoSubmitForm className="card mt-4 space-y-5 p-5">
+            <label className="field max-w-md">
               <span className="label">Skill</span>
               <select name="skill" defaultValue={skill} className="input">
                 <option value="">Any skill</option>
@@ -65,29 +66,14 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
                 ))}
               </select>
             </label>
-            <label className="field">
-              <span className="label">How often</span>
-              <select name="kind" defaultValue={kind} className="input">
-                <option value="">One-off or regular</option>
-                <option value="one_off">One-off</option>
-                <option value="regular">Regular (weekly)</option>
-              </select>
-            </label>
-            <label className="field">
-              <span className="label">Where</span>
-              <select name="area" defaultValue={area} className="input">
-                <option value="">Anywhere in Singapore</option>
-                {AREAS.map((a) => (
-                  <option key={a} value={a}>{a === "Online" ? "Online / from home" : a}</option>
-                ))}
-              </select>
-            </label>
+            <ChipGroup label="How often" name="kind" value={kind} options={[["", "Any"], ["one_off", "One-off"], ["regular", "Weekly"]]} />
+            <ChipGroup label="Where" name="area" value={area} options={[["", "Anywhere"], ...AREAS.map((a) => [a, a === "Online" ? "Online / from home" : a] as [string, string])]} />
             {showCompleted && <input type="hidden" name="show" value="completed" />}
-            <div className="flex items-end gap-2">
-              <button className="btn-primary w-full sm:w-auto">Search</button>
-              {isFiltered && <Link href={showCompleted ? "/causes?show=completed" : "/causes"} className="btn-ghost">Clear</Link>}
+            <div className="flex flex-wrap items-center gap-2">
+              <noscript><button className="btn-primary">Search</button></noscript>
+              {isFiltered && <Link href={showCompleted ? "/causes?show=completed" : "/causes"} className="btn-ghost">Clear filters</Link>}
             </div>
-          </form>
+          </AutoSubmitForm>
         </details>
       </div>
 
@@ -129,5 +115,22 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
         )}
       </section>
     </Container>
+  );
+}
+
+// One tap per choice instead of a dropdown; the form applies it straight away.
+function ChipGroup({ label, name, value, options }: { label: string; name: string; value: string; options: [string, string][] }) {
+  return (
+    <fieldset>
+      <legend className="label">{label}</legend>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {options.map(([v, text]) => (
+          <label key={v} className="flex min-h-11 cursor-pointer items-center rounded-full border-2 border-line bg-white px-4 font-bold has-[:checked]:border-purple has-[:checked]:bg-purple has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-gold">
+            <input type="radio" name={name} value={v} defaultChecked={value === v} className="sr-only" />
+            {text}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }

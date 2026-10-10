@@ -36,10 +36,12 @@ export default async function OrgPage({ params }: PageProps<"/orgs/[id]">) {
             <h2 className="text-3xl font-bold">Our story</h2>
             <p className="mt-4 text-lg leading-relaxed">{org.history}</p>
           </section>
-          <section className="rounded-3xl bg-gold-soft/60 p-7">
-            <h2 className="text-2xl font-bold">Why it matters</h2>
-            <p className="mt-3 font-serif text-xl italic leading-relaxed">{org.whyItMatters}</p>
-          </section>
+          {org.whyItMatters && (
+            <section className="rounded-3xl bg-gold-soft/60 p-7">
+              <h2 className="text-2xl font-bold">Why it matters</h2>
+              <p className="mt-3 font-serif text-xl italic leading-relaxed">{org.whyItMatters}</p>
+            </section>
+          )}
         </div>
         <aside className="card h-fit space-y-4 p-6">
           {org.foundedYear && <p><strong>Serving since</strong><br /><span className="font-serif text-3xl font-bold text-purple">{org.foundedYear}</span></p>}

@@ -17,7 +17,7 @@ export default async function OrgDashboard({ searchParams }: PageProps<"/org">) 
     <Container className="py-10">
       {sp.joined && (
         <div className="mb-6">
-          <Notice tone="ok"><strong>Thank you for registering!</strong> The Catholic Foundation will review your organisation soon.</Notice>
+          <Notice tone="ok"><strong>Thank you for registering!</strong> The Catholic Foundation will review your organisation soon. Meanwhile, <Link href="/org/profile" className="font-bold">add a cover photo, website and why your work matters</Link> to help volunteers get to know you.</Notice>
         </div>
       )}
       {org.status !== "approved" && (

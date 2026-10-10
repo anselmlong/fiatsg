@@ -6,11 +6,14 @@ export const metadata = { title: "Join" };
 
 export default async function JoinPage({ searchParams }: PageProps<"/join">) {
   const next = (await searchParams).next;
+  const fromCause = typeof next === "string" && next.startsWith("/causes/");
   return (
     <Container className="max-w-3xl py-14">
-      <h1 className=" text-4xl font-bold sm:text-5xl">What gifts has God given you?</h1>
+      <h1 className=" text-4xl font-bold sm:text-5xl">{fromCause ? "Join to offer your help" : "What gifts has God given you?"}</h1>
       <p className="mt-3 text-lg text-muted">
-        It takes about a minute. Tell us what you're good at, and we'll show you the causes that need it.
+        {fromCause
+          ? "Just your name and how to reach you. You'll go straight back to the cause."
+          : "It takes about a minute. Tell us what you're good at, and we'll show you the causes that need it."}
       </p>
       <div className="card mt-8 p-6 sm:p-8">
         <JoinForm next={typeof next === "string" ? next : ""} />

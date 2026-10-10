@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db, orgs, users } from "@/db";
 import { checkPassword, endSession, hashPassword, startSession } from "@/lib/auth";
 import { type FormState, list, safeNext, str, strOrNull } from "@/lib/forms";
-import { isSkill } from "@/lib/skills";
+import { COVER_LIBRARY, isSkill } from "@/lib/skills";
 
 const homeFor = (role: string) => (role === "org" ? "/org" : role === "cf_admin" ? "/admin" : "/causes");
 
@@ -80,7 +80,8 @@ export async function joinOrg(_: FormState, fd: FormData): Promise<FormState> {
     whyItMatters: str(fd, "whyItMatters"),
     website: strOrNull(fd, "website"),
     contactPhone: strOrNull(fd, "phone"),
-    coverUrl: strOrNull(fd, "coverUrl"),
+    // Sign-up no longer asks for a photo; start with the first library cover until they pick one.
+    coverUrl: strOrNull(fd, "coverUrl") ?? COVER_LIBRARY[0].url,
     foundedYear: Number(str(fd, "foundedYear")) || null,
     status: "pending",
   });

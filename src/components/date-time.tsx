@@ -107,12 +107,15 @@ const TIMES = Array.from({ length: (22 - 6) * 4 + 1 }, (_, i) => {
   const mins = 6 * 60 + i * 15;
   return `${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
 });
-const timeLabel = (t: string) => format(parse(t, "HH:mm", new Date()), "h:mm a").toLowerCase();
+export const timeLabel = (t: string) => format(parse(t, "HH:mm", new Date()), "h:mm a").toLowerCase();
 
-export function TimeSelect({ name, initial }: { name: string; initial?: string | null }) {
-  const options = initial && !TIMES.includes(initial) ? [...TIMES, initial].sort() : TIMES;
+// Uncontrolled with `initial`, or controlled with `value` + `onChange`.
+export function TimeSelect({ name, initial, value, onChange }: { name: string; initial?: string | null; value?: string; onChange?: (value: string) => void }) {
+  const current = value ?? initial;
+  const options = current && !TIMES.includes(current) ? [...TIMES, current].sort() : TIMES;
+  const control = value === undefined ? { defaultValue: initial ?? "10:00" } : { value, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => onChange?.(e.target.value) };
   return (
-    <Select name={name} defaultValue={initial ?? "10:00"} required icon={<Clock aria-hidden className="h-5 w-5 text-purple" />}>
+    <Select name={name} {...control} required icon={<Clock aria-hidden className="h-5 w-5 text-purple" />}>
       {options.map((t) => <option key={t} value={t}>{timeLabel(t)}</option>)}
     </Select>
   );
