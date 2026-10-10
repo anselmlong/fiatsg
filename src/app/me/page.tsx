@@ -8,7 +8,7 @@ import { fmtSchedule, timeAgo } from "@/lib/format";
 import { SkillsForm } from "./skills-form";
 import { metSaintIds } from "@/lib/meet";
 import { SAINTS } from "@/lib/saints";
-import { Sprout } from "lucide-react";
+import { ArrowRight, ChevronDown, Sprout } from "lucide-react";
 
 export const metadata = { title: "My causes" };
 
@@ -57,114 +57,116 @@ export default async function MePage() {
   ].filter((x) => x.n > 0);
 
   return (
-    <Container className="py-10">
-      <h1 className=" text-4xl font-bold sm:text-5xl">My causes</h1>
-      <p className="mt-3 max-w-2xl text-lg text-muted">
-        Thank you, {first}. “Whatever you did for one of the least of these, you did for me.” — Matthew 25:40
-      </p>
+    <Container className="max-w-4xl py-8 sm:py-12">
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold">My causes</h1>
+          <p className="mt-2 text-muted">Thank you, {first}. Here’s where you’re helping.</p>
+        </div>
+        <Link href="/faith" className="inline-flex min-h-11 items-center gap-2 text-sm font-bold no-underline hover:underline">
+          Your saints <span className="font-normal text-muted">{metCount}/{SAINTS.length}</span>
+          <ArrowRight aria-hidden className="h-4 w-4" />
+        </Link>
+      </header>
       {numbers.length > 0 && (
-        <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-base">
+        <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
           {numbers.map((x) => (
-            <span key={x.l}><strong className="font-serif text-xl tabular-nums text-purple">{x.n}</strong> {x.l}</span>
+            <span key={x.l}><strong className="tabular-nums text-ink">{x.n}</strong> {x.l}</span>
           ))}
         </p>
       )}
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_400px]">
-        <div className="space-y-12">
-          <section aria-label="Causes you've said yes to">
-            {mine.length === 0 ? (
-              <div className="card p-8 text-center">
-                <Sprout aria-hidden className="mx-auto h-12 w-12 text-ok" strokeWidth={1.5} />
-                <p className="mt-3 font-serif text-2xl text-purple-deep">Every yes begins small.</p>
-                <p className="mt-2 text-lg text-muted">When you offer to help, it will appear here, with news of what your help made possible.</p>
-                <Link href="/causes" className="btn-primary mt-5">Find a cause</Link>
-              </div>
-            ) : (
-              <ul className="space-y-4">
-                {mine.map((m) => {
-                  const { when, time } = fmtSchedule(m.request);
-                  return (
-                    <li key={m.response.id}>
-                      <Link href={`/causes/${m.request.id}`} className="card flex gap-4 p-4 no-underline hover:shadow-md">
-                        <div className="relative hidden h-24 w-32 shrink-0 overflow-hidden rounded-2xl sm:block">
-                          {m.request.coverUrl && <Image src={m.request.coverUrl} alt="" fill sizes="128px" className="object-cover" />}
+      <section aria-label="Causes you've said yes to" className="mt-8">
+        {mine.length === 0 ? (
+          <div className="border-y border-line py-10">
+            <Sprout aria-hidden className="h-8 w-8 text-ok" strokeWidth={1.5} />
+            <p className="mt-3 font-serif text-2xl text-ink">Every yes begins small.</p>
+            <p className="mt-2 max-w-lg text-muted">When you offer to help, your causes and their updates will appear here.</p>
+            <Link href="/causes" className="btn-primary mt-5">Find a cause</Link>
+          </div>
+        ) : (
+          <ul className="divide-y divide-line border-y border-line">
+            {mine.map((m) => {
+              const { when, time } = fmtSchedule(m.request);
+              return (
+                <li key={m.response.id}>
+                  <Link href={`/causes/${m.request.id}`} className="group flex items-start gap-4 rounded-lg py-6 no-underline sm:gap-5">
+                    {m.request.coverUrl && (
+                      <div className="relative hidden h-24 w-24 shrink-0 overflow-hidden rounded-xl sm:block">
+                        <Image src={m.request.coverUrl} alt="" fill sizes="96px" className="object-cover" />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                        <p className="text-sm text-muted">{m.orgName.split(" — ")[0]}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <StatusBadge status={m.response.status} />
+                          {m.request.status === "completed" && <StatusBadge status="completed" label="Completed" />}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <StatusBadge status={m.response.status} />
-                            {m.request.status === "completed" && <StatusBadge status="completed" label="Completed" />}
-                          </div>
-                          <p className="mt-2 text-xl font-bold text-purple-deep">{m.request.title}</p>
-                          <p className="text-sm text-muted">{m.orgName.split(" — ")[0]} · {when} · {time}</p>
-                          {m.response.status === "offered" && <p className="mt-1 text-sm">They'll contact you soon to follow up.</p>}
-                          {m.response.status === "accepted" && m.request.status !== "completed" && (
-                            <p className="mt-1 text-sm font-bold text-ok">You're confirmed. Open for the address, your contact and a calendar invite.</p>
-                          )}
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-
-          <section>
-            <h2 className="text-3xl font-bold">News from the causes you follow</h2>
-            {feed.length === 0 ? (
-              <p className="mt-4 text-muted">When organisations you've helped or prayed for post updates, they'll appear here.</p>
-            ) : (
-              <ol className="mt-6 space-y-5">
-                {feed.map((f) => (
-                  <li key={f.update.id} className="card overflow-hidden">
-                    {f.update.photoUrl && <div className="relative aspect-[21/9]"><Image src={f.update.photoUrl} alt="" fill sizes="(min-width:1024px) 640px, 100vw" className="object-cover" /></div>}
-                    <div className="p-5">
-                      <p className="text-sm font-bold text-muted">{f.orgName.split(" — ")[0]} · {timeAgo(f.update.createdAt)}</p>
-                      <Link href={`/causes/${f.requestId}`} className="text-lg font-bold">{f.title}</Link>
-                      <p className="mt-2">{f.update.body}</p>
+                      </div>
+                      <h2 className="mt-2 text-xl font-bold group-hover:underline">{m.request.title}</h2>
+                      <p className="mt-1 text-sm text-muted">{when} · {time}</p>
+                      {m.response.status === "offered" && <p className="mt-2 text-sm text-muted">They'll contact you soon to follow up.</p>}
+                      {m.response.status === "accepted" && m.request.status !== "completed" && (
+                        <p className="mt-2 text-sm text-ok">You're confirmed. View the address, contact and calendar invite.</p>
+                      )}
                     </div>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </section>
-        </div>
+                    <ArrowRight aria-hidden className="mt-1 hidden h-4 w-4 shrink-0 text-purple sm:block" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
-        {/* Headings sit outside the cards, as "My causes" does, so the cards start on one line. */}
-        <aside id="skills" className="scroll-mt-28 space-y-12">
-          <Link href="/faith" className="card flex items-center justify-between gap-4 border-2 border-gold/60 p-5 no-underline hover:shadow-md">
+      <section aria-labelledby="cause-updates" className="mt-10">
+        <h2 id="cause-updates" className="text-2xl font-bold">Updates</h2>
+        {feed.length === 0 ? (
+          <p className="mt-2 max-w-xl text-sm text-muted">No news yet. Updates from causes you’ve helped or prayed for will appear here.</p>
+        ) : (
+          <ol className="mt-5 divide-y divide-line">
+            {feed.map((f) => (
+              <li key={f.update.id} className="py-5 first:pt-0">
+                <p className="text-sm text-muted">{f.orgName.split(" — ")[0]} · {timeAgo(f.update.createdAt)}</p>
+                <Link href={`/causes/${f.requestId}`} className="mt-1 inline-block text-lg font-bold">{f.title}</Link>
+                <p className="mt-2 whitespace-pre-line">{f.update.body}</p>
+                {f.update.photoUrl && <div className="relative mt-4 aspect-[21/9] overflow-hidden rounded-xl"><Image src={f.update.photoUrl} alt="" fill sizes="(min-width:1024px) 864px, 100vw" className="object-cover" /></div>}
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <aside aria-label="Your gifts and prayers" className="mt-10 border-t border-line">
+        <details id="skills" className="group/skills scroll-mt-28 border-b border-line">
+          <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
             <span>
-              <span className="block text-xl font-bold text-purple-deep">Your saints</span>
-              <span className="text-muted"><strong className="tabular-nums text-purple">{metCount}</strong> of {SAINTS.length} met</span>
+              <span className="block font-bold text-ink">My gifts & details</span>
+              <span className="mt-1 block text-sm text-muted">{user.skills.length + (user.otherSkill ? 1 : 0)} gifts selected · Update your skills, area and contact</span>
             </span>
-            <span aria-hidden className="font-bold text-purple">→</span>
-          </Link>
-          <section>
-            <h2 className="text-3xl font-bold">My gifts</h2>
-            <div className="card mt-6 p-6">
-              <div className="flex flex-wrap gap-2">
-                {user.skills.length ? user.skills.map((s) => <SkillChip key={s} id={s} />) : <p className="text-muted">None chosen yet.</p>}
-                {user.otherSkill && <span className="chip">{user.otherSkill}</span>}
-              </div>
-              <details className="mt-5">
-                <summary className="btn-ghost w-full cursor-pointer list-none">Change my gifts & details</summary>
-                <div className="mt-5">
-                  <SkillsForm skills={user.skills} otherSkill={user.otherSkill} area={user.area} phone={user.phone} />
-                </div>
-              </details>
+            <ChevronDown aria-hidden className="h-4 w-4 shrink-0 text-purple group-open/skills:rotate-180" />
+          </summary>
+          <div className="max-w-xl pb-6">
+            <div className="mb-5 flex flex-wrap gap-2">
+              {user.skills.map((s) => <SkillChip key={s} id={s} />)}
+              {user.otherSkill && <span className="chip">{user.otherSkill}</span>}
             </div>
-          </section>
-          {prayed.length > 0 && (
-            <section>
-              <h2 className="text-3xl font-bold">I'm praying for</h2>
-              <ul className="card mt-6 space-y-2 p-6">
-                {prayed.map((p) => <li key={p.requestId}><Link href={`/causes/${p.requestId}`}>{p.title}</Link></li>)}
-              </ul>
-            </section>
-          )}
-        </aside>
-      </div>
+            <SkillsForm skills={user.skills} otherSkill={user.otherSkill} area={user.area} phone={user.phone} />
+          </div>
+        </details>
+        {prayed.length > 0 && (
+          <details className="group/prayers border-b border-line">
+            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
+              <span className="font-bold text-ink">I’m praying for <span className="ml-2 font-normal tabular-nums text-muted">{prayed.length}</span></span>
+              <ChevronDown aria-hidden className="h-4 w-4 shrink-0 text-purple group-open/prayers:rotate-180" />
+            </summary>
+            <ul className="space-y-3 pb-5">
+              {prayed.map((p) => <li key={p.requestId}><Link href={`/causes/${p.requestId}`} className="inline-block py-1">{p.title}</Link></li>)}
+            </ul>
+          </details>
+        )}
+      </aside>
     </Container>
   );
 }
