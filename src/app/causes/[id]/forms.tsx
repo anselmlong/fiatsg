@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { offerHelp, pray } from "@/app/actions/supporter";
 import { Submit } from "@/components/submit";
+import { Candle } from "@/components/candle";
 import { PrayIcon } from "@/components/icons";
 
 export function OfferForm({ requestId, orgName, firstName }: { requestId: number; orgName: string; firstName: string }) {
@@ -37,11 +38,17 @@ export function PrayForm({ requestId, count, alreadyPrayed, needsName }: { reque
   const [state, action] = useActionState(pray.bind(null, requestId), undefined);
   const done = alreadyPrayed || !!state?.ok;
   if (done) {
+    // The server re-renders with the new prayer already counted.
+    const others = Math.max(0, count - 1);
     return (
-      <div className="rounded-2xl bg-purple-soft p-5 text-center" role="status">
-        <PrayIcon aria-hidden className="mx-auto h-10 w-10 text-purple" strokeWidth={1.5} />
-        <p className="mt-2 text-lg font-bold text-purple-deep">You're praying for this cause</p>
-        <p className="text-muted">along with {state?.ok === "prayed" ? count + 1 : count} others. Thank you.</p>
+      <div className="flex items-center gap-5 rounded-2xl bg-purple-deep p-5 text-white" role="status">
+        <Candle lit ignite={state?.ok === "prayed"} className="h-20 w-12 shrink-0" />
+        <div>
+          <p className="font-serif text-xl font-bold !text-white">Your candle is lit.</p>
+          <p className="text-white/85">
+            {others === 0 ? "You are the first to pray for this cause." : `You and ${others} ${others === 1 ? "other" : "others"} are praying for this cause.`}
+          </p>
+        </div>
       </div>
     );
   }
@@ -57,7 +64,7 @@ export function PrayForm({ requestId, count, alreadyPrayed, needsName }: { reque
           <input name="name" className="input" maxLength={40} />
         </label>
       )}
-      <Submit className="btn-gold w-full text-lg" pending="Praying…"><PrayIcon aria-hidden className="h-5 w-5" /> I'll pray for this</Submit>
+      <Submit className="btn-gold w-full text-lg" pending="Lighting your candle…"><PrayIcon aria-hidden className="h-5 w-5" /> I'll pray for this</Submit>
       <p className="hint text-center">{count === 0 ? "Be the first to pray" : `${count} people are praying`}</p>
     </form>
   );

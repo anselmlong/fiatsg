@@ -73,7 +73,8 @@ export default async function MePage() {
             {mine.length === 0 ? (
               <div className="card mt-6 p-8 text-center">
                 <Sprout aria-hidden className="mx-auto h-12 w-12 text-ok" strokeWidth={1.5} />
-                <p className="mt-3 text-lg">You haven't offered to help yet. Your first yes is waiting.</p>
+                <p className="mt-3 font-serif text-2xl text-purple-deep">Every yes begins small.</p>
+                <p className="mt-2 text-lg text-muted">When you offer to help, it will appear here, with news of what your help made possible.</p>
                 <Link href="/causes" className="btn-primary mt-5">Find a cause</Link>
               </div>
             ) : (

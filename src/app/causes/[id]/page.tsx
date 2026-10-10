@@ -8,7 +8,7 @@ import { withdrawOffer } from "@/app/actions/supporter";
 import { Container, DemoTag, Notice, SkillChip, StatusBadge } from "@/components/ui";
 import { db, responses } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
-import { fmtSchedule, timeAgo } from "@/lib/format";
+import { fmtSchedule, isFresh, timeAgo } from "@/lib/format";
 import { getCause, getRecentPrayers, getUpdates } from "@/lib/queries";
 import { ageLabel } from "@/lib/skills";
 import { OfferForm, PrayForm } from "./forms";
@@ -151,15 +151,27 @@ export default async function CausePage({ params }: PageProps<"/causes/[id]">) {
                   <p className="text-muted">You're signed in as an organisation or CF account. Volunteers offer help from a supporter account.</p>
                 ) : myResponse ? (
                   <div className="space-y-3">
-                    <StatusBadge status={myResponse.status} />
-                    {myResponse.status === "offered" && <p className="text-xl font-bold text-purple-deep">Thank you, {user.name.split(" ")[0]}.</p>}
-                    <p>
-                      {myResponse.status === "accepted"
-                        ? `${orgShort} has accepted your offer. They'll be in touch with the details.`
-                        : myResponse.status === "declined"
-                          ? `${orgShort} has enough help for now. Thank you for offering — there are other causes that need you.`
-                          : `Your details have been sent to ${orgShort}. They'll contact you to follow up.`}
-                    </p>
+                    {myResponse.status === "offered" && isFresh(myResponse.createdAt) ? (
+                      <div className="relative isolate overflow-hidden rounded-2xl bg-purple-deep px-5 py-7 text-center" role="status">
+                        <div aria-hidden className="received-glow absolute inset-0 -z-10 m-auto h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.55),transparent_70%)]" />
+                        <p className="rise-in font-serif text-5xl font-bold italic !text-white">Fiat.</p>
+                        <p className="rise-in mt-2 font-serif text-xl text-gold [animation-delay:150ms]">Your yes has been received.</p>
+                        <p className="rise-in mt-4 text-white/90 [animation-delay:300ms]">
+                          Thank you, {user.name.split(" ")[0]}. {orgShort} has your details and will contact you soon.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <StatusBadge status={myResponse.status} />
+                        <p>
+                          {myResponse.status === "accepted"
+                            ? `${orgShort} has welcomed your offer. They'll be in touch with the details.`
+                            : myResponse.status === "declined"
+                              ? `${orgShort} has enough help for now. Thank you for offering — there are other causes that need you.`
+                              : `Your details have been sent to ${orgShort}. They'll contact you to follow up.`}
+                        </p>
+                      </>
+                    )}
                     {myResponse.status === "offered" && (
                       <form action={withdrawOffer.bind(null, id)}>
                         <button className="btn-ghost w-full">Withdraw my offer</button>

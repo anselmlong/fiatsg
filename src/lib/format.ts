@@ -33,3 +33,6 @@ export const timeAgo = (d: Date) => {
   if (days < 30) return `${days} days ago`;
   return fmtShort(d);
 };
+
+// True for a few minutes after an action, so its confirmation can play once.
+export const isFresh = (d: Date, minutes = 5) => Date.now() - new Date(d).getTime() < minutes * 60_000;

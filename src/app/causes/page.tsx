@@ -34,8 +34,8 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
       {pick("welcome") && user && (
         <div className="mb-8">
           <Notice tone="ok">
-            <strong>Welcome to Fiat, {user.name.split(" ")[0]}!</strong>{" "}
-            {mySkills.length ? "We've picked out causes that need your gifts below." : "Browse the causes below — anyone can help."}
+            <strong>Welcome, {user.name.split(" ")[0]}.</strong>{" "}
+            {mySkills.length ? "Here is where your gifts are needed most." : "Anyone can help. Start with whatever moves your heart."}
           </Notice>
         </div>
       )}

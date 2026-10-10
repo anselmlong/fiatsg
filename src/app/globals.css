@@ -120,3 +120,34 @@ input, textarea, select { font: inherit; }
   @apply inline-flex items-center gap-1 rounded-full bg-purple-soft px-3 py-1 text-sm font-semibold text-purple-deep;
 }
 
+
+/* Candle: one authored moment for prayer. Static under reduced motion. */
+@keyframes candle-flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  30% { transform: scale(0.96, 1.04) rotate(-1.5deg); }
+  60% { transform: scale(1.03, 0.97) rotate(1deg); }
+}
+@keyframes candle-ignite {
+  from { transform: scale(0.2); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes candle-breathe {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+@keyframes received-glow {
+  from { opacity: 0; transform: scale(0.6); }
+  40% { opacity: 1; }
+  to { opacity: 0; transform: scale(1.4); }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .candle-flame { animation: candle-flicker 2.4s ease-in-out infinite; }
+  .candle-glow { animation: candle-breathe 3.2s ease-in-out infinite; }
+  .candle-ignite { animation: candle-ignite 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .received-glow { animation: received-glow 1.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .rise-in { animation: rise-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+}
