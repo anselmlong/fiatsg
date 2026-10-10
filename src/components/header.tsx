@@ -3,6 +3,7 @@ import Link from "next/link";
 import { logout } from "@/app/actions/auth";
 import { currentUser } from "@/lib/auth";
 import { MobileMenu } from "./mobile-menu";
+import { Translator } from "./translator";
 
 export async function Header() {
   const user = await currentUser();
@@ -27,7 +28,7 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
-        <Link href="/" className="flex items-center gap-3 no-underline" aria-label="Fiat home">
+        <Link href="/" className="flex shrink-0 items-center gap-3 no-underline" aria-label="Fiat home" data-no-translate>
           <span className="font-serif text-3xl font-bold text-purple">Fiat</span>
           <span className="hidden border-l border-line pl-3 sm:block">
             <Image src="/images/cf-logo.png" alt="Catholic Foundation" width={120} height={34} className="h-8 w-auto" />
@@ -41,6 +42,7 @@ export async function Header() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2 lg:ml-2">
+          <Translator />
           <div className="hidden lg:flex lg:items-center lg:gap-2">
             {user ? (
               <form action={logout}>

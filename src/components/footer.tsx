@@ -5,9 +5,9 @@ export function Footer() {
     <footer className="mt-16 bg-purple-deep text-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-serif text-3xl font-bold text-white">Fiat</p>
+          <p className="font-serif text-3xl font-bold text-white" data-no-translate>Fiat</p>
           <p className="mt-1 text-white/85">
-            <span lang="la" className="font-serif italic">Fiat voluntas tua</span> — thy will be done.
+            <span lang="la" className="font-serif italic" data-no-translate>Fiat voluntas tua</span> — thy will be done.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:items-end">

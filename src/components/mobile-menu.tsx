@@ -21,7 +21,7 @@ export function MobileMenu({
         aria-expanded={open}
         aria-controls="mobile-nav"
         onClick={() => setOpen((o) => !o)}
-        className="btn-ghost !min-h-11 !px-4"
+        className="btn-ghost !min-h-11 !px-4 whitespace-nowrap"
       >
         {open ? "Close" : "Menu"}
       </button>
