@@ -13,14 +13,14 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-cream">
+      <section className="home-hero relative isolate overflow-hidden bg-cream">
         <Image
           src="/images/hero-worship-crop.jpg"
           alt="Young Catholics worshipping together, hands raised, before a crucifix"
           fill
           priority
           sizes="100vw"
-          className="-z-10 object-cover object-[70%_center]"
+          className="home-hero-image -z-10 object-cover object-[70%_center]"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cream via-cream/95 to-cream/20" />
         <div className="absolute inset-0 -z-10 bg-cream/70 lg:hidden" />
@@ -58,7 +58,7 @@ export default async function Home() {
 
       {!user && (
         <section className="border-t border-line pt-12">
-          <Container className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <Container className="scroll-arrival flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <p className="text-lg">
               <strong className="text-ink">Part of a Catholic organisation?</strong> Ask for the volunteers you need.
             </p>
