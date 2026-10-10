@@ -201,6 +201,28 @@ input, textarea, select { font: inherit; }
   from { transform: translateX(-120%) skewX(-18deg); }
   to { transform: translateX(220%) skewX(-18deg); }
 }
+/* The light the saint arrives in: slow rays, a ring of gold as the card lands, and sparks rising. */
+@keyframes reveal-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rays-in {
+  from { opacity: 0; transform: scale(0.6) rotate(-20deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rays-spin {
+  to { rotate: 360deg; }
+}
+@keyframes card-land {
+  0% { box-shadow: 0 0 0 0 rgba(246, 213, 138, 0), 0 25px 50px -12px rgba(0, 0, 0, 0.6); }
+  30% { box-shadow: 0 0 70px 18px rgba(246, 213, 138, 0.55), 0 25px 50px -12px rgba(0, 0, 0, 0.6); }
+  100% { box-shadow: 0 0 40px 4px rgba(246, 213, 138, 0.18), 0 25px 50px -12px rgba(0, 0, 0, 0.6); }
+}
+@keyframes spark-rise {
+  0% { opacity: 0; transform: translateY(0) scale(0.4); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-38vh) scale(1); }
+}
 @keyframes halo-breathe {
   0%, 100% { opacity: 0.55; transform: scale(0.96); }
   50% { opacity: 1; transform: scale(1.04); }
@@ -224,4 +246,9 @@ input, textarea, select { font: inherit; }
   .card-turn { animation: card-turn 1100ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both; }
   .card-shimmer { animation: card-shimmer 1400ms ease-in-out 1100ms both; }
   .halo-breathe { animation: halo-breathe 3.6s ease-in-out infinite; }
+  .reveal-in { animation: reveal-in 400ms ease-out both; }
+  .reveal-rays { animation: rays-in 1600ms cubic-bezier(0.16, 1, 0.3, 1) 900ms both; }
+  .reveal-rays > div { animation: rays-spin 90s linear infinite; }
+  .card-land { animation: card-turn 1100ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both, card-land 1200ms cubic-bezier(0.16, 1, 0.3, 1) 1150ms both; }
+  .spark { animation: spark-rise var(--d, 3s) ease-out var(--delay, 1.2s) infinite both; }
 }

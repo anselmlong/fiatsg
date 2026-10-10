@@ -47,8 +47,11 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
 
   useEffect(() => {
     if (!meeting) return;
-    navigator.vibrate?.([30, 80, 30, 80, 120]);
-    if (sound) bell();
+    // The buzz and the bell come as the card lands, not when the dark falls.
+    const land = setTimeout(() => {
+      navigator.vibrate?.([18, 60, 18, 60, 90]);
+      if (sound) bell();
+    }, 1150);
     // Hold the page behind still, and focus without letting the browser scroll the card away.
     const root = document.documentElement;
     const prev = root.style.overflow;
@@ -56,6 +59,7 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
     const t = setTimeout(() => closeRef.current?.focus({ preventScroll: true }), 400);
     return () => {
       clearTimeout(t);
+      clearTimeout(land);
       root.style.overflow = prev;
     };
     // Play once per saint.
@@ -80,15 +84,16 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
   if (!meeting) return null;
   const s = meeting.saint;
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="reveal-title" className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden overscroll-contain bg-[#1a0d2e]/95 backdrop-blur-sm" onKeyDown={(e) => e.key === "Escape" && close()}>
+    <div role="dialog" aria-modal="true" aria-labelledby="reveal-title" className="reveal-in fixed inset-0 z-50 overflow-y-auto overflow-x-hidden overscroll-contain bg-[#1a0d2e]/95 backdrop-blur-sm" onKeyDown={(e) => e.key === "Escape" && close()}>
+      <Light />
       <button onClick={toggleSound} className="absolute right-4 top-4 rounded-full p-3 text-white/80 hover:bg-white/10" aria-label={sound ? "Turn sound off" : "Turn sound on"}>
         {sound ? <Volume2 className="h-6 w-6" /> : <VolumeX className="h-6 w-6" />}
       </button>
-      <div className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center px-4 py-8 text-center">
-        <p className="rise-in font-serif text-xl text-gold">{meeting.firstName}, you've met</p>
+      <div className="relative mx-auto flex min-h-full max-w-md flex-col items-center justify-center px-4 py-8 text-center">
+        <p className="rise-in font-serif text-xl text-gold [animation-delay:150ms]">{meeting.firstName}, you've met</p>
         <div className="relative isolate mt-4">
-          <div aria-hidden className="halo-breathe absolute -inset-10 -z-10 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.55),transparent_68%)]" />
-          <div className="card-turn relative w-[clamp(8rem,calc((100dvh-27.5rem)*0.75),18rem)] overflow-hidden rounded-[1.4rem] bg-gold p-[5px] shadow-2xl">
+          <div aria-hidden className="halo-breathe absolute left-1/2 top-1/2 -z-10 aspect-square w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.45),transparent_62%)]" />
+          <div className="card-land relative w-[clamp(8rem,calc((100dvh-27.5rem)*0.75),18rem)] overflow-hidden rounded-[1.4rem] bg-gold p-[5px] shadow-2xl">
             <div className="overflow-hidden rounded-[1.1rem] border-2 border-gold-soft bg-paper">
               <div className="relative aspect-[3/4] bg-purple-deep">
                 <Image src={s.image} alt={s.name} fill priority sizes="288px" className="object-cover" />
@@ -101,13 +106,37 @@ export function SaintReveal({ enabled }: { enabled: boolean }) {
             <div aria-hidden className="card-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent" />
           </div>
         </div>
-        <p className="rise-in mt-6 text-balance font-serif text-xl italic text-white [animation-delay:1200ms]">{s.why}</p>
-        {s.patron && <p className="rise-in mt-2 text-white/75 [animation-delay:1300ms]">{s.patron}</p>}
-        <div className="rise-in mt-6 flex w-full flex-col gap-3 [animation-delay:1500ms]">
+        <p className="rise-in mt-6 text-balance font-serif text-xl italic text-white [animation-delay:1350ms]">{s.why}</p>
+        {s.patron && <p className="rise-in mt-2 text-white/75 [animation-delay:1500ms]">{s.patron}</p>}
+        <div className="rise-in mt-6 flex w-full flex-col gap-3 [animation-delay:1750ms]">
           <a href={`/saints/${s.id}`} onClick={() => markSaintSeen(meeting.meetingId)} className="btn-gold w-full text-lg">Read {s.name.replace(/^St /, "")}'s story</a>
           <button ref={closeRef} onClick={close} className="btn w-full border-2 border-white/40 text-white hover:bg-white/10">Amen</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Sparks: fixed positions so the server and client agree, spread around the card.
+const SPARKS = [
+  [22, 3.4, 1.2], [31, 2.8, 1.6], [38, 3.8, 1.3], [45, 3.1, 2.1], [52, 2.6, 1.4], [58, 3.6, 1.9], [64, 3.0, 1.25],
+  [71, 3.9, 1.75], [78, 2.9, 1.5], [27, 4.2, 2.4], [49, 4.0, 2.7], [68, 3.3, 2.3], [35, 2.7, 2.9], [61, 4.4, 3.1],
+];
+
+// The light behind the card: slow-turning rays and gold sparks rising. Clipped to the screen so it never adds scrolling.
+function Light() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="reveal-rays absolute left-1/2 top-[44%] -translate-x-1/2 -translate-y-1/2 h-[150vmax] w-[150vmax] opacity-0 motion-reduce:opacity-40">
+        <div className="h-full w-full rounded-full bg-[repeating-conic-gradient(from_0deg,rgba(246,213,138,0.16)_0deg_5deg,transparent_5deg_15deg)] [mask-image:radial-gradient(circle,black_8%,transparent_55%)]" />
+      </div>
+      {SPARKS.map(([left, d, delay], i) => (
+        <span
+          key={i}
+          className="spark absolute top-[58%] h-1.5 w-1.5 rounded-full bg-gold-soft opacity-0 shadow-[0_0_8px_2px_rgba(246,213,138,0.7)] motion-reduce:hidden"
+          style={{ left: `${left}%`, ["--d" as string]: `${d}s`, ["--delay" as string]: `${delay}s` }}
+        />
+      ))}
     </div>
   );
 }
