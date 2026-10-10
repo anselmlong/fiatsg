@@ -396,4 +396,38 @@ export const SAINTS: Saint[] = [
     image: "/saints/teresa-of-calcutta.jpg",
     credit: "© 1986 Túrelio (via Wikimedia-Commons). CC BY-SA 2.0 Germany; this crop and warm-toned adaptation are shared under the same licence",
   },
+  {
+    "id": "thomas-aquinas",
+    "name": "St Thomas Aquinas",
+    "feast": "28 January",
+    "patron": "Patron of students and teachers",
+    "category": "faith",
+    "tier": 2,
+    "story": "Thomas grew up in Italy in the 1200s and joined the Dominicans despite his family's opposition. He studied with Albert the Great and became a teacher himself, asking how faith and reason could help people understand God. His great work, the Summa Theologiae, explored questions that Christians still ask today. For Thomas, thinking carefully was part of loving God. He left that work unfinished when he died in 1274, but generations of students have continued learning from his patient search for truth.",
+    "quote": {
+      "text": "But if any of you lacks wisdom, let him ask of God",
+      "source": "James 1:5 (World English Bible), a prayer for wisdom in the spirit of Thomas"
+    },
+    "prayer": "St Thomas Aquinas, help us to ask good questions and grow in wisdom.",
+    "why": "You completed a faith course. Thomas made learning a lifelong way of drawing closer to God.",
+    "image": "/saints/thomas-aquinas.jpg",
+    "credit": "Carlo Crivelli, Saint Thomas Aquinas (detail), 1476. Public domain, via Wikimedia Commons"
+  },
+  {
+    "id": "benedict",
+    "name": "St Benedict",
+    "feast": "11 July",
+    "patron": "Patron of Europe and monastics",
+    "category": "faith",
+    "tier": 2,
+    "story": "Benedict was born in central Italy around 480. After studying in Rome, he withdrew to a cave for a life of prayer. Others eventually gathered around him, and he went on to establish the monastery at Monte Cassino. His Rule gave their days a steady rhythm of prayer, study, work and community life. It was a balanced way of seeking God together, with care for people beyond the monastery too. That rhythm still shapes the lives of monks and nuns today.",
+    "quote": {
+      "text": "Come away into a deserted place, and rest awhile.",
+      "source": "Mark 6:31 (World English Bible), Jesus invites his apostles to rest"
+    },
+    "prayer": "St Benedict, teach us to listen and make room for God in our days.",
+    "why": "You took time for a retreat. Benedict stepped away to listen, and built a life around prayer.",
+    "image": "/saints/benedict.jpg",
+    "credit": "Fra Angelico, Saint Benedict (detail of a fresco), 1440s. Public domain, via Wikimedia Commons"
+  },
 ];

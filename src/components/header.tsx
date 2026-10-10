@@ -26,6 +26,7 @@ export async function Header() {
           ]
         : [
             { href: "/causes", label: "Find a cause" },
+            { href: "/missions", label: "Missions" },
             ...(user ? [{ href: "/me", label: "My causes" }] : []),
             { href: "/faith", label: "Saints", badge: saints || undefined },
           ];

@@ -33,7 +33,7 @@ export type Saint = {
   credit: string; // "Painting by Ary Scheffer, 1846. Public domain, via Wikimedia Commons"
 };
 
-export type FaithTaskId = "pray" | "invite" | "mass" | "parish" | "with_friend" | "offer" | "retreat";
+export type FaithTaskId = "pray" | "invite" | "mass" | "parish" | "with_friend" | "offer" | "retreat" | "course" | "attend_retreat";
 export type FaithTask = {
   id: FaithTaskId;
   saintId: string;
@@ -51,6 +51,8 @@ export const FAITH_TASKS: FaithTask[] = [
   { id: "parish", saintId: "john-vianney", kind: "honour", title: "Attend a parish event", body: "Go to a talk, a fellowship or a feast at your parish." },
   { id: "with_friend", saintId: "frassati", kind: "auto", title: "Volunteer with a friend", body: "Serve at the same cause as a friend you invited, and both check in." },
   { id: "retreat", saintId: "ignatius", kind: "honour", title: "Bring a friend to a retreat", body: "Spend a day or a weekend with God, and bring someone along." },
+  { id: "course", saintId: "thomas-aquinas", kind: "honour", title: "Complete a faith course", body: "Finish a course at your parish or with a Catholic community, and make room for your questions." },
+  { id: "attend_retreat", saintId: "benedict", kind: "honour", title: "Join a retreat", body: "Take part in a day or weekend retreat and set aside time to listen to God." },
 ];
 // The saint waiting for someone who opens a friend's invite link.
 export const WELCOME_SAINT = "joseph";

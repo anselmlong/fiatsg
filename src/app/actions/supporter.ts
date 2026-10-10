@@ -64,8 +64,7 @@ export async function doFaithTask(taskId: string) {
   const task = faithTask(taskId);
   if (!task || task.kind !== "honour") return;
   await meetForTask(user.id, task.id);
-  revalidatePath("/faith");
-  revalidatePath("/me");
+  revalidatePath("/", "layout");
 }
 
 // Scanning the QR code at the venue. Fiat trusts the code as proof of being there.
