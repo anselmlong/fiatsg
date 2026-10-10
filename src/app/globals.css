@@ -120,6 +120,24 @@ input, textarea, select { font: inherit; }
   @apply inline-flex items-center gap-1 rounded-full bg-purple-soft px-3 py-1 text-sm font-semibold text-purple-deep;
 }
 
+/* Calendar (react-day-picker) in Fiat colours. Doubled class beats the library CSS, which loads later. */
+.rdp-root.fiat-calendar {
+  --rdp-accent-color: var(--purple);
+  --rdp-accent-background-color: var(--purple-soft);
+  --rdp-today-color: var(--gold-ink);
+  --rdp-day_button-border-radius: 9999px;
+  --rdp-disabled-opacity: 0.35;
+  color: var(--ink);
+}
+.rdp-root.fiat-calendar .rdp-caption_label { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--purple-deep); }
+.rdp-root.fiat-calendar .rdp-weekday { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+.rdp-root.fiat-calendar .rdp-nav_button { border-radius: 9999px; }
+.rdp-root.fiat-calendar .rdp-nav_button:hover:not(:disabled) { background: var(--purple-soft); }
+.rdp-root.fiat-calendar .rdp-day_button:hover:not(:disabled) { background: var(--purple-soft); }
+.rdp-root.fiat-calendar .rdp-today:not(.rdp-selected) .rdp-day_button { font-weight: 800; text-decoration: underline 2px var(--gold); text-underline-offset: 4px; }
+.rdp-root.fiat-calendar .rdp-selected { font-size: inherit; }
+.rdp-root.fiat-calendar .rdp-selected .rdp-day_button { background: var(--purple); color: white; border-color: var(--purple); }
+
 
 /* Candle: one authored moment for prayer. Static under reduced motion. */
 @keyframes candle-flicker {

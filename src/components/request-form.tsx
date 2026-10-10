@@ -5,6 +5,7 @@ import type { Request } from "@/db";
 import type { FormState } from "@/lib/forms";
 import { AGE_GROUPS, AREAS, WEEKDAYS } from "@/lib/skills";
 import { CoverPicker } from "./cover-picker";
+import { DateField, Select, TimeSelect } from "./date-time";
 import { MediaUploader } from "./media-uploader";
 import { Submit } from "./submit";
 import { SkillPicker } from "./ui";
@@ -21,6 +22,7 @@ export function RequestForm({
   const [state, action] = useActionState(serverAction, undefined);
   const [kind, setKind] = useState<"one_off" | "regular">(initial?.kind ?? "one_off");
   const [area, setArea] = useState(initial?.area ?? "Central");
+  const [startDate, setStartDate] = useState(initial?.startDate ?? "");
 
   return (
     <form action={action} className="space-y-10">
@@ -97,23 +99,23 @@ export function RequestForm({
           </div>
         )}
         <div className="grid gap-5 sm:grid-cols-2">
-          <label className="field">
+          <div className="field">
             <span className="label">{kind === "regular" ? "Starting from" : "Date"}</span>
-            <input name="startDate" type="date" required defaultValue={initial?.startDate} className="input" />
-          </label>
+            <DateField name="startDate" initial={initial?.startDate} required onChange={setStartDate} />
+          </div>
           {kind === "regular" && (
-            <label className="field">
+            <div className="field">
               <span className="label">Until <span className="font-normal text-muted">(optional)</span></span>
-              <input name="endDate" type="date" defaultValue={initial?.endDate ?? ""} className="input" />
-            </label>
+              <DateField name="endDate" initial={initial?.endDate} min={startDate} placeholder="No end date" />
+            </div>
           )}
           <label className="field">
             <span className="label">Start time</span>
-            <input name="startTime" type="time" required defaultValue={initial?.startTime ?? "10:00"} className="input" />
+            <TimeSelect name="startTime" initial={initial?.startTime ?? "10:00"} />
           </label>
           <label className="field">
             <span className="label">End time</span>
-            <input name="endTime" type="time" required defaultValue={initial?.endTime ?? "12:00"} className="input" />
+            <TimeSelect name="endTime" initial={initial?.endTime ?? "12:00"} />
           </label>
         </div>
       </fieldset>
@@ -122,9 +124,9 @@ export function RequestForm({
         <legend className="text-2xl font-bold text-purple-deep">4. Where?</legend>
         <label className="field">
           <span className="label">Area</span>
-          <select name="area" value={area} onChange={(e) => setArea(e.target.value)} className="input">
+          <Select name="area" value={area} onChange={(e) => setArea(e.target.value)}>
             {AREAS.map((a) => <option key={a} value={a}>{a === "Online" ? "Online / from home" : a}</option>)}
-          </select>
+          </Select>
         </label>
         {area !== "Online" && (
           <label className="field">

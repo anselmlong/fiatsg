@@ -43,8 +43,10 @@ function readRequest(fd: FormData) {
   else if (values.story.length < 30) error = "Please tell volunteers a little more about why this matters (a few sentences).";
   else if (!values.skills.length) error = "Please choose at least one skill you need.";
   else if (!values.startDate) error = kind === "regular" ? "Please choose a start date." : "Please choose a date.";
+  else if (values.endDate && values.endDate < values.startDate) error = "The end date can't be before the start date.";
   else if (kind === "regular" && !values.weekdays.length) error = "Please choose which day(s) of the week.";
   else if (!values.startTime || !values.endTime) error = "Please set a start and end time.";
+  else if (values.endTime <= values.startTime) error = "The end time needs to be after the start time.";
   return { values, error };
 }
 
