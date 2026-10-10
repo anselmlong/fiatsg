@@ -1,0 +1,127 @@
+.hero-option {
+  --hero-purple: #482078;
+  --hero-background: #eee7f4;
+  background: var(--hero-background);
+}
+
+.hero-option-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 660px;
+}
+
+.hero-option-copy {
+  align-self: center;
+  padding: 4rem clamp(1.5rem, 4vw, 4rem);
+  padding-left: max(1.5rem, calc((100vw - 72rem) / 2 + 1rem));
+}
+
+.hero-option h1 {
+  max-width: 10ch;
+  color: var(--hero-purple);
+  font-size: clamp(2.75rem, 4.5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.hero-option-invitation {
+  margin-top: 1.5rem;
+  max-width: 27ch;
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  line-height: 1.35;
+  color: #3e3048;
+}
+
+.hero-option-description {
+  margin-top: 1.5rem;
+  max-width: 46ch;
+  color: #5e5266;
+}
+
+.hero-option-figure {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+}
+
+.hero-option-photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-option figcaption {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.hero-option--royal {
+  --hero-background: #482078;
+}
+
+.hero-option--royal h1,
+.hero-option--royal .hero-option-invitation {
+  color: #fff8ed;
+}
+
+.hero-option--royal .hero-option-description {
+  color: #e7dced;
+}
+
+.hero-option--arch {
+  --hero-background: var(--cream);
+}
+
+.hero-option--arch .hero-option-figure {
+  margin: 2.5rem max(1.5rem, calc((100vw - 72rem) / 2 + 1rem)) 2.5rem 1.5rem;
+}
+
+.hero-option--arch .hero-option-photo {
+  inset: 0 0 2rem;
+  border: 2px solid var(--hero-purple);
+  border-radius: 50% 50% 0 0 / 40% 40% 0 0;
+  padding: 0.5rem;
+  background: var(--cream);
+}
+
+.hero-option--arch .hero-option-photo img {
+  /* The narrow cream inset makes the purple frame read as a deliberate border. */
+  clip-path: inset(0.5rem round 50% 50% 0 0 / 40% 40% 0 0);
+}
+
+.hero-option--arch figcaption {
+  right: 0;
+  bottom: 0;
+  background: transparent;
+}
+
+@media (max-width: 63.999rem) {
+  .hero-option-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .hero-option-copy {
+    padding: 3rem 1rem;
+  }
+  .hero-option h1 {
+    font-size: clamp(2.75rem, 8vw, 4.5rem);
+  }
+  .hero-option-figure {
+    min-height: clamp(280px, 65vw, 480px);
+  }
+  .hero-option--arch .hero-option-copy {
+    padding-bottom: 2rem;
+  }
+  .hero-option--arch .hero-option-figure {
+    min-height: clamp(400px, 85vw, 600px);
+    margin: 0 1rem 2rem;
+  }
+}

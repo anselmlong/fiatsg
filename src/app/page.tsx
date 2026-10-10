@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HERO_PREVIEWS, HomeHeroPreview, HeroPreviewSwitcher } from "@/components/home-hero-preview";
 import "./home-hero.css";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -7,7 +8,9 @@ import { currentUser } from "@/lib/auth";
 import { listCauses } from "@/lib/queries";
 import { SaintDiscovery } from "@/components/saint-discovery";
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ hero?: string }> }) {
+  const { hero } = await searchParams;
+  const preview = HERO_PREVIEWS.find((v) => v.id === hero)?.id;
   const [user, causes] = await Promise.all([currentUser(), listCauses(["approved"])]);
   const mySkills = user?.skills ?? [];
   const score = (s: string[]) => s.filter((x) => mySkills.includes(x)).length;
@@ -15,7 +18,8 @@ export default async function Home() {
 
   return (
     <>
-      <section className="home-hero relative isolate overflow-hidden bg-cream">
+      {(preview || hero === "current") && <HeroPreviewSwitcher selected={preview ?? "current"} />}
+      {preview ? <HomeHeroPreview variant={preview} /> : <section className="home-hero relative isolate overflow-hidden bg-cream">
         <Image
           src="/images/hero-worship-crop.jpg"
           alt="Young Catholics worshipping together, hands raised, before a crucifix"
@@ -41,7 +45,7 @@ export default async function Home() {
           </Link>
         </Container>
         <p className="absolute bottom-3 right-4 rounded bg-paper/90 px-2 py-1 text-xs text-muted">Photo: Office for Young People</p>
-      </section>
+      </section>}
 
       <section className="pt-16 pb-12 sm:pt-24">
         <Container>
