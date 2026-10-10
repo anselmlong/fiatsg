@@ -18,6 +18,7 @@ export async function Header() {
       : user?.role === "cf_admin"
         ? [
             { href: "/admin", label: "Review queue" },
+            { href: "/admin/requests", label: "All requests" },
             { href: "/causes", label: "All causes" },
           ]
         : [

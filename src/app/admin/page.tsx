@@ -120,7 +120,10 @@ export default async function AdminPage() {
                       {when} · {time} · {r.address ?? r.area} · {r.volunteersNeeded} volunteers · {ageLabel(r.ageGroup)}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">{r.skills.map((s) => <SkillChip key={s} id={s} />)}</div>
-                    <Link href={`/causes/${r.id}`} className="mt-3 inline-block text-sm font-bold">Preview public page →</Link>
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm font-bold">
+                      <Link href={`/causes/${r.id}`}>Preview public page →</Link>
+                      <Link href={`/admin/requests/${r.id}/edit`}>Edit it yourself →</Link>
+                    </div>
                     <Decision action={reviewRequest.bind(null, r.id)} />
                   </div>
                 </div>
