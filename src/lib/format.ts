@@ -17,11 +17,14 @@ const DAY_NAMES: Record<string, string> = {
   Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday",
 };
 
+const WEEKDAY_SET = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const isWeekdays = (d: string[]) => d.length === 5 && WEEKDAY_SET.every((x) => d.includes(x));
+
 export function fmtSchedule(r: Pick<Request, "kind" | "startDate" | "endDate" | "weekdays" | "startTime" | "endTime">) {
   const time = `${fmtTime(r.startTime)} – ${fmtTime(r.endTime)}`;
   if (r.kind === "one_off") return { when: fmtDate(r.startDate), time };
   const days = r.weekdays.map((d) => DAY_NAMES[d] ?? d);
-  const every = days.length === 1 ? `Every ${days[0]}` : `Every ${days.slice(0, -1).join(", ")} & ${days.at(-1)}`;
+  const every = isWeekdays(r.weekdays) ? "Weekdays" : days.length === 1 ? `Every ${days[0]}` : `Every ${days.slice(0, -1).join(", ")} & ${days.at(-1)}`;
   const range = r.endDate ? `${fmtShort(r.startDate)} – ${fmtShort(r.endDate)}` : `from ${fmtShort(r.startDate)}`;
   return { when: `${every}, ${range}`, time };
 }
@@ -45,6 +48,6 @@ export function fmtScheduleShort(r: Pick<Request, "kind" | "startDate" | "weekda
     return { day, time };
   }
   const d = r.weekdays;
-  const day = d.length === 1 ? `Every ${DAY_NAMES[d[0]] ?? d[0]}` : `Every ${d.slice(0, -1).join(", ")} & ${d.at(-1)}`;
+  const day = isWeekdays(d) ? "Weekdays" : d.length === 1 ? `Every ${DAY_NAMES[d[0]] ?? d[0]}` : `Every ${d.slice(0, -1).join(", ")} & ${d.at(-1)}`;
   return { day, time };
 }
