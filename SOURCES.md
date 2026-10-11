@@ -2,15 +2,16 @@
 
 ## Bonus discovery cards
 
-These three cards are separate from the service collection. The portraits are public-domain reproductions from Wikimedia Commons, displayed with a 3:4 crop by the card component.
+These four cards are separate from the service collection. The portraits are public-domain reproductions from Wikimedia Commons, displayed with a 3:4 crop by the card component.
 
 | Card | Portrait | Story reference |
 | --- | --- | --- |
 | St Anthony of Padua | [Francisco de Zurbarán, Saint Anthony of Padua](https://commons.wikimedia.org/wiki/File:Saint_Anthony_of_Padua_491.jpg) | [Franciscan Media](https://www.franciscanmedia.org/saint-of-the-day/saint-anthony-of-padua/) |
 | St Thomas the Apostle | [El Greco, Apostle St Thomas, 1610–1614](https://commons.wikimedia.org/wiki/File:El_Greco_-_Apostle_St_Thomas_-_WGA10599.jpg) | [Benedict XVI, general audience of 27 September 2006](https://www.vatican.va/content/benedict-xvi/en/audiences/2006/documents/hf_ben-xvi_aud_20060927.html). Quote: John 20:28. |
 | St Francis of Assisi | [Unknown artist, Saint Francis of Assisi, 1615–1635](https://commons.wikimedia.org/wiki/File:Saint_Francis_of_Assisi_-_Google_Art_Project.jpg) | [Franciscan Media](https://www.franciscanmedia.org/saint-of-the-day/saint-francis-of-assisi/); [Vatican News](https://www.vaticannews.va/en/church/news/2022-10/st-francis-mass-assisi-zuppi-mattarella-ecology-peace.html) |
+| St Isidore of Seville | [Bartolomé Esteban Murillo, San Isidoro, 1655](https://commons.wikimedia.org/wiki/File:San_Isidoro_-_Murillo.jpg) | [Franciscan Media](https://www.franciscanmedia.org/saint-of-the-day/saint-isidore-of-seville/) |
 
-The lost key and visiting bird are playful discovery mechanisms, not historical events. The prayers on these cards are original invocations for Fiat. `src/lib/saint-sources.ts` exposes the existing reading references below on saint story pages.
+The lost key, visiting bird and cheat code are playful discovery mechanisms, not historical events. The prayers on these cards are original invocations for Fiat. `src/lib/saint-sources.ts` exposes the existing reading references below on saint story pages.
 
 ## Organisation images
 
