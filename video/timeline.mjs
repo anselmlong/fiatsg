@@ -38,11 +38,11 @@ export const T = {
   devices: 24.0,
   causeIn: 26.4,
   callouts: [
-    { at: 24.7, text: "Vetted by the Catholic Foundation" },
+    { at: 24.7, text: "Real needs from Catholic organisations" },
     { at: 27.0, text: "Matched to your gifts" },
     { at: 28.4, text: "Can't come? Pray instead" },
     { at: 29.8, text: "Check in with a QR code" },
-    { at: 31.2, text: "English · Bahasa Melayu · Tamil" },
+    { at: 31.2, text: "English · 中文 · Bahasa Melayu · Tamil" },
   ],
   // The faith along the way
   faith: 33.0,
@@ -51,7 +51,7 @@ export const T = {
     { at: 35.0, out: 36.2, text: "Companions." },
     { at: 36.4, out: 38.35, text: "Discover the faith through the saints who said yes before you." },
   ],
-  anselmForward: 38.4,
+  saintForward: 38.4,
   quote: 38.9,
   // Call to action
   rush: 41.0,

@@ -13,8 +13,8 @@ and stitched with ffmpeg. Nothing here touches the app. The film reads the saint
 
 ## Re-rendering
 
-Needs Node 22+ and ffmpeg on the PATH. The page loads Caudex and Nunito Sans from Google Fonts, so
-rendering needs a network connection. It refuses to render if either font fails to load.
+Needs Node 22+ and ffmpeg on the PATH. The page loads Caudex, Nunito Sans and Noto Sans SC (for 中文) from Google Fonts, so
+rendering needs a network connection. It refuses to render if any of them fails to load.
 
 ```sh
 cd video
@@ -72,20 +72,20 @@ For laying music under the film later. All times are seconds from the first fram
 | 20.40 | 1224 | "Fiat — let it be done." drawn in gold ink | Bell C5 |
 | 21.80 | 1308 | "Mary's yes changed everything…" | |
 | 24.00 | 1440 | Home screen swings in | |
-| 24.70 | 1482 | Callout: Vetted by the Catholic Foundation | Soft ping |
+| 24.70 | 1482 | Callout: Real needs from Catholic organisations | Soft ping |
 | 26.40 | 1584 | Cause screen (ACMI) swings in front | |
 | 27.00 | 1620 | Callout: Matched to your gifts | Soft ping |
 | 28.40 | 1704 | Callout: Can't come? Pray instead | Soft ping |
 | 29.80 | 1788 | Callout: Check in with a QR code | Soft ping |
-| 31.20 | 1872 | Callout: English · Bahasa Melayu · Tamil | Soft ping |
+| 31.20 | 1872 | Callout: English · 中文 · Bahasa Melayu · Tamil | Soft ping |
 | **33.00** | **1980** | **Cut to the dark stage: drifting saint cards** | Pad shifts to A minor |
 | 33.40 | 2004 | "Not points. Not badges." | Bell E5 |
 | 35.00 | 2100 | "Companions." | Bell G5 |
 | 36.40 | 2184 | "Discover the faith through the saints…" | Bell A5, pad to F |
-| 38.40 | 2304 | St Anselm's card comes forward | |
-| 38.90 | 2334 | "…I believe in order that I may understand." | Bell C5, pad to C |
+| 38.40 | 2304 | St Pier Giorgio Frassati's card comes forward | |
+| 38.90 | 2334 | "Verso l'alto — to the heights!" | Bell C5, pad to C |
 | 41.00 | 2460 | Cards rush into one point of light | Riser |
-| **41.80** | **2508** | **Bloom → Fiat wordmark + Catholic Foundation logo** | **Hit:** C major bell chord + boom |
+| **41.80** | **2508** | **Bloom → Fiat wordmark** | **Hit:** C major bell chord + boom |
 | 42.30 | 2538 | "What will your yes be?" | Final pad |
 | 42.80 | 2568 | fiat.anselmlong.com · Built for the FIAT Catholic Hackathon 2026 | |
 | 43.50–45.00 | 2610–2699 | Clean static hold (also the thumbnail) | Pad decays to silence |
@@ -93,9 +93,9 @@ For laying music under the film later. All times are seconds from the first fram
 ## Sources
 
 - Saint names, feasts and images: `src/lib/saint-roster.ts` and `public/saints/`. Image credits are in the roster.
-- St Anselm's line is an excerpt of the roster quote ("I do not seek to understand in order that I may
-  believe, but I believe in order that I may understand." *Proslogion*, ch. 1).
+- The closing quote is St Pier Giorgio Frassati's own, from the roster: "Verso l'alto — to the heights!",
+  written on a photograph of his last climb, June 1925.
 - The product claims match the app:
   - The cause page says "Can't come? You can still pray."
   - QR check-in is at `causes/[id]/check-in`.
-  - The language picker offers English, Bahasa Melayu and Tamil.
+  - The language picker offers English, 中文, Bahasa Melayu and Tamil.

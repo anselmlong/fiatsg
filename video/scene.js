@@ -135,8 +135,8 @@ const L = V
       pillSize: 54,
       faithSize: 100, faithY: 900,
       quoteCard: { x: 540, y: 700, w: 500 }, quoteY: 1255, sourceY: 1440, quoteSize: 80,
-      point: { x: 540, y: 520 },
-      end: { mark: 300, markY: 520, logoW: 560, logoY: 700, qY: 1050, qSize: 100, urlY: 1290, urlSize: 62, smallY: 1370, smallSize: 34 },
+      point: { x: 540, y: 640 },
+      end: { mark: 300, markY: 640, qY: 960, qSize: 100, urlY: 1200, urlSize: 62, smallY: 1280, smallSize: 34 },
     }
   : {
       hero: { cx: 960, cy: 470, w: 390 }, capY: 935, capSize: 100,
@@ -150,8 +150,8 @@ const L = V
       pillSize: 46,
       faithSize: 104, faithY: 540,
       quoteCard: { x: 960, y: 395, w: 300 }, quoteY: 745, sourceY: 850, quoteSize: 76,
-      point: { x: 960, y: 300 },
-      end: { mark: 230, markY: 300, logoW: 380, logoY: 455, qY: 680, qSize: 92, urlY: 820, urlSize: 56, smallY: 895, smallSize: 32 },
+      point: { x: 960, y: 340 },
+      end: { mark: 240, markY: 340, qY: 610, qSize: 92, urlY: 760, urlSize: 56, smallY: 835, smallSize: 32 },
     };
 
 // =================================================================================================
@@ -462,14 +462,15 @@ ticket.innerHTML = `<div class="serif" style="font-size:44px;font-weight:700;col
 const ticketAnchor = el("div", "anchor", ticket);
 css(ticketAnchor, V ? { left: "0%", top: "40%" } : { left: "50%", top: "0%" });
 
-const anchors = [cover.anchor(16.6, 4.2), cause.anchor(73, 70.5), cause.anchor(80, 82.7), ticketAnchor, cause.anchor(74, 4.2)];
+const anchors = [cover.anchor(53, 32), cause.anchor(73, 70.5), cause.anchor(80, 82.7), ticketAnchor, cause.anchor(74, 4.2)];
 const svgNS = "http://www.w3.org/2000/svg";
 const lines = document.createElementNS(svgNS, "svg");
 css(lines, { position: "absolute", inset: 0, width: W + "px", height: H + "px", overflow: "visible" });
 C.appendChild(lines);
 const callouts = T.callouts.map((c, i) => {
   const p = L.pills[i];
-  const pill = el("div", "pill", C, c.text);
+  // Each item stays whole, so a line never breaks inside a name (or between 中 and 文).
+  const pill = el("div", "pill", C, c.text.includes(" · ") ? c.text.split(" · ").map((x) => `<span style="white-space:nowrap">${x}</span>`).join(" · ") : c.text);
   css(pill, { left: p.x + "px", top: p.y + "px", maxWidth: p.w + "px", fontSize: L.pillSize + "px" });
   const ln = document.createElementNS(svgNS, "line");
   ln.setAttribute("stroke", "#c8973e"); ln.setAttribute("stroke-width", "3.5"); ln.setAttribute("stroke-linecap", "round");
@@ -579,18 +580,20 @@ dCanvas.width = W; dCanvas.height = H;
 const dctx = dCanvas.getContext("2d");
 const lanternLayer = el("div", "layer", D);
 const r2 = rng(21);
-const LANTERN_IDS = ["joseph", "bakhita", "john-bosco", "teresa-of-calcutta", "martin-de-porres", "frassati", "cabrini", "vincent-de-paul", "peter-claver", "elizabeth-of-hungary", "nicholas", "anselm", "john-vianney", "jeanne-jugan"];
+// The saint who closes the faith section, with his own words from the roster.
+const QUOTE_SAINT = "frassati";
+const LANTERN_IDS = ["joseph", "bakhita", "john-bosco", "teresa-of-calcutta", "martin-de-porres", "camillus-de-lellis", "cabrini", "vincent-de-paul", "peter-claver", "elizabeth-of-hungary", "nicholas", "frassati", "john-vianney", "jeanne-jugan"];
 const SPOTS = V
   ? [[0.15, 0.12], [0.52, 0.06], [0.86, 0.15], [0.1, 0.35], [0.9, 0.38], [0.24, 0.62], [0.78, 0.66], [0.12, 0.86], [0.5, 0.9], [0.88, 0.88], [0.36, 0.22], [0.66, 0.26], [0.36, 0.76], [0.64, 0.78]]
   : [[0.08, 0.2], [0.25, 0.1], [0.5, 0.08], [0.76, 0.12], [0.93, 0.25], [0.06, 0.62], [0.2, 0.85], [0.42, 0.9], [0.64, 0.88], [0.86, 0.8], [0.95, 0.58], [0.36, 0.2], [0.64, 0.8], [0.03, 0.42]];
 const lanterns = LANTERN_IDS.map((id, i) => {
   const c = makeCard(lanternLayer, [id], { edges: true, back: true });
   c.face(id);
-  const z = id === "anselm" ? 0.55 : r2();
+  const z = id === QUOTE_SAINT ? 0.55 : r2();
   c.root.style.zIndex = Math.round(z * 100);
   return { id, c, x: SPOTS[i][0] * W, y: SPOTS[i][1] * H, z, ph: r2() * 6.28, ph2: r2() * 6.28 };
 });
-const aLantern = lanterns.find((l) => l.id === "anselm");
+const aLantern = lanterns.find((l) => l.id === QUOTE_SAINT);
 const dShade = el("div", "layer", D);
 css(dShade, { background: `radial-gradient(ellipse ${V ? "80% 20%" : "56% 30%"} at 50% ${(L.faithY / H) * 100}%, rgba(13,6,24,0.94), rgba(13,6,24,0.75) 55%, transparent 100%)`, zIndex: 150 });
 const faithLines = T.faithLines.map((l, i) => {
@@ -599,9 +602,9 @@ const faithLines = T.faithLines.map((l, i) => {
     extra: { zIndex: 200, textShadow: i === 1 ? "0 0 40px rgba(246,213,138,0.6)" : "0 4px 24px rgba(0,0,0,0.6)" } });
   return { ...l, e };
 });
-const quote = textLine(D, "“…I believe in order<br>that I may understand.”", { size: L.quoteSize, top: L.quoteY, color: "#fbf6ef", weight: 400, italic: true, maxW: V ? 1000 : 1700, extra: { zIndex: 200 } });
-if (!V) quote.innerHTML = "“…I believe in order that I may understand.”";
-const source = textLine(D, "St Anselm · Proslogion, chapter 1", { size: V ? 36 : 32, top: L.sourceY, color: "#f6d58a", weight: 800, serif: false, extra: { zIndex: 200, letterSpacing: "0.14em", textTransform: "uppercase" } });
+const quote = textLine(D, "“Verso l'alto —<br>to the heights!”", { size: L.quoteSize, top: L.quoteY, color: "#fbf6ef", weight: 400, italic: true, maxW: V ? 1000 : 1700, extra: { zIndex: 200 } });
+if (!V) quote.innerHTML = "“Verso l'alto — to the heights!”";
+const source = textLine(D, "St Pier Giorgio Frassati · June 1925", { size: V ? 36 : 32, top: L.sourceY, color: "#f6d58a", weight: 800, serif: false, extra: { zIndex: 200, letterSpacing: "0.14em", textTransform: "uppercase" } });
 const point = el("div", "abs", D);
 css(point, { width: "600px", height: "600px", left: L.point.x - 300 + "px", top: L.point.y - 300 + "px", borderRadius: "50%", zIndex: 300,
   background: "radial-gradient(circle, #ffffff 0%, #fff6dc 8%, rgba(246,213,138,0.7) 20%, rgba(246,213,138,0.15) 45%, transparent 70%)" });
@@ -612,9 +615,6 @@ css(eBg, { background: "radial-gradient(circle at 50% 30%, #fff3d6 0%, #fbf6ef 5
 const eHalo = el("div", "abs", E);
 css(eHalo, { width: "1000px", height: "1000px", left: L.point.x - 500 + "px", top: L.end.markY - 500 + "px", borderRadius: "50%", background: "radial-gradient(circle, rgba(246,213,138,0.5), rgba(246,213,138,0.12) 40%, transparent 68%)" });
 const mark = textLine(E, "Fiat", { size: L.end.mark, top: L.end.markY, color: "#34195c" });
-const logo = el("img", "abs", E);
-logo.src = "/public/images/cf-logo.png";
-css(logo, { width: L.end.logoW + "px", left: (W - L.end.logoW) / 2 + "px" });
 const question = textLine(E, "What will your yes be?", { size: L.end.qSize, top: L.end.qY, color: "#2b1a3f", maxW: V ? 960 : 1700 });
 const url = textLine(E, "fiat.anselmlong.com", { size: L.end.urlSize, top: L.end.urlY, color: "#a8772a", weight: 800, serif: false, extra: { letterSpacing: "0.01em" } });
 const small = textLine(E, "Built for the FIAT Catholic Hackathon 2026", { size: L.end.smallSize, top: L.end.smallY, color: "#6b5a7a", weight: 700, serif: false, maxW: V ? 960 : 1700 });
@@ -636,11 +636,11 @@ function renderD(t) {
   if (!on) return;
   dctx.clearRect(0, 0, W, H);
   embers(dctx, t, 0.7 * (1 - prog(t, T.rush, T.rush + 0.5)));
-  const fwd = spring(t - T.anselmForward, 0.9, 0.8);
-  const dim = expOut(prog(t, T.anselmForward, T.anselmForward + 0.8));
+  const fwd = spring(t - T.saintForward, 0.9, 0.8);
+  const dim = expOut(prog(t, T.saintForward, T.saintForward + 0.8));
   lanterns.forEach((l, i) => {
     let s = lanternState(l, t);
-    if (l === aLantern && t >= T.anselmForward) {
+    if (l === aLantern && t >= T.saintForward) {
       const q = L.quoteCard;
       const turns = Math.round(s.ry / 360) * 360;
       s = { x: lerp(s.x, q.x, fwd), y: lerp(s.y, q.y, fwd), w: lerp(s.w, q.w, fwd), ry: lerp(s.ry, turns, fwd), rx: lerp(s.rx, 0, fwd), o: lerp(s.o, 1, fwd) };
@@ -680,8 +680,6 @@ function renderE(t) {
   const m = expOut(prog(t, T.bloom + 0.05, T.bloom + 0.8));
   css(mark, { letterSpacing: lerp(0.14, 0.01, m) + "em" });
   place(mark, L.end.markY, clamp(prog(t, T.bloom + 0.05, T.bloom + 0.35)), 0, lerp(0.9, 1, m));
-  const lg = inOutText(t, T.bloom + 0.2, null, { dur: 0.7, rise: 24 });
-  css(logo, { top: L.end.logoY + lg.y + "px", opacity: lg.o });
   css(eHalo, { opacity: 0.6 + 0.4 * m, transform: `scale(${lerp(0.6, 1, m)})` });
   const qq = inOutText(t, T.question, null, { dur: 0.7, rise: 40 });
   place(question, L.end.qY, qq.o, qq.y);
@@ -705,7 +703,8 @@ for (const f of ["700 72px Caudex", "400 72px Caudex", "italic 400 72px Caudex",
   if (!document.fonts.check(f)) throw new Error("Font failed to load: " + f);
 }
 // check() also passes when no face matches at all, so insist the Google faces really loaded.
-for (const fam of ["Caudex", "Nunito Sans"]) {
+await document.fonts.load("800 32px 'Noto Sans SC'", "中文");
+for (const fam of ["Caudex", "Nunito Sans", "Noto Sans SC"]) {
   if (![...document.fonts].some((f) => f.family.replace(/["']/g, "") === fam && f.status === "loaded")) throw new Error("Font missing: " + fam);
 }
 await Promise.all([...document.images].map((i) => i.decode()));

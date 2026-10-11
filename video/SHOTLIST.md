@@ -41,12 +41,12 @@ Hard cut to a cold, desaturated purple-grey. Low pulse every 0.8 s.
 | 20.40 | "Fiat — let it be done." draws in with gold ink (left→right reveal, gold turning to purple). |
 | 21.80 | "Mary's yes changed everything." / "Yours can be an hour, a skill, a prayer or an invite." |
 | 24.00 | Title lifts away. cover.jpg in a tilted 3D browser frame slides in with parallax. |
-| 25.00 | Callout → CF logo in the header: "Vetted by the Catholic Foundation" |
+| 24.70 | Callout → the cause photo: "Real needs from Catholic organisations" |
 | 26.40 | cause.jpg (ACMI computer literacy for migrant workers) swings in front. |
 | 27.00 | Callout → "Gifts needed" chips: "Matched to your gifts" |
 | 28.40 | Callout → "I'd like to help" panel: "Can't come? Pray instead" |
 | 29.80 | A QR ticket card floats in: "Check in with a QR code" |
-| 31.20 | Callout → language picker: "English · Bahasa Melayu · Tamil" |
+| 31.20 | Callout → language picker: "English · 中文 · Bahasa Melayu · Tamil" |
 
 ## 33.0–41.0 s (f1980–2459) THE FAITH ALONG THE WAY
 Dark stage, saint cards drifting in 3D like lanterns, each catching the light as it turns.
@@ -55,13 +55,13 @@ Dark stage, saint cards drifting in 3D like lanterns, each catching the light as
 | 33.40 | "Not points. Not badges." |
 | 35.00 | "Companions." |
 | 36.40 | "Discover the faith through the saints" / "who said yes before you." |
-| 38.60 | St Anselm's card comes forward to centre; under it: "…I believe in order that I may understand." — Proslogion, ch. 1 (a faithful excerpt of the roster quote) |
+| 38.40 | St Pier Giorgio Frassati's card comes forward to centre; under it: "Verso l'alto — to the heights!" — St Pier Giorgio Frassati, June 1925 (from the roster) |
 
 ## 41.0–45.0 s (f2460–2699) CALL TO ACTION
 | t | Shot |
 |---|---|
 | 41.00–41.80 | All cards rush into one point of light. |
-| 41.80 | The point blooms to cream; "Fiat" wordmark (purple serif) resolves, CF logo beneath. |
+| 41.80 | The point blooms to cream; "Fiat" wordmark (purple serif) resolves. |
 | 42.30 | "What will your yes be?" |
 | 42.80 | "fiat.anselmlong.com" · small "Built for the FIAT Catholic Hackathon 2026" |
 | 43.50–45.00 | Clean static final frame (≥1.5 s hold, also the thumbnail). |

@@ -30,7 +30,7 @@ export async function openBrowser() {
   return chromium.launch({ args: ["--force-color-profile=srgb", "--disable-lcd-text", "--font-render-hinting=none"] });
 }
 
-export async function openPage(browser, base, format) {
+export async function openPage(browser, base, format, [from, to] = [0, 2700]) {
   const [width, height] = SIZES[format];
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
   const errors = [];
@@ -40,8 +40,8 @@ export async function openPage(browser, base, format) {
   await page.waitForFunction(() => window.ready === true || false, null, { timeout: 60000 }).catch(() => {});
   if (errors.length) throw errors[0];
   if (!(await page.evaluate(() => window.ready))) throw new Error("Composition never became ready");
-  // Warm up: show every section once so its layers and images are rasterised before real captures.
-  for (let t = 0; t < 45; t += 1.5) await shoot(page, Math.round(t * 60), { type: "jpeg", quality: 10 });
+  // Warm up: show each section in the span once so its layers and images are rasterised before real captures.
+  for (let f = Math.max(0, from - 90); f < to; f += 90) await shoot(page, f, { type: "jpeg", quality: 10 });
   return page;
 }
 
