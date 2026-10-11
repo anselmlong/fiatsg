@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useEffectEvent, useId, useRef, useState, useTransition } from "react";
 import { Bird, BookOpen, KeyRound } from "lucide-react";
-import { claimDiscovery } from "@/app/actions/discoveries";
+import { claimDiscovery, unlockAllSaints } from "@/app/actions/discoveries";
 import type { Discovery } from "@/lib/bonus-saints";
 import type { SaintSource } from "@/lib/saint-sources";
 import { pingSaints } from "./saint-reveal";
@@ -79,38 +79,85 @@ export function SaintDiscovery({ discovery }: { discovery: "lost-key" | "bird" }
   );
 }
 
-const CHEAT_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-
-// Listens anywhere on the site for the classic cheat code, ignoring keys typed into fields.
-export function CheatCode() {
-  const { claim, feedback } = useDiscovery("cheat-code");
-  const [shown, setShown] = useState(false);
-  const unlock = useEffectEvent(() => {
-    setShown(true);
-    claim();
-  });
+// Calls onMatch when the keys typed outside form fields end with the given sequence.
+function useKeySequence(sequence: string[], onMatch: () => void) {
+  const match = useEffectEvent(onMatch);
   useEffect(() => {
-    let step = 0;
+    const typed: string[] = [];
     function onKey(event: KeyboardEvent) {
       const target = event.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
-      const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-      step = key === CHEAT_CODE[step] ? step + 1 : key === CHEAT_CODE[0] ? (step === 2 ? 2 : 1) : 0;
-      if (step === CHEAT_CODE.length) {
-        step = 0;
-        unlock();
+      typed.push(event.key.length === 1 ? event.key.toLowerCase() : event.key);
+      if (typed.length > sequence.length) typed.shift();
+      if (typed.join(" ") === sequence.join(" ")) {
+        typed.length = 0;
+        match();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
-  if (!shown) return null;
+  }, [sequence]);
+}
+
+function CheatToast({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className="fixed inset-x-4 bottom-4 z-50 mx-auto w-fit max-w-sm rounded-2xl border-2 border-gold bg-paper p-4 shadow-lg">
-      <p className="font-serif font-bold text-gold-ink">Cheat code accepted</p>
-      {feedback}
-      <button type="button" onClick={() => setShown(false)} className="mt-2 text-sm font-bold text-purple">Close</button>
+      <p className="font-serif font-bold text-gold-ink">{title}</p>
+      {children}
+      <button type="button" onClick={onClose} className="mt-2 text-sm font-bold text-purple">Close</button>
     </div>
+  );
+}
+
+const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+const ALL_SAINTS = [..."allsaints"];
+
+// The classic cheat code, typed anywhere on the site, finds St Isidore's bonus card.
+export function CheatCode() {
+  const { claim, feedback } = useDiscovery("cheat-code");
+  const [shown, setShown] = useState(false);
+  useKeySequence(KONAMI, () => {
+    setShown(true);
+    claim();
+  });
+  return shown ? <CheatToast title="Cheat code accepted" onClose={() => setShown(false)}>{feedback}</CheatToast> : null;
+}
+
+// Typing "allsaints" anywhere adds every saint and bonus card to a supporter's collection.
+export function AllSaintsCode() {
+  const [pending, startTransition] = useTransition();
+  const [message, setMessage] = useState<string | null>(null);
+  const [signIn, setSignIn] = useState(false);
+  const pathname = usePathname();
+  useKeySequence(ALL_SAINTS, () => {
+    if (pending) return;
+    setMessage("Gathering the communion of saints…");
+    startTransition(async () => {
+      try {
+        const result = await unlockAllSaints();
+        setSignIn(result.status === "sign-in");
+        if (result.status === "unlocked") {
+          setMessage(result.added > 0 ? `${result.added} new ${result.added === 1 ? "card joins" : "cards join"} your collection.` : "Every saint is already in your collection.");
+          pingSaints();
+        } else if (result.status === "sign-in") {
+          setMessage("Log in as a supporter, then type it again to keep them.");
+        } else {
+          setMessage("Saints are collected with a supporter account.");
+        }
+      } catch {
+        setMessage("Couldn't unlock the saints. Please try again.");
+      }
+    });
+  });
+  if (message === null) return null;
+  return (
+    <CheatToast title="Cheat code accepted" onClose={() => setMessage(null)}>
+      <div className="max-w-sm text-sm text-muted" role="status" aria-live="polite">
+        <p>{message}</p>
+        {signIn && <Link href={`/login?next=${encodeURIComponent(pathname)}`} className="mt-2 inline-block font-bold">Log in to collect</Link>}
+        {!signIn && !pending && <Link href="/faith#collection" className="mt-2 inline-block font-bold">See your saints →</Link>}
+      </div>
+    </CheatToast>
   );
 }
 

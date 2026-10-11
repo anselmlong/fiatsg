@@ -14,6 +14,16 @@ export async function meetSaint(userId: number, saintId: string, from: { taskId?
   return rows.length > 0;
 }
 
+// Meets many saints at once, already seen so they don't queue up a reveal each. Returns how many were new.
+export async function meetSaints(userId: number, saintIds: string[], taskId: string) {
+  const rows = await db
+    .insert(saintMeetings)
+    .values(saintIds.map((saintId) => ({ userId, saintId, taskId, seenAt: new Date() })))
+    .onConflictDoNothing()
+    .returning({ id: saintMeetings.id });
+  return rows.length;
+}
+
 export async function meetForTask(userId: number, taskId: FaithTaskId) {
   const task = faithTask(taskId)!;
   return meetSaint(userId, task.saintId, { taskId });
