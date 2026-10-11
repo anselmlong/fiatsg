@@ -23,8 +23,10 @@ Not everyone can give money. Everyone can give something: their time, their skil
 | Caritas Singapore | caritas@fiat.sg | fiat-org-2026 |
 | Office for Young People | oyp@fiat.sg | fiat-org-2026 |
 | Catholic Prayer Society (pending review) | cps@fiat.sg | fiat-org-2026 |
+| Volunteer (3 saints met) | maria@fiat.sg | fiat-2026 |
+| Volunteer (every saint unlocked) | saints@fiat.sg | fiat-2026 |
 
-Supporter accounts are created live through **Join**.
+New supporter accounts are created live through **Join**.
 
 ## Stack
 
