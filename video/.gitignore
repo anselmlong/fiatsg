@@ -1,4 +1,5 @@
 node_modules/
+.frames/
 out/stills/
 public/saints/
 public/score.wav
