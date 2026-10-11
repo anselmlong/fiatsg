@@ -430,4 +430,21 @@ export const SAINTS: Saint[] = [
     "image": "/saints/benedict.jpg",
     "credit": "Fra Angelico, Saint Benedict (detail of a fresco), 1440s. Public domain, via Wikimedia Commons"
   },
+  {
+    "id": "anselm",
+    "name": "St Anselm of Canterbury",
+    "feast": "21 April",
+    "patron": "Doctor of the Church",
+    "category": "faith",
+    "tier": 2,
+    "story": "Anselm was born in Aosta, in the Italian Alps, around 1033. As a young man he crossed into France and became a monk at the abbey of Bec, where he was later abbot and a much-loved teacher. In 1093 he became Archbishop of Canterbury and was twice sent into exile for defending the freedom of the Church. He prayed and wrote about God with honest questions, describing faith as seeking understanding. He died in 1109 and was later named a Doctor of the Church.",
+    "quote": {
+      "text": "I do not seek to understand in order that I may believe, but I believe in order that I may understand.",
+      "source": "St Anselm, Proslogion, chapter 1"
+    },
+    "prayer": "St Anselm, help us to bring our questions to God and keep seeking to understand.",
+    "why": "You talked through a question about the faith. For Anselm, faith was always seeking understanding.",
+    "image": "/saints/anselm.jpg",
+    "credit": "Unknown Portuguese artist, Santo Anselmo (detail), 18th century. Public domain, via Wikimedia Commons"
+  },
 ];
