@@ -8,6 +8,7 @@ import { sql } from "drizzle-orm";
 const ADMIN = { email: "cf@fiat.sg", password: "fiat-cf-2026" };
 const ORG_PASSWORD = "fiat-org-2026";
 const VOLUNTEER = { email: "maria@fiat.sg", password: "fiat-2026", name: "Maria Tan" };
+const ALL_SAINTS = { email: "saints@fiat.sg", password: "fiat-2026", name: "Clara Lim" };
 
 type Req = {
   title: string;
@@ -448,8 +449,30 @@ async function main() {
     { userId: maria.id, saintId: "cabrini", requestId: gamesDay, seenAt: daysAgo(34), createdAt: daysAgo(34) },
   ]);
 
+  // A demo volunteer who has met every saint, roster and bonus alike, for showing the full collection.
+  const { SAINTS, FAITH_TASKS } = await import("../src/lib/saints");
+  const { BONUS_SAINTS } = await import("../src/lib/bonus-saints");
+  const [allSaints] = await db
+    .insert(users)
+    .values({
+      email: ALL_SAINTS.email,
+      name: ALL_SAINTS.name,
+      passwordHash: await bcrypt.hash(ALL_SAINTS.password, 10),
+      role: "supporter",
+      skills: ["befriending", "teaching"],
+      area: "Central",
+      createdAt: daysAgo(90),
+    })
+    .returning();
+  const taskFor = new Map(FAITH_TASKS.map((t) => [t.saintId, t.id]));
+  await db.insert(saintMeetings).values([
+    ...SAINTS.map((s, i) => ({ userId: allSaints.id, saintId: s.id, taskId: taskFor.get(s.id) ?? null, seenAt: daysAgo(80 - i), createdAt: daysAgo(80 - i) })),
+    ...BONUS_SAINTS.map((s) => ({ userId: allSaints.id, saintId: s.id, taskId: `discovery:${s.discovery}`, seenAt: daysAgo(5), createdAt: daysAgo(5) })),
+  ]);
+
   console.log("\nSeeded. Demo logins:");
   console.log(`  Volunteer: ${VOLUNTEER.email} / ${VOLUNTEER.password}`);
+  console.log(`  Volunteer with every saint: ${ALL_SAINTS.email} / ${ALL_SAINTS.password}`);
   console.log(`  Catholic Foundation admin: ${ADMIN.email} / ${ADMIN.password}`);
   for (const o of ORGS) console.log(`  ${o.status === "pending" ? "(pending) " : ""}${o.name.split(" — ")[0]}: ${o.email} / ${ORG_PASSWORD}`);
 }
