@@ -6,7 +6,7 @@ Fiat connects Catholics in Singapore with Catholic organisations that need help.
 
 Not everyone can give money. Everyone can give something: their time, their skills, their prayer.
 
-**Live:** https://fiat.anselmlong.com · **Write-up:** https://anselmlong.com/blog/fiat
+**Live:** https://fiat.anselmlong.com
 
 ![Fiat home page](docs/screenshots/cover.jpg)
 
