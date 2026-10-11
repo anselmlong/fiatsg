@@ -132,8 +132,41 @@ export function CauseCard({ cause, mySkills = [] }: { cause: CauseRow; mySkills?
           <dt><MapPin aria-label="Where" className="h-5 w-5 text-purple" /></dt>
           <dd>{r.area === "Online" ? "Online, from home" : r.area}</dd>
         </dl>
+        <VolunteerProgress className="mt-4" needed={r.volunteersNeeded} confirmed={cause.acceptedCount} completed={r.status === "completed"} />
       </div>
     </Link>
+  );
+}
+
+// How many places are taken: "3 of 10 volunteers" with a bar, and what's left in plain words.
+// Only confirmed volunteers fill the bar; offers still waiting on the organisation show as a paler stretch after it.
+export function VolunteerProgress({ needed, confirmed, waiting = 0, completed = false, className = "" }: { needed: number; confirmed: number; waiting?: number; completed?: boolean; className?: string }) {
+  const left = Math.max(0, needed - confirmed);
+  const full = left === 0;
+  const pct = (n: number) => `${Math.min(100, (n / Math.max(1, needed)) * 100)}%`;
+  const status = completed
+    ? "Finished"
+    : full
+      ? "All places filled"
+      : confirmed === 0
+        ? "Be the first to join"
+        : left <= 2
+          ? `Only ${left} ${left === 1 ? "place" : "places"} left`
+          : `${left} places left`;
+  const urgent = !completed && !full && confirmed > 0 && left <= 2;
+  return (
+    <div className={className}>
+      <p className="flex flex-wrap items-baseline justify-between gap-x-3 text-base">
+        <span className="text-ink">
+          <strong className="tabular-nums">{Math.min(confirmed, needed)} of {needed}</strong> {completed ? "volunteers came" : "volunteers"}
+        </span>
+        <span className={`text-sm font-bold ${urgent ? "text-gold-ink" : full || completed ? "text-purple" : "text-muted"}`}>{status}</span>
+      </p>
+      <div aria-hidden className="mt-2 flex h-2.5 overflow-hidden rounded-full bg-purple-soft">
+        <div className={`h-full rounded-full ${full || completed ? "bg-gold" : "bg-purple"}`} style={{ width: pct(confirmed) }} />
+        {!full && waiting > 0 && <div className="h-full bg-purple/30" style={{ width: pct(Math.min(waiting, left)) }} />}
+      </div>
+    </div>
   );
 }
 

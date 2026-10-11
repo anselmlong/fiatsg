@@ -8,7 +8,7 @@ import { withdrawOffer } from "@/app/actions/supporter";
 import { ShareButtons } from "@/components/share-buttons";
 import { ScrollIntoView } from "@/components/scroll-into-view";
 import { MediaGallery } from "@/components/media-gallery";
-import { Container, Notice, SkillChip, StatusBadge } from "@/components/ui";
+import { Container, Notice, SkillChip, StatusBadge, VolunteerProgress } from "@/components/ui";
 import { db, responses, users } from "@/db";
 import { currentOrg, currentUser } from "@/lib/auth";
 import { fmtSchedule, isFresh, timeAgo } from "@/lib/format";
@@ -202,7 +202,15 @@ export default async function CausePage({ params, searchParams }: PageProps<"/ca
               <div><dt className="flex items-center gap-2 font-bold"><CalendarDays aria-hidden className="h-5 w-5 text-purple" /> When</dt><dd>{when}<br />{time}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><MapPin aria-hidden className="h-5 w-5 text-purple" /> Where</dt><dd>{r.area === "Online" ? "Online — from home" : <>{r.address ?? r.area}<br /><span className="text-muted">{r.area}</span></>}</dd></div>
               <div><dt className="flex items-center gap-2 font-bold"><UsersRound aria-hidden className="h-5 w-5 text-purple" /> Who can come</dt><dd>{ageLabel(r.ageGroup)}</dd></div>
-              <div><dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt><dd>{r.status === "completed" ? `${r.volunteersNeeded} needed` : spotsLeft === 0 ? "All places filled" : <>{spotsLeft} {spotsLeft === 1 ? "place" : "places"} open{waiting > 0 && <span className="text-muted"> · {waiting} waiting to hear back</span>}</>}</dd></div>
+              <div className="col-span-2">
+                <dt className="flex items-center gap-2 font-bold"><UserRound aria-hidden className="h-5 w-5 text-purple" /> Volunteers</dt>
+                <dd className="mt-2">
+                  <VolunteerProgress needed={r.volunteersNeeded} confirmed={cause.acceptedCount} waiting={waiting} completed={r.status === "completed"} />
+                  {r.status !== "completed" && spotsLeft > 0 && waiting > 0 && (
+                    <p className="mt-2 text-sm text-muted">{waiting} more {waiting === 1 ? "person has" : "people have"} offered and {waiting === 1 ? "is" : "are"} waiting to hear back.</p>
+                  )}
+                </dd>
+              </div>
             </dl>
             <div>
               <p className="font-bold">Gifts needed</p>

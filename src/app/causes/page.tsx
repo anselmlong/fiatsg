@@ -27,8 +27,10 @@ export default async function CausesPage({ searchParams }: PageProps<"/causes">)
   );
   const isFiltered = !!(skill || kind || area);
   const matchScore = (s: string[]) => s.filter((x) => mySkills.includes(x)).length;
-  const forYou = !isFiltered && !showCompleted ? filtered.filter((c) => matchScore(c.request.skills) > 0).sort((a, b) => matchScore(b.request.skills) - matchScore(a.request.skills)) : [];
-  const rest = filtered.filter((c) => !forYou.includes(c));
+  // Causes with every place filled go last, so the ones still needing people come first.
+  const isFull = (c: (typeof all)[number]) => !showCompleted && c.acceptedCount >= c.request.volunteersNeeded;
+  const forYou = !isFiltered && !showCompleted ? filtered.filter((c) => matchScore(c.request.skills) > 0).sort((a, b) => Number(isFull(a)) - Number(isFull(b)) || matchScore(b.request.skills) - matchScore(a.request.skills)) : [];
+  const rest = filtered.filter((c) => !forYou.includes(c)).sort((a, b) => Number(isFull(a)) - Number(isFull(b)));
 
   return (
     <Container className="py-10">

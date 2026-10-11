@@ -2,6 +2,7 @@
 import { config } from "dotenv";
 config({ path: ".env.local" });
 
+import { randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { sql } from "drizzle-orm";
 
@@ -448,6 +449,46 @@ async function main() {
     { userId: maria.id, saintId: "joseph", taskId: "offer", seenAt: daysAgo(38), createdAt: daysAgo(38) },
     { userId: maria.id, saintId: "cabrini", requestId: gamesDay, seenAt: daysAgo(34), createdAt: daysAgo(34) },
   ]);
+
+  // Other volunteers who've signed up, so each cause shows a different stage: nobody yet, part way, nearly full, full.
+  // Maria's own places (English class, Games Day) count on top of these.
+  const SIGNUPS: Record<string, { confirmed: number; waiting?: number }> = {
+    "Befrienders and medical volunteers": { confirmed: 7, waiting: 1 },
+    "Help at Villa Francis Home for the Aged": { confirmed: 3, waiting: 2 },
+    "Helpline volunteers for ACMI Family Connectors": { confirmed: 1 },
+    "English Level 1 assistant trainer": { confirmed: 2, waiting: 1 },
+    "Computer literacy accompanying trainer": { confirmed: 4 },
+    "Volunteer cooks for seniors who live alone": { confirmed: 4, waiting: 1 },
+    "Tech-savvy befrienders for seniors, online": { confirmed: 2 },
+    "Games Day for migrant workers": { confirmed: 17 },
+    "Transnational family outing": { confirmed: 14 },
+  };
+  const FIRST = ["Aaron", "Bernadette", "Cheryl", "Damien", "Esther", "Francis", "Grace", "Hui Min", "Ignatius", "Joanne", "Kenneth", "Lucia", "Marcus", "Nicole", "Oliver", "Priya", "Rachel", "Stephen", "Theresa", "Vincent"];
+  const LAST = ["Lee", "Ng", "Fernandez", "Wong", "Pereira", "Goh"];
+  const crowdHash = await bcrypt.hash(randomUUID(), 10);
+  const crowd = await db
+    .insert(users)
+    .values(
+      FIRST.map((first, i) => ({
+        email: `volunteer${i + 1}@demo.fiat.sg`,
+        name: `${first} ${LAST[i % LAST.length]}`,
+        passwordHash: crowdHash,
+        role: "supporter" as const,
+        createdAt: daysAgo(60 - i),
+      })),
+    )
+    .returning();
+  let next = 0;
+  await db.insert(responses).values(
+    Object.entries(SIGNUPS).flatMap(([title, { confirmed, waiting = 0 }]) =>
+      Array.from({ length: confirmed + waiting }, (_, i) => ({
+        requestId: byTitle.get(title)!,
+        userId: crowd[next++ % crowd.length].id,
+        status: i < confirmed ? ("accepted" as const) : ("offered" as const),
+        createdAt: daysAgo(25 - (i % 20)),
+      })),
+    ),
+  );
 
   // A demo volunteer who has met every saint, roster and bonus alike, for showing the full collection.
   const { SAINTS, FAITH_TASKS } = await import("../src/lib/saints");
