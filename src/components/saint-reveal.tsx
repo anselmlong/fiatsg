@@ -125,6 +125,16 @@ function RevealOverlay({
   });
   const dialogRef = useRef<HTMLDivElement>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const gripRef = useRef<HTMLButtonElement>(null);
+  const tiltRef = useRef<HTMLDivElement>(null);
+  const hand = useRef<ReturnType<typeof holdCard> | null>(null);
+
+  useEffect(() => {
+    const held = holdCard(tiltRef.current!, gripRef.current!);
+    hand.current = held;
+    return () => held.release();
+  }, []);
+  useEffect(() => hand.current?.setActive(phase !== "charging"), [phase]);
 
   useEffect(() => {
     // Hold the page behind still, and focus without letting the browser scroll the card away.
@@ -196,29 +206,41 @@ function RevealOverlay({
         <div className="relative isolate mt-4">
           <div aria-hidden className="reveal-glow absolute left-1/2 top-1/2 -z-10 aspect-square w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(246,213,138,0.5),transparent_62%)]" />
           <button
+            ref={gripRef}
             type="button"
-            onClick={reveal}
-            disabled={phase !== "sealed"}
+            onClick={() => !hand.current?.wasDragged() && reveal()}
+            aria-disabled={phase !== "sealed"}
+            tabIndex={phase === "sealed" ? 0 : -1}
             aria-label={shown ? s.name : "Turn the card over"}
-            className="reveal-shake block w-[clamp(8rem,calc((100dvh-27.5rem)*0.75),18rem)] rounded-[1.4rem] [perspective:1400px] focus-visible:outline-offset-8 disabled:cursor-default"
+            className={`reveal-shake block w-[clamp(8rem,calc((100dvh-27.5rem)*0.75),18rem)] touch-none select-none rounded-[1.4rem] [perspective:1100px] focus-visible:outline-offset-8 ${shown ? "cursor-grab active:cursor-grabbing" : ""}`}
           >
-            <div className={`relative transition-transform duration-[1000ms] ease-[cubic-bezier(0.2,1.3,0.4,1)] [transform-style:preserve-3d] ${shown ? "[transform:rotateY(0deg)]" : "[transform:rotateY(180deg)]"}`}>
-              {/* Front: the saint. */}
-              <div className="card-front relative overflow-hidden rounded-[1.4rem] bg-gold p-[5px] [backface-visibility:hidden]">
-                <div className="overflow-hidden rounded-[1.1rem] border-2 border-gold-soft bg-paper">
-                  <div className="relative aspect-[3/4] bg-purple-deep">
-                    <Image src={s.image} alt="" fill priority sizes="288px" className="object-cover" />
+            {/* The hand: leans toward the cursor and spins when dragged. The flip lives inside it. */}
+            <div ref={tiltRef} className="handheld [transform-style:preserve-3d]">
+              <div className={`relative transition-transform duration-[1000ms] ease-[cubic-bezier(0.2,1.3,0.4,1)] [transform-style:preserve-3d] ${shown ? "[transform:rotateY(0deg)]" : "[transform:rotateY(180deg)]"}`}>
+                {/* The card's gold edge: thin slices between the faces, seen only when it turns. */}
+                {EDGE.map((z) => (
+                  <div key={z} aria-hidden className="absolute inset-0 rounded-[1.4rem] bg-[#a87a2c]" style={{ transform: `translateZ(${z}px)` }} />
+                ))}
+                {/* Front: the saint. */}
+                <div className="card-front foil-frame relative overflow-hidden rounded-[1.4rem] p-[5px] [backface-visibility:hidden] [transform:translateZ(2px)]">
+                  <div className="overflow-hidden rounded-[1.1rem] border-2 border-gold-soft bg-paper">
+                    <div className="relative aspect-[3/4] bg-purple-deep">
+                      <Image src={s.image} alt="" fill priority sizes="288px" draggable={false} className="object-cover" />
+                      <div aria-hidden className="card-foil pointer-events-none absolute inset-0" />
+                      <div aria-hidden className="card-glare pointer-events-none absolute inset-0" />
+                    </div>
+                    <div className="px-3 py-3">
+                      <p id="reveal-title" className="font-serif text-2xl font-bold text-purple-deep">{s.name}</p>
+                      {s.feast && <p className="text-xs font-bold uppercase tracking-wider text-gold-ink">Feast · {s.feast}</p>}
+                    </div>
                   </div>
-                  <div className="px-3 py-3">
-                    <p id="reveal-title" className="font-serif text-2xl font-bold text-purple-deep">{s.name}</p>
-                    {s.feast && <p className="text-xs font-bold uppercase tracking-wider text-gold-ink">Feast · {s.feast}</p>}
-                  </div>
+                  {shown && <div aria-hidden className="card-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent" />}
                 </div>
-                {shown && <div aria-hidden className="card-shimmer pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent" />}
-              </div>
-              {/* Back: a sealed holy card. */}
-              <div className="absolute inset-0 overflow-hidden rounded-[1.4rem] bg-gold p-[5px] [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                <CardBack />
+                {/* Back: a sealed holy card. */}
+                <div className="foil-frame absolute inset-0 overflow-hidden rounded-[1.4rem] p-[5px] [backface-visibility:hidden] [transform:rotateY(180deg)_translateZ(2px)]">
+                  <CardBack />
+                  <div aria-hidden className="card-glare pointer-events-none absolute inset-0" />
+                </div>
               </div>
             </div>
           </button>
@@ -240,6 +262,129 @@ function RevealOverlay({
       </div>
     </div>
   );
+}
+
+// Depths of the edge slices, in px, between the two faces at ±2px.
+const EDGE = [-1.5, -0.75, 0, 0.75, 1.5];
+
+// Holding the card: it leans toward the cursor, and a drag turns it in the hand. Let go and it keeps
+// spinning with the flick's momentum, then a spring settles it face forward on the nearest whole turn.
+// Plain DOM on purpose: it writes CSS variables every frame, so React never re-renders mid-motion.
+function holdCard(tilt: HTMLElement, grip: HTMLElement) {
+  const m = { rx: 0, ry: 0, vx: 0, vy: 0, turns: 0, leanX: 0, leanY: 0 };
+  let drag: { id: number; x: number; y: number; t: number } | null = null;
+  let travelled = 0;
+  let active = true;
+  let frame = 0;
+
+  function paint() {
+    // How far the face is turned from straight on, -180..180, decides where the light falls.
+    const turn = (((m.ry % 360) + 540) % 360) - 180;
+    tilt.style.setProperty("--rx", `${m.rx.toFixed(2)}deg`);
+    tilt.style.setProperty("--ry", `${m.ry.toFixed(2)}deg`);
+    tilt.style.setProperty("--gx", `${(50 + turn * 1.6).toFixed(1)}%`);
+    tilt.style.setProperty("--gy", `${(50 - m.rx * 2.4).toFixed(1)}%`);
+    tilt.style.setProperty("--foil", `${(115 + turn * 1.2 + m.rx).toFixed(1)}deg`);
+    tilt.style.setProperty("--glare", Math.min(1, (Math.abs(turn) + Math.abs(m.rx)) / 22).toFixed(3));
+  }
+
+  function step() {
+    if (!drag) {
+      // Underdamped spring: a little overshoot reads as weight.
+      m.vx = (m.vx + (m.leanY - m.rx) * 0.045) * 0.86;
+      m.vy = (m.vy + (m.turns + m.leanX - m.ry) * 0.045) * 0.86;
+      m.rx += m.vx;
+      m.ry += m.vy;
+    }
+    paint();
+    const resting = !drag && Math.abs(m.vx) + Math.abs(m.vy) < 0.005 && Math.abs(m.leanY - m.rx) + Math.abs(m.turns + m.leanX - m.ry) < 0.02;
+    if (!resting) {
+      frame = requestAnimationFrame(step);
+      return;
+    }
+    // Fold the whole turns away so the numbers stay small.
+    m.ry -= m.turns;
+    m.turns = 0;
+    paint();
+    frame = 0;
+  }
+  const wake = () => {
+    if (!frame) frame = requestAnimationFrame(step);
+  };
+
+  function lean(e: PointerEvent) {
+    if (e.pointerType !== "mouse" || !active || drag) return;
+    const box = tilt.getBoundingClientRect();
+    const nx = Math.max(-1, Math.min(1, (e.clientX - (box.left + box.width / 2)) / (innerWidth / 2)));
+    const ny = Math.max(-1, Math.min(1, (e.clientY - (box.top + box.height / 2)) / (innerHeight / 2)));
+    m.leanX = nx * 18;
+    m.leanY = -ny * 14;
+    wake();
+  }
+  function rest() {
+    m.leanX = m.leanY = 0;
+    wake();
+  }
+  function down(e: PointerEvent) {
+    if (!active || e.button !== 0) return;
+    grip.setPointerCapture(e.pointerId);
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now() };
+    travelled = 0;
+    m.vx = m.vy = 0;
+    wake();
+  }
+  function move(e: PointerEvent) {
+    if (!drag || drag.id !== e.pointerId) return;
+    const now = performance.now();
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    const frames = Math.max(1, now - drag.t) / 16.7;
+    m.ry += dx * 0.5;
+    m.rx = Math.max(-55, Math.min(55, m.rx - dy * 0.4));
+    // Smoothed per-frame velocity, so the release carries the flick and not one jittery sample.
+    m.vy = m.vy * 0.5 + ((dx * 0.5) / frames) * 0.5;
+    m.vx = m.vx * 0.5 + ((-dy * 0.4) / frames) * 0.5;
+    drag = { id: drag.id, x: e.clientX, y: e.clientY, t: now };
+    travelled += Math.abs(dx) + Math.abs(dy);
+  }
+  function up(e: PointerEvent) {
+    if (!drag || drag.id !== e.pointerId) return;
+    drag = null;
+    // Aim for the whole turn the flick would coast to, and let the spring carry it there.
+    m.turns = Math.round((m.ry + m.vy * 18) / 360) * 360;
+    m.leanX = m.leanY = 0;
+    wake();
+  }
+
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!still) {
+    addEventListener("pointermove", lean);
+    document.documentElement.addEventListener("pointerleave", rest);
+    grip.addEventListener("pointerdown", down);
+    grip.addEventListener("pointermove", move);
+    grip.addEventListener("pointerup", up);
+    grip.addEventListener("pointercancel", up);
+  }
+
+  return {
+    // While the card gathers light it is not ours to hold: let go and let it settle.
+    setActive(on: boolean) {
+      active = on;
+      if (on) return;
+      if (drag) up({ pointerId: drag.id } as PointerEvent);
+      rest();
+    },
+    wasDragged: () => travelled > 8,
+    release() {
+      cancelAnimationFrame(frame);
+      removeEventListener("pointermove", lean);
+      document.documentElement.removeEventListener("pointerleave", rest);
+      grip.removeEventListener("pointerdown", down);
+      grip.removeEventListener("pointermove", move);
+      grip.removeEventListener("pointerup", up);
+      grip.removeEventListener("pointercancel", up);
+    },
+  };
 }
 
 // The reverse of every holy card: deep purple, a gold border, a cross inside a halo.

@@ -192,8 +192,9 @@ input, textarea, select { font: inherit; }
 }
 /* Meeting a saint: the holy card turns over out of the dark, and gold light passes across it. */
 @keyframes card-shimmer {
-  from { transform: translateX(-120%) skewX(-18deg); }
-  to { transform: translateX(220%) skewX(-18deg); }
+  from { transform: translateX(-120%) skewX(-18deg); opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: translateX(340%) skewX(-18deg); opacity: 0; }
 }
 /* The light the saint arrives in: slow rays, a ring of gold as the card lands, and sparks rising. */
 @keyframes reveal-in {
@@ -252,6 +253,29 @@ input, textarea, select { font: inherit; }
 @keyframes halo-breathe {
   0%, 100% { opacity: 0.55; transform: scale(0.96); }
   50% { opacity: 1; transform: scale(1.04); }
+}
+/* The holy card in hand (saint-reveal.tsx): useHandheld writes --rx/--ry for the lean, --gx/--gy for
+   where the light falls, --foil for the angle of the gold, --glare for how much it catches. */
+.handheld { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); will-change: transform; }
+.foil-frame {
+  background: linear-gradient(var(--foil, 115deg), #a8772a 0%, #e9be62 22%, #fbe7b0 38%, #c8973e 52%, #f6d58a 68%, #a8772a 100%);
+}
+/* A band of foil light that slides across the painting as the card turns. */
+.card-foil {
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 236, 190, 0.5) 45%, rgba(255, 252, 240, 0.85) 50%, rgba(255, 236, 190, 0.5) 55%, transparent 70%);
+  background-size: 300% 100%;
+  background-position: var(--gx, 50%) 0;
+  mix-blend-mode: soft-light;
+  opacity: calc(var(--glare, 0) * 0.9);
+}
+/* The soft spot of candlelight the card catches. */
+.card-glare {
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 248, 230, 0.45), rgba(255, 248, 230, 0.12) 30%, transparent 58%);
+  mix-blend-mode: overlay;
+  opacity: calc(0.15 + var(--glare, 0) * 0.85);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-foil, .card-glare { display: none; }
 }
 .seal-ring { stroke-dasharray: 151; }
 .seal-check { stroke-dasharray: 30; }
