@@ -1,7 +1,7 @@
 import type { Saint } from "./saints";
 import type { SaintSource } from "./saint-sources";
 
-export type Discovery = "lost-key" | "sources" | "bird";
+export type Discovery = "lost-key" | "sources" | "bird" | "cheat-code";
 
 // Separate from the service roster: discoveries never change cause pools or completion.
 export const BONUS_SAINTS: (Saint & { discovery: Discovery; hint: string; sources: SaintSource[] })[] = [
@@ -40,6 +40,18 @@ export const BONUS_SAINTS: (Saint & { discovery: Discovery; hint: string; source
     image: "/saints/bonus-francis.jpg",
     credit: "Unknown artist, Saint Francis of Assisi, 1615–1635. Public domain, via Wikimedia Commons / Google Art Project.",
     sources: [{ label: "Franciscan Media — St Francis of Assisi", url: "https://www.franciscanmedia.org/saint-of-the-day/saint-francis-of-assisi/" }, { label: "Vatican News — The feast of St Francis", url: "https://www.vaticannews.va/en/church/news/2022-10/st-francis-mass-assisi-zuppi-mattarella-ecology-peace.html" }],
+  },
+  {
+    id: "bonus-isidore", discovery: "cheat-code", name: "St Isidore of Seville",
+    feast: "4 April", patron: "Patron of the internet", category: "faith", tier: 1,
+    hint: "Some codes never go out of style. Type it anywhere on Fiat: ↑↑↓↓←→←→BA",
+    story: "Isidore was bishop of Seville around the year 600. He gathered what the ancient world knew into the Etymologies, an encyclopedia that teachers copied and studied for centuries. Because he tried to put all knowledge within reach, he is often proposed as patron of the internet and of people who work with computers. Typing an old cheat code to find him is a small reminder that what we learn is meant to serve God and our neighbour.",
+    quote: { text: "", source: "" },
+    prayer: "St Isidore, help us use what we know, online and off, for the good of others.",
+    why: "You entered the secret code. Even play can lead somewhere good.",
+    image: "/saints/bonus-isidore.jpg",
+    credit: "Bartolomé Esteban Murillo, San Isidoro, 1655. Public domain, via Wikimedia Commons.",
+    sources: [{ label: "Franciscan Media — St Isidore of Seville", url: "https://www.franciscanmedia.org/saint-of-the-day/saint-isidore-of-seville/" }],
   },
 ];
 

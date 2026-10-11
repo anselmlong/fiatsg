@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { useEffect, useEffectEvent, useId, useRef, useState, useTransition } from "react";
 import { Bird, BookOpen, KeyRound } from "lucide-react";
 import { claimDiscovery } from "@/app/actions/discoveries";
 import type { Discovery } from "@/lib/bonus-saints";
@@ -75,6 +75,41 @@ export function SaintDiscovery({ discovery }: { discovery: "lost-key" | "bird" }
         <Icon aria-hidden className={discovery === "bird" ? "h-7 w-7" : "h-5 w-5 -rotate-12"} strokeWidth={1.5} />
       </button>
       {feedback}
+    </div>
+  );
+}
+
+const CHEAT_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+
+// Listens anywhere on the site for the classic cheat code, ignoring keys typed into fields.
+export function CheatCode() {
+  const { claim, feedback } = useDiscovery("cheat-code");
+  const [shown, setShown] = useState(false);
+  const unlock = useEffectEvent(() => {
+    setShown(true);
+    claim();
+  });
+  useEffect(() => {
+    let step = 0;
+    function onKey(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+      step = key === CHEAT_CODE[step] ? step + 1 : key === CHEAT_CODE[0] ? (step === 2 ? 2 : 1) : 0;
+      if (step === CHEAT_CODE.length) {
+        step = 0;
+        unlock();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  if (!shown) return null;
+  return (
+    <div className="fixed inset-x-4 bottom-4 z-50 mx-auto w-fit max-w-sm rounded-2xl border-2 border-gold bg-paper p-4 shadow-lg">
+      <p className="font-serif font-bold text-gold-ink">Cheat code accepted</p>
+      {feedback}
+      <button type="button" onClick={() => setShown(false)} className="mt-2 text-sm font-bold text-purple">Close</button>
     </div>
   );
 }

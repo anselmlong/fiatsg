@@ -7,7 +7,7 @@ import { metSaintIds } from "@/lib/meet";
 import { FAITH_TASKS, SAINTS, categoryLabel, causePool, saint } from "@/lib/saints";
 import { siteUrl } from "@/lib/site";
 import { TaskButton } from "./task-button";
-import { BONUS_SAINTS } from "@/lib/bonus-saints";
+import { BONUS_SAINTS, type Discovery } from "@/lib/bonus-saints";
 
 export const metadata = { title: "Saints" };
 
@@ -15,6 +15,8 @@ const HOW: Record<string, { href: string; label: string } | undefined> = {
   pray: { href: "/causes", label: "Find a cause to pray for" },
   offer: { href: "/causes", label: "Find a cause" },
 };
+
+const DISCOVERY_HREF: Record<Discovery, string> = { "lost-key": "/", bird: "#footer-bird", sources: "/saints/monica", "cheat-code": "#bonus-cards" };
 
 // The collection first, then the ways to meet more.
 export default async function SaintsPage() {
@@ -38,15 +40,15 @@ export default async function SaintsPage() {
           <Collection met={met} />
           <section id="bonus-cards" aria-labelledby="bonus-heading" className="mt-12 scroll-mt-28 border-t border-line pt-8">
             <h2 id="bonus-heading" className="text-3xl font-bold">Little discoveries</h2>
-            <p className="mt-2 max-w-xl text-muted">Three bonus cards for curious souls. These are separate from your main collection.</p>
-            <p className="mt-2 text-sm text-gold-ink">{BONUS_SAINTS.filter((s) => met.has(s.id)).length} of 3 discovered</p>
-            <ul className="mt-5 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-3">
+            <p className="mt-2 max-w-xl text-muted">Four bonus cards for curious souls. These are separate from your main collection.</p>
+            <p className="mt-2 text-sm text-gold-ink">{BONUS_SAINTS.filter((s) => met.has(s.id)).length} of {BONUS_SAINTS.length} discovered</p>
+            <ul className="mt-5 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
               {BONUS_SAINTS.map((s) => (
                 <li key={s.id}>
                   {met.has(s.id) ? (
                     <Link href={`/saints/${s.id}`} className="block h-full rounded-[1.4rem] no-underline"><SaintCard saint={s} /></Link>
                   ) : (
-                    <Link href={s.discovery === "lost-key" ? "/" : s.discovery === "bird" ? "#footer-bird" : "/saints/monica"} className="group block h-full rounded-[1.4rem] no-underline">
+                    <Link href={DISCOVERY_HREF[s.discovery]} className="group block h-full rounded-[1.4rem] no-underline">
                       <SaintLocked hint={s.hint} />
                     </Link>
                   )}

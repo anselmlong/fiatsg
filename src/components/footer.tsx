@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { SaintDiscovery } from "./saint-discovery";
+import { CheatCode, SaintDiscovery } from "./saint-discovery";
 
 export function Footer() {
   return (
@@ -8,6 +8,7 @@ export function Footer() {
         <div id="footer-bird" className="mb-3 flex scroll-mt-28 justify-center">
           <SaintDiscovery discovery="bird" />
         </div>
+        <CheatCode />
         <figure className="mx-auto max-w-xl text-center">
           <blockquote>
           <p className="font-serif text-xl text-gold-ink sm:text-3xl">What can I give Him, poor as I am?</p>
