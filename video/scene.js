@@ -179,7 +179,7 @@ css(flash, { background: `radial-gradient(circle at ${L.hero.cx}px ${L.hero.cy}p
 const captions = [{ at: T.slam, text: "You prayed. So did she.", slam: true }, ...T.spins.map((s) => ({ at: s.at, text: s.line }))];
 captions.forEach((c, i) => {
   c.out = i + 1 < captions.length ? captions[i + 1].at : T.pullBack;
-  c.el = textLine(A, c.text, { size: L.capSize, top: L.capY, color: "#fbf6ef", extra: { textShadow: "0 0 40px rgba(246,213,138,0.55), 0 4px 18px rgba(0,0,0,0.5)" } });
+  c.el = textLine(A, c.text, { size: L.capSize, top: L.capY, color: "#fbf6ef", maxW: V ? 860 : 1500, extra: { textShadow: "0 0 40px rgba(246,213,138,0.55), 0 4px 18px rgba(0,0,0,0.5)" } });
 });
 
 // The grid of all 28, on cream.
@@ -385,7 +385,7 @@ const SCRAPS = [
   if (V) e.style.maxWidth = (s.w ? 860 : 700) + "px";
   return { ...s, e };
 });
-const probLines = T.problemLines.map((l) => ({ ...l, e: textLine(B, l.text, { size: L.probSize, top: H / 2, color: "#e6e1ea", maxW: V ? 940 : 1600, extra: { textShadow: "0 6px 30px rgba(0,0,0,0.6)" } }) }));
+const probLines = T.problemLines.map((l) => ({ ...l, e: textLine(B, l.text, { size: L.probSize, top: H / 2, color: "#e6e1ea", maxW: V ? 860 : 1600, extra: { textShadow: "0 6px 30px rgba(0,0,0,0.6)" } }) }));
 probLines[2].e.style.zIndex = 2;
 
 function renderB(t) {
@@ -594,8 +594,8 @@ const aLantern = lanterns.find((l) => l.id === "anselm");
 const dShade = el("div", "layer", D);
 css(dShade, { background: `radial-gradient(ellipse ${V ? "80% 20%" : "56% 30%"} at 50% ${(L.faithY / H) * 100}%, rgba(13,6,24,0.94), rgba(13,6,24,0.75) 55%, transparent 100%)`, zIndex: 150 });
 const faithLines = T.faithLines.map((l, i) => {
-  const html = i === 2 ? "Discover the faith through the saints<br>who said yes before you." : l.text;
-  const e = textLine(D, html, { size: i === 1 ? L.faithSize * 1.45 : L.faithSize * (i === 2 ? 0.8 : 1), top: L.faithY, color: i === 1 ? "#f6d58a" : "#fbf6ef", maxW: V ? 980 : 1700,
+  const html = i === 2 && !V ? "Discover the faith through the saints<br>who said yes before you." : l.text;
+  const e = textLine(D, html, { size: i === 1 ? L.faithSize * 1.45 : L.faithSize * (i === 2 ? 0.8 : 1), top: L.faithY, color: i === 1 ? "#f6d58a" : "#fbf6ef", maxW: V ? 860 : 1700,
     extra: { zIndex: 200, textShadow: i === 1 ? "0 0 40px rgba(246,213,138,0.6)" : "0 4px 24px rgba(0,0,0,0.6)" } });
   return { ...l, e };
 });
@@ -645,8 +645,9 @@ function renderD(t) {
       const turns = Math.round(s.ry / 360) * 360;
       s = { x: lerp(s.x, q.x, fwd), y: lerp(s.y, q.y, fwd), w: lerp(s.w, q.w, fwd), ry: lerp(s.ry, turns, fwd), rx: lerp(s.rx, 0, fwd), o: lerp(s.o, 1, fwd) };
       l.c.root.style.zIndex = 250;
-    } else if (l !== aLantern) {
-      s.o *= lerp(1, 0.32, dim);
+    } else {
+      l.c.root.style.zIndex = Math.round(l.z * 100);
+      if (l !== aLantern) s.o *= lerp(1, 0.32, dim);
     }
     // The rush: everything falls into one point of light.
     const rr = cubicIn(prog(t, T.rush + i * 0.012, T.rush + 0.7 + i * 0.012));

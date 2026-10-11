@@ -40,17 +40,26 @@ export async function openPage(browser, base, format) {
   await page.waitForFunction(() => window.ready === true || false, null, { timeout: 60000 }).catch(() => {});
   if (errors.length) throw errors[0];
   if (!(await page.evaluate(() => window.ready))) throw new Error("Composition never became ready");
+  // Warm up: show every section once so its layers and images are rasterised before real captures.
+  for (let t = 0; t < 45; t += 1.5) await shoot(page, Math.round(t * 60), { type: "jpeg", quality: 10 });
   return page;
 }
 
+// Paint frame f, then wait two animation frames so the compositor has committed and rasterised it
+// before the capture. Without this a cold page can hand back tiles that are still blank.
+const paint = (f) => {
+  window.seek(f);
+  return new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+};
+
 export async function shoot(page, f, opts) {
-  await page.evaluate((f) => window.seek(f), f);
+  await page.evaluate(paint, f);
   // A busy frame can stall the compositor under parallel load; give it time, then try once more.
   try {
     return await page.screenshot({ timeout: 120000, ...opts });
   } catch (e) {
     console.warn(`\nframe ${f}: ${e.message.split("\n")[0]}, retrying`);
-    await page.evaluate((f) => window.seek(f), f);
+    await page.evaluate(paint, f);
     return page.screenshot({ timeout: 120000, ...opts });
   }
 }

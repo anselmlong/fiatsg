@@ -88,7 +88,7 @@ for (let t = T.pulse.from; t < T.pulse.to - 0.1; t += T.pulse.every) boom(t, 0.4
 
 // 19–33 s: the candle and the warmth
 bell(T.candle, 91, 0.08, 2.5);
-pad(T.flood, T.faith - 0.3, [48, 55, 64, 72], 0.07, 2.0, 0.6);
+pad(T.flood, T.faith - 0.3, [48, 55, 64, 72], 0.1, 2.0, 0.6);
 pad(T.flood + 0.5, T.faith - 0.3, [36], 0.06, 2.5, 0.6);
 bell(T.title, 72, 0.18, 3.0);
 T.callouts.forEach((c, i) => bell(c.at, [84, 86, 88, 91, 93][i], 0.08, 1.4, i % 2 ? 0.4 : -0.4));
