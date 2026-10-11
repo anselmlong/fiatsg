@@ -33,7 +33,7 @@ export default async function SaintsPage() {
       {supporter ? (
         <>
           <p className="mt-4 font-serif text-2xl text-ink">
-            <strong className="tabular-nums">{SAINTS.filter((s) => met.has(s.id)).length}</strong> of {SAINTS.length} met
+            <strong className="tabular-nums">{SAINTS.filter((s) => met.has(s.id)).length}</strong> met
           </p>
           <Collection met={met} />
           <section id="bonus-cards" aria-labelledby="bonus-heading" className="mt-12 scroll-mt-28 border-t border-line pt-8">
