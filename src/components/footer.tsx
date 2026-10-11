@@ -31,6 +31,7 @@ export function Footer() {
             <p className="mt-1 text-muted">
               <span lang="la" className="font-serif italic" data-no-translate>Fiat voluntas tua</span> — thy will be done.
             </p>
+            <a href="/fiat-user-guide.pdf" target="_blank" rel="noopener" className="mt-3 inline-block text-sm font-bold">User guide (PDF)</a>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
             <div className="w-fit rounded-xl bg-white px-3 py-2">
