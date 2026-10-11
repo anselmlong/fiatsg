@@ -67,40 +67,46 @@ function riser(from, to, gain = 0.12, f0 = 220, f1 = 880) {
   }
 }
 
-// 0–9 s: the cold open and the hook (C major, D-led)
+// Cold open and the hook (C major)
 pad(0, T.pullBack + 0.6, [36, 43], 0.06, 0.05, 0.5);
 riser(0, T.flip, 0.16);
 bell(T.flip, 72, 0.32, 3.2);
 bell(T.flip + 0.01, 79, 0.12, 2.4, 0.3);
 boom(T.flip, 0.45);
 boom(T.slam, 0.35, 120, 50, 0.6);
-const notes = [74, 76, 79, 81];
 T.spins.forEach((s, i) => {
   tick(s.at, 0.07, 1300 + i * 150);
-  tick(s.at + s.dur * 0.4, 0.05, 1600 + i * 150);
-  bell(landAt(s), notes[i], 0.22, 2.0, i % 2 ? 0.25 : -0.25);
+  bell(landAt(s), [74, 76, 79, 81][i], 0.22, 1.8, i % 2 ? 0.25 : -0.25);
 });
-[72, 76, 79, 84, 88].forEach((n, i) => bell(T.pullBack + i * 0.06, n, 0.12, 1.8, -0.4 + i * 0.2));
+[72, 76, 79, 84, 88].forEach((n, i) => bell(T.pullBack + i * 0.05, n, 0.12, 1.6, -0.4 + i * 0.2));
 boom(T.pullBack, 0.3, 70, 35, 0.8);
 
-// 9–19 s: the problem. One low pulse, nothing else.
-for (let t = T.pulse.from; t < T.pulse.to - 0.1; t += T.pulse.every) boom(t, 0.42, 62, 44, 0.7);
+// The problem: one low pulse, nothing else.
+for (let t = T.pulse.from; t < T.pulse.to - 0.1; t += T.pulse.every) boom(t, 0.42, 62, 44, 0.55);
 
-// 19–33 s: the candle and the warmth
+// The candle, then warmth under the whole flow
 bell(T.candle, 91, 0.08, 2.5);
-pad(T.flood, T.faith - 0.3, [48, 55, 64, 72], 0.1, 2.0, 0.6);
-pad(T.flood + 0.5, T.faith - 0.3, [36], 0.06, 2.5, 0.6);
+pad(T.flood, T.faith - 0.3, [48, 55, 64, 72], 0.1, 1.6, 0.6);
+pad(T.flood + 0.5, T.faith - 0.3, [36], 0.06, 2.0, 0.6);
 bell(T.title, 72, 0.18, 3.0);
-T.callouts.forEach((c, i) => bell(c.at, [84, 86, 88, 91, 93][i], 0.08, 1.4, i % 2 ? 0.4 : -0.4));
+T.steps.forEach((s, i) => {
+  if (s.saint) return;
+  bell(s.at, [79, 81, 84, 86, 88, 91][i], 0.09, 1.4, i % 2 ? 0.4 : -0.4);
+  if (s.tap) tick(s.at + 0.95, 0.08, 1800);
+});
+// Meeting the saint in the flow: the same rise, bell and bloom as the cold open.
+riser(T.saintFlip - 0.8, T.saintFlip, 0.12);
+bell(T.saintFlip, 72, 0.28, 3.0);
+bell(T.saintFlip + 0.01, 79, 0.12, 2.4, 0.3);
+boom(T.saintFlip, 0.35);
 
-// 33–41 s: the lanterns (Am, F, C)
-pad(T.faith, T.faithLines[2].at, [45, 52, 60, 64], 0.06, 0.6, 0.8);
-pad(T.faithLines[2].at, T.quote, [41, 48, 57, 60], 0.06, 0.8, 0.8);
+// The lanterns (Am, then C)
+pad(T.faith, T.quote, [45, 52, 60, 64], 0.06, 0.6, 0.8);
 pad(T.quote, T.rush + 0.4, [48, 55, 64, 67], 0.06, 0.8, 0.5);
-T.faithLines.forEach((l, i) => bell(l.at, [76, 79, 81][i], 0.12, 2.4));
+bell(T.faithLine.at, 76, 0.12, 2.4);
 bell(T.quote, 72, 0.14, 3.0);
 
-// 41–45 s: into the light
+// Into the light
 riser(T.rush, T.bloom, 0.16, 330, 1320);
 bell(T.bloom, 72, 0.3, 3.4);
 bell(T.bloom + 0.02, 76, 0.16, 3.2, -0.3);
@@ -122,6 +128,6 @@ for (let i = 0; i < N; i++) {
   buf.writeInt16LE(Math.round(Math.max(-1, Math.min(1, Lch[i] * k * fade)) * 32767), 44 + i * 4);
   buf.writeInt16LE(Math.round(Math.max(-1, Math.min(1, Rch[i] * k * fade)) * 32767), 46 + i * 4);
 }
-mkdirSync(new URL("./out", import.meta.url), { recursive: true });
-writeFileSync(new URL("./out/score.wav", import.meta.url), buf);
+mkdirSync(new URL("./public", import.meta.url), { recursive: true });
+writeFileSync(new URL("./public/score.wav", import.meta.url), buf);
 console.log(`score.wav: ${DURATION}s, peak normalised`);

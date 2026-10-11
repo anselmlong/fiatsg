@@ -10,5 +10,12 @@
   "devDependencies": {
     "playwright": "1.58",
     "qrcode": "^1.5.4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.534",
+    "@remotion/google-fonts": "^4.0.534",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.534"
   }
 }
