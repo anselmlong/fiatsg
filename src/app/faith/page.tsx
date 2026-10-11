@@ -25,7 +25,7 @@ export default async function SaintsPage() {
 
   return (
     <Container className="py-10">
-      <h1 className="text-4xl font-bold sm:text-5xl">{supporter ? "Your saints" : "Meet the saints"}</h1>
+      <h1 className="text-4xl font-bold sm:text-5xl">{supporter ? "Your Faith Companions" : "Meet the saints"}</h1>
       <p className="mt-3 max-w-2xl text-lg text-muted">
         Each time you serve, pray or bring someone along, you meet a saint who did the same, and their holy card joins your collection.
       </p>
